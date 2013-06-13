@@ -73,58 +73,77 @@ describe Collector::Collector do
     end
   end
 
-  describe :fetch_varz do
-    it "processes the HTTP response" do
-      create_fake_collector do |collector, _|
-        collector.process_component_discovery(Yajl::Encoder.encode({
-          "type" => "Test",
-          "index" => 1,
-          "host" => "test-host:1234",
-          "credentials" => ["user", "pass"]
-        }))
+  describe "fetch varz" do
+    before do
+      collector.process_component_discovery(Yajl::Encoder.encode(
+                                                "type" => "Test",
+                                                "index" => 0,
+                                                "host" => "test-host:1234",
+                                                "credentials" => ["user", "pass"]
+                                            ))
+    end
 
-        http_request = mock(:HttpRequest)
-        http_request.should_receive(:errback)
+    let(:collector) do
+      Collector::Config.tsdb_host = "dummy"
+      Collector::Config.tsdb_port = 14242
+      Collector::Config.nats_uri = "nats://foo:bar@nats-host:14222"
+      EventMachine.stub(:connect)
+      NATS.stub(:connect)
+      Collector::Collector.new
+    end
 
-        callback = nil
-        http_request.should_receive(:callback) do |&block|
-          callback = block
+    def stub_em_http
+      http_request = MockRequest.new
+      EventMachine::HttpRequest.stub_chain(:new, get: http_request)
+      http_request
+    end
+
+    subject(:fetch_varz) { collector.fetch_varz }
+
+    context "when a normal varz returns succesfully" do
+      it "hits the correct endpoint" do
+        http_conn = mock(:http_conn)
+        EventMachine::HttpRequest.should_receive(:new).with("http://test-host:1234/varz") { http_conn }
+        http_conn.should_receive(:get).with(head: { "Authorization" => "Basic dXNlcjpwYXNz" }) { mock.as_null_object }
+
+        fetch_varz
+      end
+
+      it "gives the message to the correct handler" do
+        Timecop.freeze(Time.now) do
+          request = stub_em_http
+          fetch_varz
+
+          request.stub(:response) { '{"foo": "bar"}' }
+          handler = mock(:handler)
+          Collector::Handler.should_receive(:handler).with(anything, anything) { handler }
+          handler.should_receive(:do_process).with(Collector::HandlerContext.new(0, Time.now.to_i, { "foo" => "bar" }))
+
+          request.call_callback
         end
+      end
+    end
 
-        http_client = mock(:HttpClient)
-        http_client.should_receive(:get).
-          with({:head=>{"Authorization" => "Basic dXNlcjpwYXNz"}}).
-          and_return(http_request)
+    context "when the varz has json errors" do
+      it 'should log the error' do
+        request = stub_em_http
+        fetch_varz
 
-        EventMachine::HttpRequest.should_receive(:new).
-          with("http://test-host:1234/varz").
-          and_return(http_client)
+        Collector::Config.logger.stub(:warn).with(/\AError processing varz: lexical error: .*?; fetched from test-host:1234\z/m)
+        Collector::Config.logger.stub(:warn).with(instance_of(Yajl::ParseError))
 
-        collector.fetch_varz
+        request.stub(:response) { 'foo' }
+        request.call_callback
+      end
+    end
 
+    context "when the varz does not return succefully" do
+      it 'should log the failure' do
+        request = stub_em_http
+        fetch_varz
 
-        callback.should_not be_nil
-        handler = mock(:Handler)
-
-        http_request.should_receive(:response).and_return(Yajl::Encoder.encode({
-          "test" => "foo"
-        }))
-
-        Time.stub(:now).and_return(123)
-        received_context = nil
-        handler.should_receive(:do_process).with(kind_of(Collector::HandlerContext)) do |ctx|
-          received_context = ctx
-        end
-
-        Collector::Handler.should_receive(:handler).
-          with(kind_of(Collector::Historian), "Test").
-          and_return(handler)
-
-        callback.call
-
-        expect(received_context.index).to eq 1
-        expect(received_context.now).to eq 123
-        expect(received_context.varz).to eq({ "test" => "foo" })
+        Collector::Config.logger.stub(:warn).with("Failed fetching varz from: test-host:1234, [];")
+        request.call_errback
       end
     end
   end

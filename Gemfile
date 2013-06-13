@@ -12,6 +12,8 @@ group :test do
 
   gem "ci_reporter"
 
+  gem "timecop"
+
   gem "rcov", :platforms => :ruby_18
   gem "rcov_analyzer", ">= 0.2", :platforms => :ruby_18
 

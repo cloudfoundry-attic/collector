@@ -13,6 +13,9 @@ module Collector
       @varz = varz
     end
 
+    def ==(other)
+      other.index == index && other.now == now && other.varz == varz
+    end
   end
 
   # Varz metric handler

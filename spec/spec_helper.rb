@@ -8,6 +8,7 @@ require "bundler"
 Bundler.setup(:default, :test)
 
 require "rspec/core"
+require "timecop"
 
 require "collector/config"
 Collector::Config.configure(
@@ -25,6 +26,25 @@ RSpec.configure do |c|
   end
 end
 
+class MockRequest
+  def errback(&blk)
+    @errback = blk
+  end
+
+  def callback(&blk)
+    @callback = blk
+  end
+
+  def call_errback
+    raise "No errback set up" unless @errback
+    @errback.call
+  end
+
+  def call_callback
+    raise "No callback set up" unless @callback
+    @callback.call
+  end
+end
 
 def create_fake_collector
   Collector::Config.tsdb_host = "dummy"

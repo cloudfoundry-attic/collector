@@ -132,14 +132,16 @@ module Collector
     # Fetches the varzs from all the components and calls the proper {Handler}
     # to record the metrics in the TSDB server
     def fetch_varz
+      @logger.info("Doing varz checks")
       @components.each do |job, instances|
         instances.each do |index, instance|
           next unless credentials_ok?(job, instance)
           host = instance[:host]
           varz_uri = "http://#{host}/varz"
+          @logger.debug("Retrieving varz info for #{instance.inspect} index #{index} at: #{varz_uri}")
           http = EventMachine::HttpRequest.new(varz_uri).get(:head => authorization_headers(instance))
-          http.errback do
-            @logger.warn("Failed fetching varz from: #{host}")
+          http.errback do |*args|
+            @logger.warn("Failed fetching varz from: #{host}, #{args.inspect};")
           end
           http.callback do
             begin
@@ -161,13 +163,15 @@ module Collector
     # Fetches the healthz from all the components and calls the proper {Handler}
     # to record the metrics in the TSDB server
     def fetch_healthz
+      @logger.info("Doing healthz checks")
       @components.each do |job, instances|
         instances.each do |index, instance|
           next unless credentials_ok?(job, instance)
           healthz_uri = "http://#{instance[:host]}/healthz"
+          @logger.debug("Retrieving healthz info for #{instance.inspect} index #{index} at: #{healthz_uri}")
           http = EventMachine::HttpRequest.new(healthz_uri).get(:head => authorization_headers(instance))
-          http.errback do
-            @logger.warn("Failed fetching healthz from: #{instance[:host]}")
+          http.errback do |*args|
+            @logger.warn("Failed fetching healthz from: #{host}, #{args.inspect};")
           end
           http.callback do
             begin
@@ -205,6 +209,7 @@ module Collector
     private
 
     def send_healthz_metric(is_healthy, job, index)
+      @logger.info("sending healthz metrics")
       @historian.send_data({
         key: "healthy",
         timestamp: Time.now.to_i,
