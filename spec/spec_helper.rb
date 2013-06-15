@@ -35,14 +35,14 @@ class MockRequest
     @callback = blk
   end
 
-  def call_errback
+  def call_errback(*args)
     raise "No errback set up" unless @errback
-    @errback.call
+    @errback.call(*args)
   end
 
-  def call_callback
+  def call_callback(*args)
     raise "No callback set up" unless @callback
-    @callback.call
+    @callback.call(*args)
   end
 end
 

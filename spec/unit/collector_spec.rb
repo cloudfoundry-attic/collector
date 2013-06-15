@@ -3,6 +3,21 @@
 require File.expand_path("../spec_helper", File.dirname(__FILE__))
 
 describe Collector::Collector do
+  let(:collector) do
+    Collector::Config.tsdb_host = "dummy"
+    Collector::Config.tsdb_port = 14242
+    Collector::Config.nats_uri = "nats://foo:bar@nats-host:14222"
+    EventMachine.stub(:connect)
+    NATS.stub(:connect)
+    Collector::Collector.new
+  end
+
+  def stub_em_http
+    http_request = MockRequest.new
+    EventMachine::HttpRequest.stub_chain(:new, get: http_request)
+    http_request
+  end
+
   describe "component discovery" do
     it "should record components when they announce themeselves" do
       create_fake_collector do |collector, _|
@@ -83,21 +98,6 @@ describe Collector::Collector do
                                             ))
     end
 
-    let(:collector) do
-      Collector::Config.tsdb_host = "dummy"
-      Collector::Config.tsdb_port = 14242
-      Collector::Config.nats_uri = "nats://foo:bar@nats-host:14222"
-      EventMachine.stub(:connect)
-      NATS.stub(:connect)
-      Collector::Collector.new
-    end
-
-    def stub_em_http
-      http_request = MockRequest.new
-      EventMachine::HttpRequest.stub_chain(:new, get: http_request)
-      http_request
-    end
-
     subject(:fetch_varz) { collector.fetch_varz }
 
     context "when a normal varz returns succesfully" do
@@ -138,73 +138,81 @@ describe Collector::Collector do
     end
 
     context "when the varz does not return succefully" do
-      it 'should log the failure' do
+      it "should log the failure" do
         request = stub_em_http
         fetch_varz
 
-        Collector::Config.logger.stub(:warn).with("Failed fetching varz from: test-host:1234, [];")
-        request.call_errback
+        Collector::Config.logger.stub(:warn).with("Failed fetching varz from: test-host:1234, [:foo];")
+        request.call_errback(:foo)
       end
     end
   end
 
-  describe "failing healthz" do
-    def setup_healthz_request
-      create_fake_collector do |collector, _|
-        collector.process_component_discovery(Yajl::Encoder.encode({
-          "type" => "Test",
-          "index" => 1,
-          "host" => "test-host:1234",
-          "credentials" => ["user", "pass"]
-        }))
+  describe "fetch healthz" do
+    before do
+      collector.process_component_discovery(Yajl::Encoder.encode(
+        "type" => "Test",
+        "index" => 0,
+        "host" => "test-host:1234",
+        "credentials" => ["user", "pass"]
+      ))
+    end
 
-        http_request = mock(:HttpRequest)
-        http_request.should_receive(:errback)
+    subject(:fetch_healthz) { collector.fetch_healthz }
 
-        callback = nil
-        http_request.should_receive(:callback) do |&block|
-          callback = block
+    context "when a normal healthz returns succesfully" do
+      it "hits the correct endpoint" do
+        http_conn = mock(:http_conn)
+        EventMachine::HttpRequest.should_receive(:new).with("http://test-host:1234/healthz") { http_conn }
+        http_conn.should_receive(:get).with(head: { "Authorization" => "Basic dXNlcjpwYXNz" }) { mock.as_null_object }
+
+        fetch_healthz
+      end
+
+      it "directly sends the bad health out" do
+        Timecop.freeze(Time.now) do
+          request = stub_em_http
+          fetch_healthz
+
+          request.stub(:response) { 'bad' }
+          Collector::Historian.any_instance.should_receive(:send_data).with(
+            key: "healthy",
+            timestamp: Time.now.to_i,
+            value: 0,
+            tags: {job: "Test", index: 0}
+          )
+
+          request.call_callback
         end
+      end
 
-        http_client = mock(:HttpClient)
-        http_client.should_receive(:get).
-            with({:head=>{"Authorization" => "Basic dXNlcjpwYXNz"}}).
-            and_return(http_request)
+      it "directly sends the good health out" do
+        Timecop.freeze(Time.now) do
+          request = stub_em_http
+          fetch_healthz
 
-        EventMachine::HttpRequest.should_receive(:new).
-            with("http://test-host:1234/healthz").
-            and_return(http_client)
+          request.stub(:response) { 'ok' }
+          Collector::Historian.any_instance.should_receive(:send_data).with(
+            key: "healthy",
+            timestamp: Time.now.to_i,
+            value: 1,
+            tags: {job: "Test", index: 0}
+          )
 
-        yield http_request, collector
-
-        collector.fetch_healthz
-
-        callback.call
+          request.call_callback
+        end
       end
     end
 
-    it "should fetch the healthz from the component and report healthy" do
-      setup_healthz_request do |http_request, collector|
-        http_request.should_receive(:response).and_return("ok")
+    context "when the healthz does not return succefully" do
+      it "should log the failure" do
+        request = stub_em_http
+        fetch_healthz
 
-        collector.instance_variable_get(:@historian).should_receive(:send_data).with(hash_including({
-          :key => "healthy",
-          :value => 1
-        }))
+        Collector::Config.logger.stub(:warn).with("Failed fetching healthz from: test-host:1234, [:foo];")
+        request.call_errback(:foo)
       end
     end
-
-    it "should fetch the healthz from the component and report unhealthy" do
-      setup_healthz_request do |http_request, collector|
-        http_request.should_receive(:response).and_return("not ok")
-
-        collector.instance_variable_get(:@historian).should_receive(:send_data).with(hash_including({
-          :key => "healthy",
-          :value => 0
-        }))
-      end
-    end
-
   end
 
   describe "local metrics" do

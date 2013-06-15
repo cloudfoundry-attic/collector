@@ -171,7 +171,7 @@ module Collector
           @logger.debug("Retrieving healthz info for #{instance.inspect} index #{index} at: #{healthz_uri}")
           http = EventMachine::HttpRequest.new(healthz_uri).get(:head => authorization_headers(instance))
           http.errback do |*args|
-            @logger.warn("Failed fetching healthz from: #{host}, #{args.inspect};")
+            @logger.warn("Failed fetching healthz from: #{instance[:host]}, #{args.inspect};")
           end
           http.callback do
             begin
