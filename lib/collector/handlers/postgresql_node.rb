@@ -3,7 +3,10 @@
 module Collector
   class Handler
     class PostgresqlNode < ServiceNodeHandler
-      register Components::PGSQL_NODE
+      def initialize(*args)
+        PostgresqlNode.register Components::PGSQL_NODE
+        super
+      end
 
       def service_type
         "postgresql"

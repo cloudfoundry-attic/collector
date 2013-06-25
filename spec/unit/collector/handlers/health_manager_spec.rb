@@ -1,5 +1,4 @@
 require 'spec_helper'
-#require 'collector/handlers/health_manager'
 
 describe "Collector::Handler::HealthManager" do
   before do

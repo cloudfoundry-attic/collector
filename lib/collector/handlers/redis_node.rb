@@ -3,7 +3,10 @@
 module Collector
   class Handler
     class RedisNode < ServiceNodeHandler
-      register Components::REDIS_NODE
+      def initialize(*args)
+        RedisNode.register Components::REDIS_NODE
+        super
+      end
 
       def service_type
         "redis"

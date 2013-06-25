@@ -2,7 +2,6 @@
 module Collector
   class Handler
     class HealthManager < Handler
-      register Components::HEALTH_MANAGER_COMPONENT
       METRICS = {
               "total" => {
                       "apps" => "apps",
@@ -21,6 +20,10 @@ module Collector
               }
       }
 
+      def initialize(*args)
+        HealthManager.register Components::HEALTH_MANAGER_COMPONENT
+        super
+      end
 
       def process(context)
         varz = context.varz

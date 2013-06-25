@@ -3,9 +3,12 @@ require 'matrix'
 module Collector
   class Handler
     class CloudController < Handler
-      register Components::CLOUD_CONTROLLER_COMPONENT
-
       DHMS_IN_SECS = [24 * 60 * 60, 60 * 60, 60, 1].freeze
+
+      def initialize(*args)
+        CloudController.register Components::CLOUD_CONTROLLER_COMPONENT
+        super
+      end
 
       def process(context)
         varz = context.varz

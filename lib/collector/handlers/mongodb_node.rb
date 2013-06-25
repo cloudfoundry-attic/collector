@@ -3,12 +3,14 @@
 module Collector
   class Handler
     class MongodbNode < ServiceNodeHandler
-      register Components::MONGODB_NODE
+      def initialize(*args)
+        MongodbNode.register Components::MONGODB_NODE
+        super
+      end
 
       def service_type
         "mongodb"
       end
-
     end
   end
 end

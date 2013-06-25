@@ -2,9 +2,8 @@
 index: 0
 logging:
   level: info
-tsdb:
-  host: localhost
-  port: 4242
+  file: /tmp/collector_test.log
+  syslog: vcap.collector
 mbus: nats://localhost:4222
 intervals:
   discover: 60

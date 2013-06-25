@@ -3,12 +3,14 @@
 module Collector
   class Handler
     class RedisProvisioner < ServiceGatewayHandler
-      register Components::REDIS_PROVISIONER
+      def initialize(*args)
+        RedisProvisioner.register Components::REDIS_PROVISIONER
+        super
+      end
 
       def service_type
         "redis"
       end
-
     end
   end
 end

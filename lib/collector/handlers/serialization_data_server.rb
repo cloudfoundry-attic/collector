@@ -3,7 +3,10 @@
 module Collector
   class Handler
     class SerializationDataServer < ServiceHandler
-      register Components::SERIALIZATION_DATA_SERVER
+      def initialize(*args)
+        SerializationDataServer.register Components::SERIALIZATION_DATA_SERVER
+        super
+      end
 
       def process
         if varz["nfs_free_space"]
@@ -14,7 +17,6 @@ module Collector
       def service_type
         "serialization_data_server"
       end
-
     end
   end
 end

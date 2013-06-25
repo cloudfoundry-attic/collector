@@ -3,7 +3,10 @@
 module Collector
   class Handler
     class Neo4jProvisioner < ServiceGatewayHandler
-      register Components::NEO4J_PROVISIONER
+      def initialize(*args)
+        Neo4jProvisioner.register Components::NEO4J_PROVISIONER
+        super
+      end
 
       def service_type
         "neo4j"

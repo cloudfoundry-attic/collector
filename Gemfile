@@ -3,9 +3,9 @@ source "https://rubygems.org"
 gem "rake"
 gem "nats"
 gem "vcap_common"
-gem "vcap_logging"
 gem "aws-sdk", :require => false
 gem "dogapi", "~> 1.6.0"
+gem "steno"
 
 group :test do
   gem "rspec"

@@ -23,6 +23,7 @@ require "collector"
 RSpec.configure do |c|
   c.before do
     EventMachine.stub(:defer).any_number_of_times.and_yield
+    Collector::Handler.reset
   end
 end
 

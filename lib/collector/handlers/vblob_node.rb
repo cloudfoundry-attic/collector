@@ -3,7 +3,10 @@
 module Collector
   class Handler
     class VblobNode < ServiceNodeHandler
-      register Components::VBLOB_NODE
+      def initialize(*args)
+        VblobNode.register Components::VBLOB_NODE
+        super
+      end
 
       def service_type
         "vblob"

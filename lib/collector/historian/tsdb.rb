@@ -19,7 +19,7 @@ module Collector
 
         command = "put #{properties[:key]} #{properties[:timestamp]} #{properties[:value]} #{tags}\n"
 
-        ::Collector::Config.logger.debug1(command)
+        Config.logger.debug1(command)
         @connection.send_data(command)
       end
     end

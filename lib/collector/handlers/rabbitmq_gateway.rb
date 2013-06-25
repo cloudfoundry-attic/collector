@@ -3,12 +3,14 @@
 module Collector
   class Handler
     class RabbitmqProvisioner < ServiceGatewayHandler
-      register Components::RABBITMQ_PROVISIONER
+      def initialize(*args)
+        RabbitmqProvisioner.register Components::RABBITMQ_PROVISIONER
+        super
+      end
 
       def service_type
         "rabbitmq"
       end
-
     end
   end
 end

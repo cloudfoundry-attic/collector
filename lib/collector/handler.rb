@@ -63,6 +63,11 @@ module Collector
         end
         handler_instance
       end
+
+      def reset
+        @handler_map = {}
+        @instance_map = {}
+      end
     end
 
     # @return [String] job name
@@ -77,7 +82,6 @@ module Collector
     def initialize(historian, job)
       @historian = historian
       @job = job
-      @logger = Config.logger
     end
 
     # Processes varz in the context of the collection. Subclasses

@@ -1,4 +1,4 @@
-require "vcap/logging"
+require "steno"
 
 module Collector
   # Singleton config used throughout
@@ -22,11 +22,16 @@ module Collector
         datadog_api_key && datadog_application_key
       end
 
-      def logger(config={})
-        @logger ||= begin
-          VCAP::Logging.setup_from_config(config)
-          VCAP::Logging.logger("collector")
-        end
+      def logger
+        @logger ||= Steno.logger("collector")
+      end
+
+      def setup_logging(config={})
+        log_counter = Steno::Sink::Counter.new
+        cfg = Steno::Config.from_hash(config)
+        cfg.sinks << log_counter
+        Steno.init(cfg)
+        logger.info("collector started")
       end
 
       # Configures the various attributes
@@ -34,7 +39,7 @@ module Collector
       # @param [Hash] config the config Hash
       def configure(config)
         @index = config["index"].to_i
-        logger(config["logging"])
+        setup_logging(config["logging"])
 
         @deployment_name = config["deployment_name"] || "untitled_dev"
 

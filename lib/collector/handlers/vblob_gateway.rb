@@ -3,12 +3,14 @@
 module Collector
   class Handler
     class VblobProvisioner < ServiceGatewayHandler
-      register Components::VBLOB_PROVISIONER
+      def initialize(*args)
+        VblobProvisioner.register Components::VBLOB_PROVISIONER
+        super
+      end
 
       def service_type
         "vblob"
       end
-
     end
   end
 end

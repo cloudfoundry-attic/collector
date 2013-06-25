@@ -3,7 +3,10 @@
 module Collector
   class Handler
     class MysqlNode < ServiceNodeHandler
-      register Components::MYSQL_NODE
+      def initialize(*args)
+        MysqlNode.register Components::MYSQL_NODE
+        super
+      end
 
       def service_type
         "mysql"

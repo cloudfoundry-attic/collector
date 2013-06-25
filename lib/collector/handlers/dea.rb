@@ -3,7 +3,10 @@
 module Collector
   class Handler
     class Dea < Handler
-      register Components::DEA_COMPONENT
+      def initialize(*args)
+        Dea.register Components::DEA_COMPONENT
+        super
+      end
 
       def additional_tags(context)
         { stack: context.varz['stacks'] }

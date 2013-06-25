@@ -3,7 +3,10 @@
 module Collector
   class Handler
     class RabbitmqNode < ServiceNodeHandler
-      register Components::RABBITMQ_NODE
+      def initialize(*args)
+        RabbitmqNode.register Components::RABBITMQ_NODE
+        super
+      end
 
       def service_type
         "rabbitmq"

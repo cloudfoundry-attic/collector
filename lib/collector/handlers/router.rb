@@ -3,7 +3,10 @@
 module Collector
   class Handler
     class Router < Handler
-      register Components::ROUTER_COMPONENT
+      def initialize(*args)
+        Router.register Components::ROUTER_COMPONENT
+        super
+      end
 
       def process(context)
         varz = context.varz

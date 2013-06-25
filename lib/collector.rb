@@ -22,6 +22,10 @@ require "collector/tsdb_connection"
 require "collector/historian"
 require "collector/components"
 
+Dir[File.join(File.dirname(__FILE__), "../lib/collector/handlers/*.rb")].each do |file|
+  require File.join("collector/handlers", File.basename(file, File.extname(file)))
+end
+
 module Collector
   # Varz collector
   class Collector
@@ -30,21 +34,19 @@ module Collector
     COLLECTOR_PING = "collector.nats.ping".freeze
 
     def initialize
-      @logger = Config.logger
-
       @components = {}
-
       @historian = ::Collector::Historian.build
       @nats_latency = VCAP::RollingMetric.new(60)
 
       NATS.on_error do |e|
-        @logger.fatal("Exiting, NATS error")
-        @logger.fatal(e)
+        Config.logger.fatal("Exiting, NATS error")
+        Config.logger.fatal(e)
         exit
       end
 
       @nats = NATS.connect(:uri => Config.nats_uri) do
-        @logger.info("Connected to NATS")
+        puts "Connected"
+        Config.logger.info("Connected to NATS")
         # Send initially to discover what's already running
         @nats.subscribe(ANNOUNCE_SUBJECT) { |message| process_component_discovery(message) }
 
@@ -57,6 +59,7 @@ module Collector
 
         setup_timers
       end
+
     end
 
     # Configures the periodic timers for collecting varzs.
@@ -92,7 +95,7 @@ module Collector
     def process_component_discovery(message)
       message = Yajl::Parser.parse(message)
       if message["index"]
-        @logger.debug1("Found #{message["type"]}/#{message["index"]} @ " +
+        Config.logger.debug1("Found #{message["type"]}/#{message["index"]} @ " +
                            " #{message["host"]} #{message["credentials"]}")
         instances = (@components[message["type"]] ||= {})
         instances[message["index"]] = {
@@ -102,8 +105,8 @@ module Collector
         }
       end
     rescue Exception => e
-      @logger.warn("Error discovering components: #{e.message}")
-      @logger.warn(e)
+      Config.logger.warn("Error discovering components: #{e.message}")
+      Config.logger.warn(e)
     end
 
     # Prunes components that haven't been heard from in a while
@@ -116,8 +119,8 @@ module Collector
 
       @components.delete_if { |_, instances| instances.empty? }
     rescue => e
-      @logger.warn("Error pruning components: #{e.message}")
-      @logger.warn(e)
+      Config.logger.warn("Error pruning components: #{e.message}")
+      Config.logger.warn(e)
     end
 
     # Generates metrics that don't require any interactions with varz or healthz
@@ -132,16 +135,16 @@ module Collector
     # Fetches the varzs from all the components and calls the proper {Handler}
     # to record the metrics in the TSDB server
     def fetch_varz
-      @logger.info("Doing varz checks")
+      Config.logger.info("Doing varz checks")
       @components.each do |job, instances|
         instances.each do |index, instance|
           next unless credentials_ok?(job, instance)
           host = instance[:host]
           varz_uri = "http://#{host}/varz"
-          @logger.debug("Retrieving varz info for #{instance.inspect} index #{index} at: #{varz_uri}")
+          Config.logger.debug("Retrieving varz info for #{instance.inspect} index #{index} at: #{varz_uri}")
           http = EventMachine::HttpRequest.new(varz_uri).get(:head => authorization_headers(instance))
           http.errback do |*args|
-            @logger.warn("Failed fetching varz from: #{host}, #{args.inspect};")
+            Config.logger.warn("Failed fetching varz from: #{host}, #{args.inspect};")
           end
           http.callback do
             begin
@@ -152,8 +155,8 @@ module Collector
               ctx = HandlerContext.new(index, now, varz)
               handler.do_process(ctx)
             rescue => e
-              @logger.warn("Error processing varz: #{e.message}; fetched from #{host}")
-              @logger.warn(e)
+              Config.logger.warn("Error processing varz: #{e.message}; fetched from #{host}")
+              Config.logger.warn(e)
             end
           end
         end
@@ -163,23 +166,23 @@ module Collector
     # Fetches the healthz from all the components and calls the proper {Handler}
     # to record the metrics in the TSDB server
     def fetch_healthz
-      @logger.info("Doing healthz checks")
+      Config.logger.info("Doing healthz checks")
       @components.each do |job, instances|
         instances.each do |index, instance|
           next unless credentials_ok?(job, instance)
           healthz_uri = "http://#{instance[:host]}/healthz"
-          @logger.debug("Retrieving healthz info for #{instance.inspect} index #{index} at: #{healthz_uri}")
+          Config.logger.debug("Retrieving healthz info for #{instance.inspect} index #{index} at: #{healthz_uri}")
           http = EventMachine::HttpRequest.new(healthz_uri).get(:head => authorization_headers(instance))
           http.errback do |*args|
-            @logger.warn("Failed fetching healthz from: #{instance[:host]}, #{args.inspect};")
+            Config.logger.warn("Failed fetching healthz from: #{instance[:host]}, #{args.inspect};")
           end
           http.callback do
             begin
               is_healthy = http.response.strip.downcase == "ok" ? 1 : 0
               send_healthz_metric(is_healthy, job, index)
             rescue => e
-              @logger.error("Error processing healthz: #{e.message}")
-              @logger.error(e)
+              Config.logger.error("Error processing healthz: #{e.message}")
+              Config.logger.error(e)
             end
           end
         end
@@ -188,7 +191,7 @@ module Collector
 
     def credentials_ok?(job, instance)
       unless instance[:credentials].kind_of?(Array)
-        @logger.warn("Bad credentials from #{job.inspect} #{instance.inspect}")
+        Config.logger.warn("Bad credentials from #{job.inspect} #{instance.inspect}")
         return false
       end
       true
@@ -209,7 +212,7 @@ module Collector
     private
 
     def send_healthz_metric(is_healthy, job, index)
-      @logger.info("sending healthz metrics")
+      Config.logger.info("sending healthz metrics")
       @historian.send_data({
         key: "healthy",
         timestamp: Time.now.to_i,
@@ -219,8 +222,4 @@ module Collector
     end
 
   end
-end
-
-Dir[File.join(File.dirname(__FILE__), "../lib/collector/handlers/*.rb")].each do |file|
-  require File.join("collector/handlers", File.basename(file, File.extname(file)))
 end
