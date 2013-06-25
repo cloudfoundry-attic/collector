@@ -3,11 +3,6 @@
 module Collector
   class Handler
     class Router < Handler
-      def initialize(*args)
-        Router.register Components::ROUTER_COMPONENT
-        super
-      end
-
       def process(context)
         varz = context.varz
 
@@ -36,5 +31,7 @@ module Collector
         send_metric("router.total_routes", varz["urls"], context)
       end
     end
+
+    register Components::ROUTER_COMPONENT
   end
 end

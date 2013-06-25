@@ -20,11 +20,6 @@ module Collector
               }
       }
 
-      def initialize(*args)
-        HealthManager.register Components::HEALTH_MANAGER_COMPONENT
-        super
-      end
-
       def process(context)
         varz = context.varz
         METRICS.each do |type, metric_map|
@@ -52,5 +47,7 @@ module Collector
         @last_check_timestamp = context.now
       end
     end
+
+    register Components::HEALTH_MANAGER_COMPONENT
   end
 end

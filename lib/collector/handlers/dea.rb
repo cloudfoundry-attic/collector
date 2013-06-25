@@ -3,11 +3,6 @@
 module Collector
   class Handler
     class Dea < Handler
-      def initialize(*args)
-        Dea.register Components::DEA_COMPONENT
-        super
-      end
-
       def additional_tags(context)
         { stack: context.varz['stacks'] }
       end
@@ -18,6 +13,8 @@ module Collector
         send_metric("available_memory_ratio", context.varz["available_memory_ratio"], context)
         send_metric("available_disk_ratio", context.varz["available_disk_ratio"], context)
       end
+
+      register Components::DEA_COMPONENT
     end
   end
 end

@@ -3,15 +3,11 @@
 module Collector
   class Handler
     class MongodbProvisioner < ServiceGatewayHandler
-      def initialize(*args)
-        MongodbProvisioner.register Components::MONGODB_PROVISIONER
-        super
-      end
-
       def service_type
         "mongodb"
       end
 
+      register Components::MONGODB_PROVISIONER
     end
   end
 end

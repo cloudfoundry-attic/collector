@@ -3,15 +3,11 @@
 module Collector
   class Handler
     class PostgresqlProvisioner < ServiceGatewayHandler
-      def initialize(*args)
-        PostgresqlProvisioner.register Components::PGSQL_PROVISIONER
-        super
-      end
-
       def service_type
         "postgresql"
       end
 
+      register Components::PGSQL_PROVISIONER
     end
   end
 end

@@ -3,11 +3,6 @@
 module Collector
   class Handler
     class BackupManager < ServiceHandler
-      def initialize(*args)
-        BackupManager.register Components::BACKUP_MANAGER
-        super
-      end
-
       def process
         total_size = varz["disk_total_size"] || 0
         free_size = varz["disk_available_size"] || 0
@@ -21,6 +16,8 @@ module Collector
       def service_type
         "backup_manager"
       end
+
+      register Components::BACKUP_MANAGER
     end
   end
 end
