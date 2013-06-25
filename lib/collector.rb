@@ -45,7 +45,6 @@ module Collector
       end
 
       @nats = NATS.connect(:uri => Config.nats_uri) do
-        puts "Connected"
         Config.logger.info("Connected to NATS")
         # Send initially to discover what's already running
         @nats.subscribe(ANNOUNCE_SUBJECT) { |message| process_component_discovery(message) }
@@ -129,6 +128,7 @@ module Collector
       # provides information required for any tags (e.g. in the DEA handler).
       context = HandlerContext.new(Config.index, Time.now.to_i, {})
       handler = Handler.handler(@historian, "collector")
+      puts "Sending data to #{@historian}"
       handler.send_latency_metric("nats.latency.1m", @nats_latency.value, context)
     end
 
