@@ -257,4 +257,15 @@ describe Collector::Collector do
     end
   end
 
+  describe "nats latency" do
+    let(:historian) { double(:historian) }
+
+    it 'should report metrics' do
+      Collector::Historian.stub(:build).and_return(historian)
+      collector.process_nats_ping((Time.now + 50).to_f)
+
+      historian.should_receive(:send_data)
+      collector.send_local_metrics
+    end
+  end
 end

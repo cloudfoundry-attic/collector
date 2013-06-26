@@ -19,8 +19,7 @@ module Collector
 
       if Config.datadog
         historian.add_adapter(Historian::DataDog.new(Config.datadog_api_key, Config.datadog_application_key))
-        Config.logger.info("Adding historian adapter for DataDog with api key #{Config.datadog_api_key} " \
-                     "and application key #{Config.datadog_application_key}")
+        Config.logger.info("Adding historian adapter for DataDog with api key #{Config.datadog_api_key} and application key #{Config.datadog_application_key}")
       end
 
       historian

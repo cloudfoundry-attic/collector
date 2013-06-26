@@ -148,7 +148,7 @@ describe Collector::Handler do
   end
 
   describe "send_latency_metric" do
-    it "should send the metric to the historian" do
+    it "should send the metric to the historian with string keys" do
       historian = mock("historian")
       historian.should_receive(:send_data).
           with({key: "latency_key",
@@ -158,6 +158,18 @@ describe Collector::Handler do
       context = Collector::HandlerContext.new(1, 10000, {})
       handler = Collector::Handler.handler(historian, "Test")
       handler.send_latency_metric("latency_key", {"value" => 10, "samples" => 2}, context, {foo: "bar"})
+    end
+
+    it "should send the metric to the historian with symbolized keys" do
+      historian = mock("historian")
+      historian.should_receive(:send_data).
+          with({key: "latency_key",
+                timestamp: 10000,
+                value: 5,
+                tags: hash_including({index: 1, job: "Test", foo: "bar"})})
+      context = Collector::HandlerContext.new(1, 10000, {})
+      handler = Collector::Handler.handler(historian, "Test")
+      handler.send_latency_metric("latency_key", {:value => 10, :samples => 2}, context, {foo: "bar"})
     end
   end
 end

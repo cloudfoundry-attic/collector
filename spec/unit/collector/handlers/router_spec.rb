@@ -43,19 +43,19 @@ describe Collector::Handler::Router do
           0.49548432897218125,
           0.9014480037952
         ],
-          "requests" => 68213,
-          "requests_per_sec" => 0.22460493344950977,
-          "responses_2xx" => 65021,
-          "responses_3xx" => 971,
-          "responses_4xx" => 2182,
-          "responses_5xx" => 1,
-          "responses_xxx" => 38,
-          "start" => "2013-05-28 22:01:19 +0000",
-          "tags" => {
-            "component" => {
-            }
-          },
-          "urls" => 123456789
+        "requests" => 68213,
+        "requests_per_sec" => 0.22460493344950977,
+        "responses_2xx" => 65021,
+        "responses_3xx" => 971,
+        "responses_4xx" => 2182,
+        "responses_5xx" => 1,
+        "responses_xxx" => 38,
+        "start" => "2013-05-28 22:01:19 +0000",
+        "tags" => {
+          "component" => {
+          }
+        },
+        "urls" => 123456789
       }
     end
 
@@ -76,12 +76,12 @@ describe Collector::Handler::Router do
             0.4771015543892108,
             0.8284101734116986
           ],
-            "requests" => 3200,
-            "responses_2xx" => 100,
-            "responses_3xx" => 200,
-            "responses_4xx" => 400,
-            "responses_5xx" => 800,
-            "responses_xxx" => 1600
+          "requests" => 3200,
+          "responses_2xx" => 100,
+          "responses_3xx" => 200,
+          "responses_4xx" => 400,
+          "responses_5xx" => 800,
+          "responses_xxx" => 1600
         }
       end
 
@@ -125,12 +125,12 @@ describe Collector::Handler::Router do
             0.4771015543892108,
             0.8284101734116986
           ],
-            "requests" => 2400,
-            "responses_2xx" => 200,
-            "responses_3xx" => 300,
-            "responses_4xx" => 400,
-            "responses_5xx" => 500,
-            "responses_xxx" => 1000
+          "requests" => 2400,
+          "responses_2xx" => 200,
+          "responses_3xx" => 300,
+          "responses_4xx" => 400,
+          "responses_5xx" => 500,
+          "responses_xxx" => 1000
         }
       end
 

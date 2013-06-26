@@ -140,8 +140,12 @@ module Collector
     # @param [String] name the metric name
     # @param [Hash] value the latency metric value
     def send_latency_metric(name, value, context, tags = {})
-      if value && value["samples"] && value["samples"] > 0
-        send_metric(name, value["value"] / value["samples"], context, tags)
+      return unless value
+
+      samples = value[:samples] || value["samples"]
+      if samples > 0
+        value = value[:value] || value["value"]
+        send_metric(name, value / samples, context, tags)
       end
     end
   end
