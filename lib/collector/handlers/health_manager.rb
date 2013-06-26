@@ -46,8 +46,8 @@ module Collector
         @last_num_users = total_users
         @last_check_timestamp = context.now
       end
-    end
 
-    register Components::HEALTH_MANAGER_COMPONENT
+      register Components::HEALTH_MANAGER_COMPONENT
+    end
   end
 end

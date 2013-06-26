@@ -30,8 +30,8 @@ module Collector
         send_metric("router.total_requests", varz["requests"], context)
         send_metric("router.total_routes", varz["urls"], context)
       end
-    end
 
-    register Components::ROUTER_COMPONENT
+      register Components::ROUTER_COMPONENT
+    end
   end
 end
