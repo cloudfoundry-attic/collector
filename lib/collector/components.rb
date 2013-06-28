@@ -5,6 +5,8 @@ module Collector
     HEALTH_MANAGER_COMPONENT = "HealthManager".freeze
     ROUTER_COMPONENT = "Router".freeze
 
+    MARKETPLACE_GATEWAY = 'MarketplaceGateway'
+
     # services components
     MYSQL_PROVISIONER = "MyaaS-Provisioner".freeze
     MYSQL_NODE = "MyaaS-Node".freeze
