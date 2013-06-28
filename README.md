@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/cloudfoundry/collector.png)](https://travis-ci.org/cloudfoundry/collector)
 
-VCAP Metric Collector
+Cloud Foundry Metric Collector
 =====================
 The `collector` will discover the various components on the message bus and
 query their /healthz and /varz interfaces.
