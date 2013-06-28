@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/cloudfoundry/collector.png)](https://travis-ci.org/cloudfoundry/collector)
+
 VCAP Metric Collector
 =====================
 The `collector` will discover the various components on the message bus and
