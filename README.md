@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/cloudfoundry/collector.png)](https://travis-ci.org/cloudfoundry/collector)
+[![Code Climate](https://codeclimate.com/github/cloudfoundry/collector.png)](https://codeclimate.com/github/cloudfoundry/collector)
 
 Cloud Foundry Metric Collector
 =====================
