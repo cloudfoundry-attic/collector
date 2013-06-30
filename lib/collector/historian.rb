@@ -25,14 +25,12 @@ module Collector
       historian
     end
 
-    attr_accessor :adapters
-
     def initialize
-      self.adapters = []
+      @adapters = []
     end
 
     def send_data(data)
-      adapters.each do |adapter|
+      @adapters.each do |adapter|
         begin
           Config.logger.debug("Sending data to #{adapter.class.name}: #{data}")
           adapter.send_data(data)
@@ -43,7 +41,7 @@ module Collector
     end
 
     def add_adapter(adapter)
-      self.adapters << adapter
+      @adapters << adapter
     end
   end
 end
