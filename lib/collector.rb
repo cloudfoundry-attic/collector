@@ -133,57 +133,22 @@ module Collector
     # Fetches the varzs from all the components and calls the proper {Handler}
     # to record the metrics in the TSDB server
     def fetch_varz
-      Config.logger.info("Doing varz checks")
-      @components.each do |job, instances|
-        instances.each do |index, instance|
-          next unless credentials_ok?(job, instance)
-          host = instance[:host]
-          varz_uri = "http://#{host}/varz"
-          Config.logger.debug("Retrieving varz info for #{instance.inspect} index #{index} at: #{varz_uri}")
-          http = EventMachine::HttpRequest.new(varz_uri).get(:head => authorization_headers(instance))
-          http.errback do |*args|
-            Config.logger.warn("Failed fetching varz from: #{host}, #{args.inspect};")
-          end
-          http.callback do
-            begin
-              varz = Yajl::Parser.parse(http.response)
-              now = Time.now.to_i
+      fetch(:varz) do |http, job, index|
+        varz = Yajl::Parser.parse(http.response)
+        now = Time.now.to_i
 
-              handler = Handler.handler(@historian, job)
-              ctx = HandlerContext.new(index, now, varz)
-              handler.do_process(ctx)
-            rescue => e
-              Config.logger.warn("Error processing varz: #{e.message}; fetched from #{host}")
-              Config.logger.warn(e)
-            end
-          end
-        end
+        handler = Handler.handler(@historian, job)
+        ctx = HandlerContext.new(index, now, varz)
+        handler.do_process(ctx)
       end
     end
 
     # Fetches the healthz from all the components and calls the proper {Handler}
     # to record the metrics in the TSDB server
     def fetch_healthz
-      Config.logger.info("Doing healthz checks")
-      @components.each do |job, instances|
-        instances.each do |index, instance|
-          next unless credentials_ok?(job, instance)
-          healthz_uri = "http://#{instance[:host]}/healthz"
-          Config.logger.debug("Retrieving healthz info for #{instance.inspect} index #{index} at: #{healthz_uri}")
-          http = EventMachine::HttpRequest.new(healthz_uri).get(:head => authorization_headers(instance))
-          http.errback do |*args|
-            Config.logger.warn("Failed fetching healthz from: #{instance[:host]}, #{args.inspect};")
-          end
-          http.callback do
-            begin
-              is_healthy = http.response.strip.downcase == "ok" ? 1 : 0
-              send_healthz_metric(is_healthy, job, index)
-            rescue => e
-              Config.logger.error("Error processing healthz: #{e.message}")
-              Config.logger.error(e)
-            end
-          end
-        end
+      fetch(:healthz) do |http, job, index|
+        is_healthy = http.response.strip.downcase == "ok" ? 1 : 0
+        send_healthz_metric(is_healthy, job, index)
       end
     end
 
@@ -208,6 +173,42 @@ module Collector
     end
 
     private
+
+    def fetch(type)
+      Config.logger.info("Doing #{type} checks")
+      @components.each do |job, instances|
+        instances.each do |index, instance|
+          next unless credentials_ok?(job, instance)
+
+          host = instance[:host]
+          uri = "http://#{host}/#{type}"
+
+          Config.logger.debug(
+            "collector.#{type}.update",
+            :host => host, :index => index, :uri => uri,
+            :instance => instance.inspect)
+
+          http = EventMachine::HttpRequest.new(uri).get(
+            :head => authorization_headers(instance))
+
+          http.errback do
+            Config.logger.warn(
+              "collector.#{type}.failed",
+              :host => host, :error => http.error)
+          end
+
+          http.callback do
+            begin
+              yield http, job, index
+            rescue => e
+              Config.logger.error(
+                "collector.#{type}.processing-failed",
+                :error => e, :backtrace => e.backtrace)
+            end
+          end
+        end
+      end
+    end
 
     def send_healthz_metric(is_healthy, job, index)
       Config.logger.info("sending healthz metrics")

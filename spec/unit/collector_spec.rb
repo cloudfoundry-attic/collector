@@ -140,9 +140,14 @@ describe Collector::Collector do
     context "when the varz does not return succefully" do
       it "should log the failure" do
         request = stub_em_http
+        request.stub(error: "404 not found")
+
         fetch_varz
 
-        Collector::Config.logger.stub(:warn).with("Failed fetching varz from: test-host:1234, [:foo];")
+        Collector::Config.logger.stub(:warn).with(
+          "collector.varz.failed",
+          :host => "test-host:1234", :error => "404 not found")
+
         request.call_errback(:foo)
       end
     end
@@ -207,9 +212,14 @@ describe Collector::Collector do
     context "when the healthz does not return succefully" do
       it "should log the failure" do
         request = stub_em_http
+        request.stub(error: "404 not found")
+
         fetch_healthz
 
-        Collector::Config.logger.stub(:warn).with("Failed fetching healthz from: test-host:1234, [:foo];")
+        Collector::Config.logger.stub(:warn).with(
+          "collector.healthz.failed",
+          :host => "test-host:1234", :error => "404 not found")
+
         request.call_errback(:foo)
       end
     end
