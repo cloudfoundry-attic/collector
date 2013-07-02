@@ -15,42 +15,51 @@ describe Collector::Handler::Dea do
   end
 
   describe "process" do
-    let(:handler) { Collector::Handler::Dea.new(nil, nil) }
+    let(:context) { Collector::HandlerContext.new(nil, nil, varz) }
+    let(:varz) { fixture(:dea) }
 
     before do
       handler.stub(:send_metric)
     end
 
-    it "sends the can_stage metric" do
-      varz = {
-        "can_stage" => 1
-      }
+    subject(:handler) { Collector::Handler::Dea.new(nil, nil) }
 
-      context = Collector::HandlerContext.new(nil, nil, varz)
-      handler.should_receive(:send_metric).with("can_stage", 1, context)
+    def process
       handler.process(context)
+    end
+
+    it "sends the can_stage metric" do
+      handler.should_receive(:send_metric).with("can_stage", 1, context)
+      process
     end
 
     it "sends the reservable stagers metric" do
-      varz = {
-        "reservable_stagers" => 34
-      }
-
-      context = Collector::HandlerContext.new(nil, nil, varz)
-      handler.should_receive(:send_metric).with("reservable_stagers", 34, context)
-      handler.process(context)
+      handler.should_receive(:send_metric).with("reservable_stagers", 28, context)
+      process
     end
 
     it "sends the resource availability metrics" do
-      varz = {
-        "available_memory_ratio" => 0.363,
-        "available_disk_ratio" => 0.657
-      }
+      handler.should_receive(:send_metric).with("available_disk_ratio", 1.234, context)
+      handler.should_receive(:send_metric).with("available_memory_ratio", 5.678, context)
+      process
+    end
 
-      context = Collector::HandlerContext.new(nil, nil, varz)
-      handler.should_receive(:send_metric).with("available_disk_ratio", 0.657, context)
-      handler.should_receive(:send_metric).with("available_memory_ratio", 0.363, context)
-      handler.process(context)
+    it "sends registry metrics" do
+      handler.should_receive(:send_metric).with("dea_registry_born", 1, context)
+      handler.should_receive(:send_metric).with("dea_registry_running", 2, context)
+      handler.should_receive(:send_metric).with("dea_registry_starting", 1, context)
+      handler.should_receive(:send_metric).with("dea_registry_stopping", 1, context)
+      handler.should_receive(:send_metric).with("dea_registry_stopped", 1, context)
+      handler.should_receive(:send_metric).with("dea_registry_crashed", 1, context)
+      handler.should_receive(:send_metric).with("dea_registry_deleted", 1, context)
+      handler.should_receive(:send_metric).with("dea_registry_resuming", 1, context)
+      process
+    end
+
+    it "includes born, running, starting and resuming (not sure) in mem and disk usage" do
+      handler.should_receive(:send_metric).with("dea_registry_mem_reserved", 256 * 5, context)
+      handler.should_receive(:send_metric).with("dea_registry_disk_reserved", 1024 * 5, context)
+      process
     end
   end
 end
