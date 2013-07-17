@@ -23,6 +23,7 @@ module Collector
       end
 
       def logger
+        raise "logger was used without being configured" unless @logging_configured
         @logger ||= Steno.logger("collector")
       end
 
@@ -31,6 +32,7 @@ module Collector
         cfg = Steno::Config.from_hash(config)
         cfg.sinks << log_counter
         Steno.init(cfg)
+        @logging_configured = true
         logger.info("collector started")
       end
 
