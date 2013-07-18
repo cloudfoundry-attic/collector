@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gem "rake"
 gem "nats"
-gem "vcap_common"
+gem "vcap_common", "~> 2.2.1"
 gem "aws-sdk", :require => false
 gem "dogapi", "~> 1.6.0"
 gem "steno"

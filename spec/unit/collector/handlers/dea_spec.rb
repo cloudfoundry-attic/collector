@@ -28,6 +28,12 @@ describe Collector::Handler::Dea do
       handler.process(context)
     end
 
+    it "sends the uptime metric converted to seconds" do
+      uptime_in_seconds = 56 + (60 * 3) + (60 * 60 * 3) + (60 * 60 * 24 * 3)
+      handler.should_receive(:send_metric).with("uptime", uptime_in_seconds, context)
+      process
+    end
+
     it "sends the can_stage metric" do
       handler.should_receive(:send_metric).with("can_stage", 1, context)
       process
