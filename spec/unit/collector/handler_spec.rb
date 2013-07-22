@@ -72,6 +72,16 @@ describe Collector::Handler do
       handler.do_process(context)
     end
 
+    it "sends out 'uptime' if specified" do
+      context = Collector::HandlerContext.new(nil, nil, {"uptime" => "3d:3h:3m:56s"})
+      handler = Collector::Handler.new(nil, nil)
+
+      uptime_in_seconds = 56 + (60 * 3) + (60 * 60 * 3) + (60 * 60 * 24 * 3)
+      handler.should_receive(:send_metric).with("uptime_in_seconds", uptime_in_seconds, context)
+
+      handler.do_process(context)
+    end
+
     it "sends out log counts if specified" do
       context = Collector::HandlerContext.new(nil, nil, {"log_counts" => { "fatal" => 5, "error" => 4, "warn" => 3, "info" => 2, "debug" => 1}})
       handler = Collector::Handler.new(nil, nil)

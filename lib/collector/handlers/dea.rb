@@ -1,6 +1,4 @@
 # Copyright (c) 2009-2012 VMware, Inc.
-require "vcap/common"
-
 module Collector
   class Handler
     class Dea < Handler
@@ -13,7 +11,6 @@ module Collector
         send_metric("reservable_stagers", context.varz["reservable_stagers"], context)
         send_metric("available_memory_ratio", context.varz["available_memory_ratio"], context)
         send_metric("available_disk_ratio", context.varz["available_disk_ratio"], context)
-        send_metric("uptime", VCAP.uptime_string_to_seconds(context.varz["uptime"]) , context)
 
         state_counts(context).each do |state, count|
           send_metric("dea_registry_#{state.downcase}", count, context)
