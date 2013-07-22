@@ -6,6 +6,10 @@ module Collector
       def process(context)
         varz = context.varz
 
+        send_metric("router.total_requests", varz["requests"], context)
+        send_metric("router.total_routes", varz["urls"], context)
+        send_metric("router.seconds_since_last_registry_update", varz["seconds_since_last_registry_update"], context)
+
         return unless varz["tags"]
         varz["tags"].each do |key, values|
           values.each do |value, metrics|
@@ -26,9 +30,6 @@ module Collector
             end
           end
         end
-
-        send_metric("router.total_requests", varz["requests"], context)
-        send_metric("router.total_routes", varz["urls"], context)
       end
 
       register Components::ROUTER_COMPONENT

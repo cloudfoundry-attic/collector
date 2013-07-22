@@ -50,6 +50,7 @@ describe Collector::Handler::Router do
         "responses_4xx" => 2182,
         "responses_5xx" => 1,
         "responses_xxx" => 38,
+        "seconds_since_last_registry_update" => 1.5,
         "start" => "2013-05-28 22:01:19 +0000",
         "tags" => {
           "component" => {
@@ -104,6 +105,7 @@ describe Collector::Handler::Router do
 
         historian.should have_sent_data("router.total_requests", 68213)
         historian.should have_sent_data("router.total_routes", 123456789)
+        historian.should have_sent_data("router.seconds_since_last_registry_update", 1.5)
       end
     end
 
