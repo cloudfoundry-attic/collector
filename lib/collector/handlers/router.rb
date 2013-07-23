@@ -8,7 +8,7 @@ module Collector
 
         send_metric("router.total_requests", varz["requests"], context)
         send_metric("router.total_routes", varz["urls"], context)
-        send_metric("router.seconds_since_last_registry_update", varz["seconds_since_last_registry_update"], context)
+        send_metric("router.ms_since_last_registry_update", varz["ms_since_last_registry_update"], context)
 
         return unless varz["tags"]
         varz["tags"].each do |key, values|
