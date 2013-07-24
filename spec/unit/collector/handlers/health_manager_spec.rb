@@ -61,13 +61,26 @@ describe "Collector::Handler::HealthManager" do
     end
 
     context "when the collector has no prior information about the number of users (i.e., when it's started up)" do
-
       it "doesn't send a user rate metric" do
         varz = { "total_users" => 123 }
         context = Collector::HandlerContext.new(nil, nil, varz)
 
         handler.should_not_receive(:send_metric).with("user_rate", anything, context)
         handler.process(context)
+      end
+
+      context 'when the collector received zero user count' do
+        it 'does not send the data and update the last known values' do
+          handler.stub(:send_metric)
+          context = Collector::HandlerContext.new(nil, nil, varz.merge("total_users" => 10))
+          handler.process(context)
+
+
+          context = Collector::HandlerContext.new(nil, nil, varz.merge("total_users" => 0))
+          handler.should_not_receive(:send_metric).with("user_rate", anything, anything)
+          handler.should_not_receive(:send_metric).with("total_users", anything, anything)
+          handler.process(context)
+        end
       end
     end
   end

@@ -35,16 +35,18 @@ module Collector
         total_users = varz["total_users"]
         return unless total_users
 
-        send_metric("total_users", total_users, context)
+        if total_users > 0
+          send_metric("total_users", total_users, context)
 
-        if @last_num_users
-          new_users = total_users - @last_num_users
-          rate = new_users.to_f / (context.now - @last_check_timestamp)
-          send_metric("user_rate", rate, context)
+          if @last_num_users
+            new_users = total_users - @last_num_users
+            rate = new_users.to_f / (context.now - @last_check_timestamp)
+            send_metric("user_rate", rate, context)
+          end
+
+          @last_num_users = total_users
+          @last_check_timestamp = context.now
         end
-
-        @last_num_users = total_users
-        @last_check_timestamp = context.now
       end
 
       register Components::HEALTH_MANAGER_COMPONENT
