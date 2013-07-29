@@ -126,7 +126,7 @@ module Collector
     def send_local_metrics
       context = HandlerContext.new(Config.index, Time.now.to_i, {})
       handler = Handler.handler(@historian, "collector")
-      Config.logger.info "Sending nats data to #{@historian.inspect}"
+      Config.logger.info("collector.nats-latency.sending")
       handler.send_latency_metric("nats.latency.1m", @nats_latency.value, context)
     end
 
@@ -211,7 +211,7 @@ module Collector
     end
 
     def send_healthz_metric(is_healthy, job, index)
-      Config.logger.info("sending healthz metrics")
+      Config.logger.info("collector.healthz-metrics.sending", job: job, index: index)
       @historian.send_data({
         key: "healthy",
         timestamp: Time.now.to_i,
