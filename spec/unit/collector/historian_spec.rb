@@ -98,7 +98,7 @@ describe Collector::Historian do
     it "builds a historian that logs to both services" do
       AWS.should_receive(:config).with(access_key_id: "AWS_ACCESS_KEY12345", secret_access_key: "AWS_SECRET_ACCESS_KEY98765")
       EventMachine.should_receive(:connect).with("localhost", 4242, Collector::TsdbConnection)
-      Dogapi::Client.should_receive(:new).with("DATADOG_API_KEY", "DATADOG_APPLICATION_KEY")
+      Dogapi::Client.should_receive(:new).with("DATADOG_API_KEY", "DATADOG_APPLICATION_KEY", nil, nil, false)
 
       historian.should respond_to :send_data
     end

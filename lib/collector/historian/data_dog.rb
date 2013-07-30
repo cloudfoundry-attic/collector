@@ -1,11 +1,12 @@
-require 'time'
-require 'dogapi'
+require "time"
+require "dogapi"
+require "collector/config"
 
 module Collector
   class Historian
     class DataDog
       def initialize(api_key, application_key)
-        @dog_client = Dogapi::Client.new(api_key, application_key)
+        @dog_client = Dogapi::Client.new(api_key, application_key, nil, nil, false)
       end
 
       def send_data(data)
@@ -19,7 +20,11 @@ module Collector
         end
 
         EventMachine.defer do
-          @dog_client.emit_points(name, [point], tags: tags)
+          begin
+            @dog_client.emit_points(name, [point], tags: tags)
+          rescue
+            Config.logger.warn("collector.emit-datadog.fail", metric_name: "some_metric.some_key")
+          end
         end
       end
     end
