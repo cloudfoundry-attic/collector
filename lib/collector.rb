@@ -39,13 +39,12 @@ module Collector
       @nats_latency = VCAP::RollingMetric.new(60)
 
       NATS.on_error do |e|
-        Config.logger.fatal("Exiting, NATS error")
-        Config.logger.fatal(e)
+        Config.logger.fatal("collector.nats.error", error: e.backtrace)
         exit
       end
 
       @nats = NATS.connect(:uri => Config.nats_uri) do
-        Config.logger.info("Connected to NATS")
+        Config.logger.info("collector.nats.connected")
         # Send initially to discover what's already running
         @nats.subscribe(ANNOUNCE_SUBJECT) { |message| process_component_discovery(message) }
 
@@ -94,8 +93,7 @@ module Collector
     def process_component_discovery(message)
       message = Yajl::Parser.parse(message)
       if message["index"]
-        Config.logger.debug1("Found #{message["type"]}/#{message["index"]} @ " +
-                           " #{message["host"]} #{message["credentials"]}")
+        Config.logger.debug1("collector.component.discovered", type: message["type"], index: message["index"], host: message["host"])
         instances = (@components[message["type"]] ||= {})
         instances[message["index"]] = {
           :host => message["host"],
@@ -103,9 +101,8 @@ module Collector
           :timestamp => Time.now.to_i
         }
       end
-    rescue Exception => e
-      Config.logger.warn("Error discovering components: #{e.message}")
-      Config.logger.warn(e)
+    rescue => e
+      Config.logger.warn("collector.component.discovery-failure", error: e.message, backtrace: e.backtrace)
     end
 
     # Prunes components that haven't been heard from in a while
@@ -118,8 +115,7 @@ module Collector
 
       @components.delete_if { |_, instances| instances.empty? }
     rescue => e
-      Config.logger.warn("Error pruning components: #{e.message}")
-      Config.logger.warn(e)
+      Config.logger.warn("collector.component.pruning-error", error: e.message, backtrace: e.backtrace)
     end
 
     # Generates metrics that don't require any interactions with varz or healthz
@@ -154,7 +150,7 @@ module Collector
 
     def credentials_ok?(job, instance)
       unless instance[:credentials].kind_of?(Array)
-        Config.logger.warn("Bad credentials from #{job.inspect} #{instance.inspect}")
+        Config.logger.warn("collector.credentials.invalid", job: job, instance: instance)
         return false
       end
       true
@@ -175,7 +171,6 @@ module Collector
     private
 
     def fetch(type)
-      Config.logger.info("Doing #{type} checks")
       @components.each do |job, instances|
         instances.each do |index, instance|
           next unless credentials_ok?(job, instance)

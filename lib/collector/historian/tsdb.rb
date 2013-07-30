@@ -18,8 +18,6 @@ module Collector
         end).sort.join(" ")
 
         command = "put #{properties[:key]} #{properties[:timestamp]} #{properties[:value]} #{tags}\n"
-
-        Config.logger.debug1(command)
         @connection.send_data(command)
       end
     end

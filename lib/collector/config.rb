@@ -33,7 +33,7 @@ module Collector
         cfg.sinks << log_counter
         Steno.init(cfg)
         @logging_configured = true
-        logger.info("collector started")
+        logger.info("collector.started")
       end
 
       # Configures the various attributes
