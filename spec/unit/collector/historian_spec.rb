@@ -60,14 +60,17 @@ describe Collector::Historian do
       }
     end
 
+    let(:dog_historian) { double('DataDog historian') }
+
     before do
-      Dogapi::Client.stub(:new)
       Collector::Config.configure(config_override)
+      Collector::Historian::DataDog.should_receive(:new).and_return(dog_historian)
     end
 
     it "builds a historian that logs to DataDog" do
       historian = Collector::Historian.build
-      historian.should respond_to :send_data
+      dog_historian.should_receive(:send_data)
+      historian.send_data({tags:{}})
     end
   end
 
@@ -85,8 +88,7 @@ describe Collector::Historian do
               'host' => "localhost"
           },
           "datadog" => {
-              "api_key" => "DATADOG_API_KEY",
-              "application_key" => "DATADOG_APPLICATION_KEY"
+              "api_key" => "DATADOG_API_KEY"
           }
       }
     end
@@ -95,10 +97,10 @@ describe Collector::Historian do
       Collector::Config.configure(config_override)
     end
 
-    it "builds a historian that logs to both services" do
+    it "builds a historian that logs to all services" do
       AWS.should_receive(:config).with(access_key_id: "AWS_ACCESS_KEY12345", secret_access_key: "AWS_SECRET_ACCESS_KEY98765")
       EventMachine.should_receive(:connect).with("localhost", 4242, Collector::TsdbConnection)
-      Dogapi::Client.should_receive(:new).with("DATADOG_API_KEY", "DATADOG_APPLICATION_KEY", nil, nil, false)
+      Collector::Historian::DataDog.should_receive(:new).with("DATADOG_API_KEY")
 
       historian.should respond_to :send_data
     end
@@ -126,13 +128,13 @@ describe Collector::Historian do
 
     let(:connection) { double('Connection') }
     let(:cloud_watch) { double('Cloud Watch') }
-    let(:dog_client) { double('DataDog Client') }
+    let(:dog_historian) { double('DataDog historian') }
 
     before do
       AWS.stub(:config)
       AWS::CloudWatch.stub(:new).and_return(cloud_watch)
       EventMachine.stub(:connect).and_return(connection)
-      Dogapi::Client.stub(:new).and_return(dog_client)
+      Collector::Historian::DataDog.should_receive(:new).and_return(dog_historian)
     end
 
     context "when one of the historians fail" do
@@ -140,7 +142,7 @@ describe Collector::Historian do
 
       it "should still send data to the other historians" do
         cloud_watch.should_receive(:put_metric_data)
-        dog_client.should_receive(:emit_points)
+        dog_historian.should_receive(:send_data)
 
         expect { historian.send_data({tags: {}}) }.to_not raise_error
       end

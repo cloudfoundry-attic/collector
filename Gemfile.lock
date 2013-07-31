@@ -32,8 +32,6 @@ GEM
     cookiejar (0.3.0)
     daemons (1.1.9)
     diff-lcs (1.2.4)
-    dogapi (1.6.0)
-      json (>= 1.5.1)
     em-http-request (1.1.0)
       addressable (>= 2.3.4)
       cookiejar
@@ -54,6 +52,9 @@ GEM
       rack-mount
     hashie (1.2.0)
     http_parser.rb (0.6.0.beta.2)
+    httparty (0.11.0)
+      multi_json (~> 1.0)
+      multi_xml (>= 0.5.2)
     httpclient (2.3.3)
     json (1.7.7)
     json_pure (1.7.7)
@@ -103,7 +104,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk
   ci_reporter
-  dogapi (~> 1.6.0)
+  httparty
   nats
   rake
   rspec

@@ -19,7 +19,7 @@ module Collector
       end
 
       def datadog
-        datadog_api_key && datadog_application_key
+        datadog_api_key
       end
 
       def logger
