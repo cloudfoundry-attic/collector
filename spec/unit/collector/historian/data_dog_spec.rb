@@ -52,7 +52,7 @@ describe Collector::Historian::DataDog do
 
     it "logs when sending to DataDog fails" do
       dog_client.should_receive(:emit_points).and_raise("the roof")
-      ::Collector::Config.logger.should_receive(:warn).with("collector.emit-datadog.fail", metric_name: "some_metric.some_key")
+      ::Collector::Config.logger.should_receive(:warn).with("collector.emit-datadog.fail", metric_name: "cf.collector.some_metric.some_key")
 
       expect { datadog_historian.send_data(datadog_metric_payload) }.not_to raise_error
     end

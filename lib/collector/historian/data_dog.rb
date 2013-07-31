@@ -23,7 +23,7 @@ module Collector
           begin
             @dog_client.emit_points(name, [point], tags: tags)
           rescue
-            Config.logger.warn("collector.emit-datadog.fail", metric_name: "some_metric.some_key")
+            Config.logger.warn("collector.emit-datadog.fail", metric_name: name)
           end
         end
       end
