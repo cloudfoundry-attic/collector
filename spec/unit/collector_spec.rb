@@ -166,6 +166,8 @@ describe Collector::Collector do
     subject(:fetch_healthz) { collector.fetch_healthz }
 
     context "when a normal healthz returns succesfully" do
+      before { Collector::Config.stub(:deployment_name).and_return("the_deployment") }
+
       it "hits the correct endpoint" do
         http_conn = mock(:http_conn)
         EventMachine::HttpRequest.should_receive(:new).with("http://test-host:1234/healthz") { http_conn }
@@ -184,7 +186,7 @@ describe Collector::Collector do
             key: "healthy",
             timestamp: Time.now.to_i,
             value: 0,
-            tags: {job: "Test", index: 0}
+            tags: {job: "Test", index: 0, deployment: "the_deployment"}
           )
 
           request.call_callback
@@ -201,7 +203,7 @@ describe Collector::Collector do
             key: "healthy",
             timestamp: Time.now.to_i,
             value: 1,
-            tags: {job: "Test", index: 0}
+            tags: {job: "Test", index: 0, deployment: "the_deployment"}
           )
 
           request.call_callback

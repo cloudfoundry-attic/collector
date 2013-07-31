@@ -211,7 +211,7 @@ module Collector
         key: "healthy",
         timestamp: Time.now.to_i,
         value: is_healthy,
-        tags: Components.get_job_tags(job).merge({job: job, index: index})
+        tags: Components.get_job_tags(job).merge({job: job, index: index, deployment: Config.deployment_name})
       })
     end
 
