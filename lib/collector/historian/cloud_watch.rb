@@ -31,6 +31,10 @@ module Collector
 
         EventMachine.defer do
           cloud_watch = AWS::CloudWatch.new
+          unless cloud_watch.respond_to?(:put_metric_data)
+            Config.logger.warn("collector.cloud-watch-historian.weird-state")
+            return
+          end
           cloud_watch.put_metric_data metric
         end
       end
