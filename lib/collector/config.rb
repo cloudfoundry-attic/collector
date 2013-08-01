@@ -8,7 +8,7 @@ module Collector
         :aws_secret_access_key, :datadog_api_key, :datadog_application_key,
         :nats_uri, :discover_interval, :varz_interval, :healthz_interval,
         :prune_interval, :nats_ping_interval, :local_metrics_interval,
-        :deployment_name
+        :deployment_name, :datadog_data_threshold, :datadog_time_threshold_in_seconds
 
       def tsdb
         tsdb_host && tsdb_port
@@ -56,6 +56,8 @@ module Collector
         datadog_config = config["datadog"] || {}
         @datadog_api_key = datadog_config["api_key"]
         @datadog_application_key = datadog_config["application_key"]
+        @datadog_data_threshold = datadog_config.fetch("data_threshold", 1000).to_i
+        @datadog_time_threshold_in_seconds = datadog_config.fetch("time_threshold_in_seconds", 10).to_i
 
         @nats_uri = config["mbus"]
 

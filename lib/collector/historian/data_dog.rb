@@ -4,9 +4,6 @@ require "collector/config"
 module Collector
   class Historian
     class DataDog
-      DATA_THRESHOLD = 100
-      TIME_THRESHOLD_IN_SECONDS = 10
-
       def initialize(api_key, http_client)
         @api_key = api_key
         @http_client = http_client
@@ -19,7 +16,7 @@ module Collector
         @metrics << formatted_metric_for_data(data)
 
         time_since_last_post = Time.now - @timestamp_of_last_post
-        if @metrics.size >= DATA_THRESHOLD || time_since_last_post >= TIME_THRESHOLD_IN_SECONDS
+        if @metrics.size >= Config.datadog_data_threshold || time_since_last_post >= Config.datadog_time_threshold_in_seconds
           send_metrics(@metrics.dup)
 
           @metrics.clear
