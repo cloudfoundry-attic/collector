@@ -100,7 +100,7 @@ describe Collector::Historian do
     it "builds a historian that logs to all services" do
       AWS.should_receive(:config).with(access_key_id: "AWS_ACCESS_KEY12345", secret_access_key: "AWS_SECRET_ACCESS_KEY98765")
       EventMachine.should_receive(:connect).with("localhost", 4242, Collector::TsdbConnection)
-      Collector::Historian::DataDog.should_receive(:new).with("DATADOG_API_KEY")
+      Collector::Historian::DataDog.should_receive(:new).with("DATADOG_API_KEY", HTTParty)
 
       historian.should respond_to :send_data
     end
