@@ -83,7 +83,7 @@ describe Collector::Historian::DataDog do
 
     it "aggregates the passed in data and sends the post to data dog once it hits the threshold number of data points" do
       ::Collector::Config.logger.should_not_receive(:warn)
-      ::Collector::Config.logger.should_receive(:info).with("collector.emit-datadog.success", number_of_metrics: data_threshold).twice
+      ::Collector::Config.logger.should_receive(:info).with("collector.emit-datadog.success", number_of_metrics: data_threshold, lag_in_seconds: 0).twice
 
       Timecop.freeze(Time.at(time + 1)) do
         submit_n_events(data_threshold - 1)
@@ -112,7 +112,7 @@ describe Collector::Historian::DataDog do
 
     it "aggregates the passed in data and sends the post to data dog after the threshold time has elapsed" do
       ::Collector::Config.logger.should_not_receive(:warn)
-      ::Collector::Config.logger.should_receive(:info).with("collector.emit-datadog.success", number_of_metrics: 7)
+      ::Collector::Config.logger.should_receive(:info).with("collector.emit-datadog.success", number_of_metrics: 7, lag_in_seconds: 0)
 
       Timecop.freeze(Time.at(time)) do
         submit_n_events(1)
@@ -158,7 +158,7 @@ describe Collector::Historian::DataDog do
 
     it "converts the properties hash into a DataDog point" do
       ::Collector::Config.logger.should_not_receive(:warn)
-      ::Collector::Config.logger.should_receive(:info).with("collector.emit-datadog.success", number_of_metrics: 1)
+      ::Collector::Config.logger.should_receive(:info).with("collector.emit-datadog.success", number_of_metrics: 1, lag_in_seconds: 0)
 
       Timecop.freeze(Time.at(time + time_threshold)) do
         datadog_historian.send_data(datadog_metric_payload)
@@ -185,7 +185,7 @@ describe Collector::Historian::DataDog do
       it "uses now" do
         datadog_metric_payload.delete(:timestamp)
         ::Collector::Config.logger.should_not_receive(:warn)
-        ::Collector::Config.logger.should_receive(:info).with("collector.emit-datadog.success", number_of_metrics: 1)
+        ::Collector::Config.logger.should_receive(:info).with("collector.emit-datadog.success", number_of_metrics: 1, lag_in_seconds: 0)
 
         Timecop.freeze(Time.at(time + time_threshold)) do
           datadog_historian.send_data(datadog_metric_payload)
@@ -199,11 +199,28 @@ describe Collector::Historian::DataDog do
       it "logs" do
         fake_http_client.respond_successfully = false
         ::Collector::Config.logger.should_not_receive(:info)
-        ::Collector::Config.logger.should_receive(:warn).with("collector.emit-datadog.fail", number_of_metrics: 1)
+        ::Collector::Config.logger.should_receive(:warn).with("collector.emit-datadog.fail", number_of_metrics: 1, lag_in_seconds: 0)
 
         Timecop.freeze(Time.at(time + time_threshold)) do
           datadog_historian.send_data(datadog_metric_payload)
         end
+      end
+    end
+
+    it "logs the lag between requesting to send and actually sending" do
+      ::Collector::Config.logger.should_receive(:info).with("collector.emit-datadog.success", number_of_metrics: 1, lag_in_seconds: 5)
+
+      block = nil
+      EM.should_receive(:defer) do |&blk|
+        block = blk
+      end
+
+      Timecop.freeze(Time.at(time + time_threshold)) do
+        datadog_historian.send_data(datadog_metric_payload)
+      end
+
+      Timecop.freeze(Time.at(time + time_threshold + 5)) do
+        block.call
       end
     end
   end
