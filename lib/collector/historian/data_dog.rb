@@ -23,7 +23,7 @@ module Collector
           send_metrics(@metrics.dup)
 
           @metrics.clear
-          @timestamp_of_last_send = Time.now
+          @timestamp_of_last_post = Time.now
         end
       end
 

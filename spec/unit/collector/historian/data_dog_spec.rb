@@ -133,6 +133,25 @@ describe Collector::Historian::DataDog do
       values.should eql((0...7).to_a)
     end
 
+    it "batches more than once" do
+      Timecop.freeze(Time.at(time + 11)) do
+        submit_n_events(1)
+      end
+      fake_http_client.last_post.should_not be_nil
+
+      fake_http_client.reset
+
+      Timecop.freeze(Time.at(time + 15)) do
+        submit_n_events(1)
+      end
+      fake_http_client.last_post.should be_nil
+
+      Timecop.freeze(Time.at(time + 26)) do
+        submit_n_events(1)
+      end
+      fake_http_client.last_post.should_not be_nil
+    end
+
     it "converts the properties hash into a DataDog point" do
       ::Collector::Config.logger.should_not_receive(:warn)
       ::Collector::Config.logger.should_receive(:info).with("collector.emit-datadog.success", number_of_metrics: 1)
