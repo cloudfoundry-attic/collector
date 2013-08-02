@@ -58,9 +58,9 @@ describe "Collector::Handler::HealthManager" do
     handler.should_receive(:send_metric).with("hm.total_heartbeat_messages_received", 1716, context)
     handler.should_receive(:send_metric).with("hm.total_droplet_exited_messages_received", 128, context)
     handler.should_receive(:send_metric).with("hm.total_droplet_update_messages_received", 68, context)
-    handler.should_receive(:send_metric).with("hm.total_hm_status_messages_received", 451, context)
-    handler.should_receive(:send_metric).with("hm.total_hm_health_request_messages_received", 35, context)
-    handler.should_receive(:send_metric).with("hm.total_hm_droplet_request_messages_received", 18, context)
+    handler.should_receive(:send_metric).with("hm.total_status_messages_received", 451, context)
+    handler.should_receive(:send_metric).with("hm.total_health_request_messages_received", 35, context)
+    handler.should_receive(:send_metric).with("hm.total_droplet_request_messages_received", 18, context)
 
     handler.process(context)
   end

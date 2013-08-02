@@ -25,9 +25,9 @@ module Collector
         send_metric("hm.total_heartbeat_messages_received", varz["heartbeat_msgs_received"], context)
         send_metric("hm.total_droplet_exited_messages_received", varz["droplet_exited_msgs_received"], context)
         send_metric("hm.total_droplet_update_messages_received", varz["droplet_updated_msgs_received"], context)
-        send_metric("hm.total_hm_status_messages_received", varz["healthmanager_status_msgs_received"], context)
-        send_metric("hm.total_hm_health_request_messages_received", varz["healthmanager_health_request_msgs_received"], context)
-        send_metric("hm.total_hm_droplet_request_messages_received", varz["healthmanager_droplet_request_msgs_received"], context)
+        send_metric("hm.total_status_messages_received", varz["healthmanager_status_msgs_received"], context)
+        send_metric("hm.total_health_request_messages_received", varz["healthmanager_health_request_msgs_received"], context)
+        send_metric("hm.total_droplet_request_messages_received", varz["healthmanager_droplet_request_msgs_received"], context)
 
         total_users = varz["total_users"]
         return unless total_users
