@@ -52,15 +52,15 @@ describe "Collector::Handler::HealthManager" do
     handler.should_receive(:send_metric).with("running.flapping_instances", 11, context)
     handler.should_receive(:send_metric).with("total_users", 687, context)
 
-    handler.should_receive(:send_metric).with("time_to_analyze_all_droplets_in_seconds", 60.5, context)
-    handler.should_receive(:send_metric).with("time_to_retrieve_desired_state_in_seconds", 1.25, context)
+    handler.should_receive(:send_metric).with("hm.time_to_analyze_all_droplets_in_seconds", 60.5, context)
+    handler.should_receive(:send_metric).with("hm.time_to_retrieve_desired_state_in_seconds", 1.25, context)
 
-    handler.should_receive(:send_metric).with("total_heartbeat_messages_received", 1716, context)
-    handler.should_receive(:send_metric).with("total_droplet_exited_messages_received", 128, context)
-    handler.should_receive(:send_metric).with("total_droplet_update_messages_received", 68, context)
-    handler.should_receive(:send_metric).with("total_hm_status_messages_received", 451, context)
-    handler.should_receive(:send_metric).with("total_hm_health_request_messages_received", 35, context)
-    handler.should_receive(:send_metric).with("total_hm_droplet_request_messages_received", 18, context)
+    handler.should_receive(:send_metric).with("hm.total_heartbeat_messages_received", 1716, context)
+    handler.should_receive(:send_metric).with("hm.total_droplet_exited_messages_received", 128, context)
+    handler.should_receive(:send_metric).with("hm.total_droplet_update_messages_received", 68, context)
+    handler.should_receive(:send_metric).with("hm.total_hm_status_messages_received", 451, context)
+    handler.should_receive(:send_metric).with("hm.total_hm_health_request_messages_received", 35, context)
+    handler.should_receive(:send_metric).with("hm.total_hm_droplet_request_messages_received", 18, context)
 
     handler.process(context)
   end
