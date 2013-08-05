@@ -50,6 +50,7 @@ module Collector
       def send_metrics(metrics)
         start = Time.now
         EM.defer do
+          Config.logger.debug("Sending metrics to datadog: [#{metrics.inspect}]")
           body = Yajl::Encoder.encode({ series: metrics })
           response = @http_client.post("https://app.datadoghq.com/api/v1/series", query: {api_key: @api_key}, body: body, headers: {"Content-type" => "application/json"})
           if response.success?
