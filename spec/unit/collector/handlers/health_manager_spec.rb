@@ -23,6 +23,8 @@ describe "Collector::Handler::HealthManager" do
       "healthmanager_status_msgs_received" => 451,
       "healthmanager_health_request_msgs_received" => 35,
       "healthmanager_droplet_request_msgs_received" => 18,
+      "health_start_messages_sent" => 32,
+      "health_stop_messages_sent" => 64,
       "analysis_loop_duration" => 60.5,
       "bulk_update_loop_duration" => 1.25,
       "total" => {
@@ -61,6 +63,8 @@ describe "Collector::Handler::HealthManager" do
     handler.should_receive(:send_metric).with("hm.total_status_messages_received", 451, context)
     handler.should_receive(:send_metric).with("hm.total_health_request_messages_received", 35, context)
     handler.should_receive(:send_metric).with("hm.total_droplet_request_messages_received", 18, context)
+    handler.should_receive(:send_metric).with("hm.total_health_start_messages_sent", 32, context)
+    handler.should_receive(:send_metric).with("hm.total_health_stop_messages_sent", 64, context)
 
     handler.process(context)
   end
@@ -73,7 +77,7 @@ describe "Collector::Handler::HealthManager" do
 
       handler.should_receive(:send_metric).twice.with("total_users", anything, anything)
       handler.should_receive(:send_metric).once.with("user_rate", 0.1, anything)
-      magic_number_with_magic_math = 20 * 2 - 2
+      magic_number_with_magic_math = 22 * 2 - 2
       handler.should_receive(:send_metric).exactly(magic_number_with_magic_math).times
 
       varz.merge!({ "total_users" => 100 })

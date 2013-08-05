@@ -28,6 +28,8 @@ module Collector
         send_metric("hm.total_status_messages_received", varz["healthmanager_status_msgs_received"], context)
         send_metric("hm.total_health_request_messages_received", varz["healthmanager_health_request_msgs_received"], context)
         send_metric("hm.total_droplet_request_messages_received", varz["healthmanager_droplet_request_msgs_received"], context)
+        send_metric("hm.total_health_start_messages_sent", varz["health_start_messages_sent"], context)
+        send_metric("hm.total_health_stop_messages_sent", varz["health_stop_messages_sent"], context)
 
         total_users = varz["total_users"]
         return unless total_users
