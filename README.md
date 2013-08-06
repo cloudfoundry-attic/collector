@@ -11,3 +11,7 @@ The metric data collected is published to collector plugins. See the `lib/histor
 Additional metrics can be written by providing
 `Handler` plugins. See `lib/collector/handler.rb` and
 `lib/collector/handlers/dea.rb` for an example.
+
+## Contributing
+
+Please read the [contributors' guide](https://github.com/cloudfoundry/collector/blob/master/CONTRIBUTING.md)
