@@ -6,6 +6,7 @@ module Collector
         component_name = varz_message['name']
 
         send_metric("#{component_name}.numCpus", varz_message['numCPUS'], context)
+        send_metric("#{component_name}.numGoRoutines", varz_message['numGoRoutines'], context)
         varz_message['contexts'].each do |message_context|
           context_name = message_context['name']
           message_context['metrics'].each do |metric|

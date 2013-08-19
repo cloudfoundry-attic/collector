@@ -31,6 +31,7 @@ describe Collector::Handler::Router do
       {
           "name" => "LoggregatorServer",
           "numCPUS" => 1,
+          "numGoRoutines" => 1,
           "contexts" => [
               {"name" => "agentListener",
                "metrics" => [
@@ -50,6 +51,7 @@ describe Collector::Handler::Router do
     it "sends the metrics" do
       handler.process(context)
       historian.should have_sent_data("LoggregatorServer.numCpus", 1)
+      historian.should have_sent_data("LoggregatorServer.numGoRoutines", 1)
       historian.should have_sent_data("LoggregatorServer.agentListener.currentBufferCount", 12)
       historian.should have_sent_data("LoggregatorServer.agentListener.receivedMessageCount", 45)
       historian.should have_sent_data("LoggregatorServer.agentListener.receivedByteCount", 6)

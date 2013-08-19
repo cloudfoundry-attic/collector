@@ -31,6 +31,7 @@ describe Collector::Handler::Router do
       {
           "name" => "LoggregatorDeaAgent",
           "numCPUS" => 1,
+          "numGoRoutines" => 1,
           "contexts" => [
               {"name" => "context1",
                "metrics" => [
@@ -50,6 +51,7 @@ describe Collector::Handler::Router do
     it "sends the metrics" do
       handler.process(context)
       historian.should have_sent_data("LoggregatorDeaAgent.numCpus", 1)
+      historian.should have_sent_data("LoggregatorDeaAgent.numGoRoutines", 1)
       historian.should have_sent_data("LoggregatorDeaAgent.context1.metric1", 12)
       historian.should have_sent_data("LoggregatorDeaAgent.context1.metric2", 45)
       historian.should have_sent_data("LoggregatorDeaAgent.context1.metric3", 6)
