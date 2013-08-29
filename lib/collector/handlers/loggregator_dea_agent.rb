@@ -17,7 +17,8 @@ module Collector
           message_context['metrics'].each do |metric|
             metric_name = metric['name']
             metric_value = metric['value']
-            send_metric("#{component_name}.#{context_name}.#{metric_name}", metric_value, context)
+            metric_tags = metric['tags'] || {}
+            send_metric("#{component_name}.#{context_name}.#{metric_name}", metric_value, context, metric_tags)
           end
         end
       end

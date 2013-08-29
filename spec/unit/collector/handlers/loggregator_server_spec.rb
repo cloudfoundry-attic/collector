@@ -48,7 +48,7 @@ describe Collector::Handler::Router do
                    {"name" => "receivedByteCount", "value" => 6}]},
               {"name" => "sinkServer",
                "metrics" => [
-                   {"name" => "numberOfSinks", "value" => 9}
+                   {"name" => "numberOfSinks", "value" => 9, "tags" => {"tag1" => "tagValue1", "tag2" => "tagValue2"}}
                ]
               }
           ]
@@ -69,7 +69,7 @@ describe Collector::Handler::Router do
       historian.should have_sent_data("LoggregatorServer.agentListener.currentBufferCount", 12)
       historian.should have_sent_data("LoggregatorServer.agentListener.receivedMessageCount", 45)
       historian.should have_sent_data("LoggregatorServer.agentListener.receivedByteCount", 6)
-      historian.should have_sent_data("LoggregatorServer.sinkServer.numberOfSinks", 9)
+      historian.should have_sent_data("LoggregatorServer.sinkServer.numberOfSinks", 9, {"tag1" => "tagValue1", "tag2" => "tagValue2"})
     end
   end
 end
