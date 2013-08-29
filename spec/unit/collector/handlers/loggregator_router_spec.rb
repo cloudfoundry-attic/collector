@@ -23,13 +23,13 @@ describe Collector::Handler::Router do
 
   let(:historian) { FakeHistorian.new }
   let(:timestamp) { 123456789 }
-  let(:handler) { Collector::Handler::LoggregatorServer.new(historian, "job") }
+  let(:handler) { Collector::Handler::LoggregatorRouter.new(historian, "job") }
   let(:context) { Collector::HandlerContext.new(1, timestamp, varz) }
 
   describe "process" do
     let(:varz) do
       {
-          "name" => "LoggregatorServer",
+          "name" => "LoggregatorRouter",
           "numCPUS" => 1,
           "numGoRoutines" => 1,
           "memoryStats" => {
@@ -58,18 +58,18 @@ describe Collector::Handler::Router do
 
     it "sends the metrics" do
       handler.process(context)
-      historian.should have_sent_data("LoggregatorServer.numCpus", 1)
-      historian.should have_sent_data("LoggregatorServer.numGoRoutines", 1)
-      historian.should have_sent_data("LoggregatorServer.memoryStats.numBytesAllocatedHeap", 1024)
-      historian.should have_sent_data("LoggregatorServer.memoryStats.numBytesAllocatedStack", 4096)
-      historian.should have_sent_data("LoggregatorServer.memoryStats.numBytesAllocated", 2048)
-      historian.should have_sent_data("LoggregatorServer.memoryStats.numMallocs", 3)
-      historian.should have_sent_data("LoggregatorServer.memoryStats.numFrees", 10)
-      historian.should have_sent_data("LoggregatorServer.memoryStats.lastGCPauseTimeNS", 1000)
-      historian.should have_sent_data("LoggregatorServer.agentListener.currentBufferCount", 12)
-      historian.should have_sent_data("LoggregatorServer.agentListener.receivedMessageCount", 45)
-      historian.should have_sent_data("LoggregatorServer.agentListener.receivedByteCount", 6)
-      historian.should have_sent_data("LoggregatorServer.sinkServer.numberOfSinks", 9)
+      historian.should have_sent_data("LoggregatorRouter.numCpus", 1)
+      historian.should have_sent_data("LoggregatorRouter.numGoRoutines", 1)
+      historian.should have_sent_data("LoggregatorRouter.memoryStats.numBytesAllocatedHeap", 1024)
+      historian.should have_sent_data("LoggregatorRouter.memoryStats.numBytesAllocatedStack", 4096)
+      historian.should have_sent_data("LoggregatorRouter.memoryStats.numBytesAllocated", 2048)
+      historian.should have_sent_data("LoggregatorRouter.memoryStats.numMallocs", 3)
+      historian.should have_sent_data("LoggregatorRouter.memoryStats.numFrees", 10)
+      historian.should have_sent_data("LoggregatorRouter.memoryStats.lastGCPauseTimeNS", 1000)
+      historian.should have_sent_data("LoggregatorRouter.agentListener.currentBufferCount", 12)
+      historian.should have_sent_data("LoggregatorRouter.agentListener.receivedMessageCount", 45)
+      historian.should have_sent_data("LoggregatorRouter.agentListener.receivedByteCount", 6)
+      historian.should have_sent_data("LoggregatorRouter.sinkServer.numberOfSinks", 9)
     end
   end
 end

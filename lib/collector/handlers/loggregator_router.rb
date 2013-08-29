@@ -1,6 +1,6 @@
 module Collector
   class Handler
-    class LoggregatorServer < Handler
+    class LoggregatorRouter < Handler
       def process(context)
         varz_message = context.varz
         component_name = varz_message['name']
@@ -24,7 +24,7 @@ module Collector
 
       private
 
-      register Components::LOGGREGATOR_SERVER_COMPONENT
+      register Components::LOGGREGATOR_ROUTER_COMPONENT
     end
   end
 end

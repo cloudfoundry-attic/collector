@@ -7,6 +7,11 @@ module Collector
 
         send_metric("#{component_name}.numCpus", varz_message['numCPUS'], context)
         send_metric("#{component_name}.numGoRoutines", varz_message['numGoRoutines'], context)
+
+        varz_message["memoryStats"].each_pair do |mem_stat_name, mem_stat_value|
+          send_metric("#{component_name}.memoryStats.#{mem_stat_name}", mem_stat_value, context)
+        end
+
         varz_message['contexts'].each do |message_context|
           context_name = message_context['name']
           message_context['metrics'].each do |metric|

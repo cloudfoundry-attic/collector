@@ -32,6 +32,14 @@ describe Collector::Handler::Router do
           "name" => "LoggregatorDeaAgent",
           "numCPUS" => 1,
           "numGoRoutines" => 1,
+          "memoryStats" => {
+            "numBytesAllocatedHeap" => 1024,
+            "numBytesAllocatedStack" => 4096,
+            "numBytesAllocated" => 2048,
+            "numMallocs" => 3,
+            "numFrees" => 10,
+            "lastGCPauseTimeNS" => 1000
+          },
           "contexts" => [
               {"name" => "context1",
                "metrics" => [
@@ -52,6 +60,12 @@ describe Collector::Handler::Router do
       handler.process(context)
       historian.should have_sent_data("LoggregatorDeaAgent.numCpus", 1)
       historian.should have_sent_data("LoggregatorDeaAgent.numGoRoutines", 1)
+      historian.should have_sent_data("LoggregatorDeaAgent.memoryStats.numBytesAllocatedHeap", 1024)
+      historian.should have_sent_data("LoggregatorDeaAgent.memoryStats.numBytesAllocatedStack", 4096)
+      historian.should have_sent_data("LoggregatorDeaAgent.memoryStats.numBytesAllocated", 2048)
+      historian.should have_sent_data("LoggregatorDeaAgent.memoryStats.numMallocs", 3)
+      historian.should have_sent_data("LoggregatorDeaAgent.memoryStats.numFrees", 10)
+      historian.should have_sent_data("LoggregatorDeaAgent.memoryStats.lastGCPauseTimeNS", 1000)
       historian.should have_sent_data("LoggregatorDeaAgent.context1.metric1", 12)
       historian.should have_sent_data("LoggregatorDeaAgent.context1.metric2", 45)
       historian.should have_sent_data("LoggregatorDeaAgent.context1.metric3", 6)
