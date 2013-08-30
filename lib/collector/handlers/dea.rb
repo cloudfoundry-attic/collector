@@ -3,7 +3,9 @@ module Collector
   class Handler
     class Dea < Handler
       def additional_tags(context)
-        { stack: context.varz['stacks'] }
+        { stack: context.varz["stacks"],
+          uuid: context.varz["uuid"],
+        }
       end
 
       def process(context)
