@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Collector::Handler::Dea do
 
   describe "#additional_tags" do
-    it "tags metrics with the stack type" do
+    it "tags metrics with the stack type and host" do
       context = Collector::HandlerContext.new(nil, nil, {"stacks" => ["Linux", "Windows"], "host" => "0.0.0.11:4567"})
       handler = Collector::Handler::Dea.new(nil, nil)
 

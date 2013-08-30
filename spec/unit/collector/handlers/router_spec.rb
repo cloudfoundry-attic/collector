@@ -26,9 +26,20 @@ describe Collector::Handler::Router do
   let(:handler) { Collector::Handler::Router.new(historian, "job") }
   let(:context) { Collector::HandlerContext.new(1, timestamp, varz) }
 
+  describe "#additional_tags" do
+    let(:varz) { { "host" => "0.0.0.11:4567" } }
+
+    it "tags metrics with the host" do
+      handler.additional_tags(context).should == {
+        host: "0.0.0.11",
+      }
+    end
+  end
+
   describe "process" do
     let(:varz) do
       {
+        "host" => "1.2.3.4:5678",
         "latency" => {
           "50" => 0.0250225,
           "75" => 0.03684,

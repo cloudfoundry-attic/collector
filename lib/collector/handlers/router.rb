@@ -3,6 +3,11 @@
 module Collector
   class Handler
     class Router < Handler
+      def additional_tags(context)
+        { host: context.varz["host"].split(":").first,
+        }
+      end
+
       def process(context)
         varz = context.varz
 
