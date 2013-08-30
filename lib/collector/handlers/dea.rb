@@ -4,7 +4,7 @@ module Collector
     class Dea < Handler
       def additional_tags(context)
         { stack: context.varz["stacks"],
-          uuid: context.varz["uuid"],
+          host: context.varz["host"].split(":").first,
         }
       end
 

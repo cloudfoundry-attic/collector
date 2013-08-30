@@ -4,13 +4,13 @@ describe Collector::Handler::Dea do
 
   describe "#additional_tags" do
     it "tags metrics with the stack type" do
-      context = Collector::HandlerContext.new(nil, nil, {"stacks" => ["Linux", "Windows"], "uuid" => "a fake uuid"})
+      context = Collector::HandlerContext.new(nil, nil, {"stacks" => ["Linux", "Windows"], "host" => "0.0.0.11:4567"})
       handler = Collector::Handler::Dea.new(nil, nil)
 
       # note stacks in the varz becomes stack singular in the tags
       handler.additional_tags(context).should == {
         stack: ["Linux", "Windows"],
-        uuid: "a fake uuid",
+        host: "0.0.0.11",
       }
     end
   end
