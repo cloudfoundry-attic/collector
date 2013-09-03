@@ -31,7 +31,7 @@ describe Collector::Handler::Router do
 
     it "tags metrics with the host" do
       handler.additional_tags(context).should == {
-        host: "0.0.0.11",
+        ip: "0.0.0.11",
       }
     end
   end

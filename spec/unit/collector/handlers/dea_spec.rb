@@ -10,7 +10,7 @@ describe Collector::Handler::Dea do
       # note stacks in the varz becomes stack singular in the tags
       handler.additional_tags(context).should == {
         stack: ["Linux", "Windows"],
-        host: "0.0.0.11",
+        ip: "0.0.0.11",
       }
     end
   end
