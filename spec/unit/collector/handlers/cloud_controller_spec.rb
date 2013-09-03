@@ -22,6 +22,14 @@ describe Collector::Handler::CloudController do
     Collector::Handler.handler_map["CloudController"].should == handler.class
   end
 
+  describe "#additional_tags" do
+    it "tags metrics with the host" do
+      handler.additional_tags(context).should == {
+        ip: "10.10.16.13",
+      }
+    end
+  end
+
   describe "process" do
     subject do
       handler.process(context)
