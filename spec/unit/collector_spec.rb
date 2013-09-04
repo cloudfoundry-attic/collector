@@ -35,10 +35,11 @@ describe Collector::Collector do
 
         components.should == {
           "Test"=> {
-            1 => {
-              :host=>"test-host:1234",
-              :credentials=>["user", "pass"],
-              :timestamp=>1311979380
+            "test-host" => {
+              :host => "test-host:1234",
+              :index => 1,
+              :credentials => ["user", "pass"],
+              :timestamp => 1311979380
             }
           }
         }
@@ -57,19 +58,19 @@ describe Collector::Collector do
         collector.process_component_discovery(Yajl::Encoder.encode({
           "type" => "Test",
           "index" => 1,
-          "host" => "test-host:1234",
+          "host" => "test-host-1:1234",
           "credentials" => ["user", "pass"]
         }))
 
         collector.process_component_discovery(Yajl::Encoder.encode({
           "type" => "Test",
           "index" => 2,
-          "host" => "test-host:1234",
+          "host" => "test-host-2:1234",
           "credentials" => ["user", "pass"]
         }))
 
-        components["Test"][1][:timestamp] = 100000
-        components["Test"][2][:timestamp] = 100005
+        components["Test"]["test-host-1"][:timestamp] = 100000
+        components["Test"]["test-host-2"][:timestamp] = 100005
 
         Time.should_receive(:now).at_least(1).and_return(Time.at(100011))
 
@@ -77,8 +78,9 @@ describe Collector::Collector do
 
         components.should == {
           "Test"=> {
-            2 => {
-              :host=>"test-host:1234",
+            "test-host-2" => {
+              :host=>"test-host-2:1234",
+              :index => 2,
               :credentials=>["user", "pass"],
               :timestamp=>100005
             }

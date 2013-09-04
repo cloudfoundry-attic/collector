@@ -95,8 +95,9 @@ module Collector
       if message["index"]
         Config.logger.debug1("collector.component.discovered", type: message["type"], index: message["index"], host: message["host"])
         instances = (@components[message["type"]] ||= {})
-        instances[message["index"]] = {
+        instances[message["host"].split(":").first] = {
           :host => message["host"],
+          :index => message["index"],
           :credentials => message["credentials"],
           :timestamp => Time.now.to_i
         }
@@ -195,7 +196,7 @@ module Collector
 
           http.callback do
             begin
-              yield http, job, index
+              yield http, job, instance[:index]
             rescue => e
               Config.logger.error(
                 "collector.#{type}.processing-failed",

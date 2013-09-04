@@ -36,108 +36,71 @@ describe Collector::Handler::CloudController do
       data
     end
 
+    let(:tags) do
+      {
+        role: "core",
+        job: "CloudController",
+        index: 0,
+        ip: "10.10.16.13",
+        name: "CloudController/0",
+        deployment: "untitled_dev"
+      }
+    end
+
     its(["cc.requests.outstanding"]) { should eq(
       key: "cc.requests.outstanding",
       timestamp: now,
       value: 22,
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
 
     its(["cc.requests.completed"]) { should eq(
       key: "cc.requests.completed",
       timestamp: now,
       value: 9828,
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
 
     its(["cc.db.pool.size"]) { should eq(
       key: "cc.db.pool.size",
       timestamp: now,
       value: 17,
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
 
     its(["cc.db.pool.max_size"]) { should eq(
       key: "cc.db.pool.max_size",
       timestamp: now,
       value: 32,
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
 
     its(["cc.db.pool.allocated"]) { should eq(
       key: "cc.db.pool.allocated",
       timestamp: now,
       value: 5,
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
 
     its(["cc.db.pool.available"]) { should eq(
       key: "cc.db.pool.available",
       timestamp: now,
       value: 12,
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
 
     its(["cc.http_status.1XX"]) { should eq(
       key: "cc.http_status.1XX",
       timestamp: now,
       value: 3,
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
 
     its(["cc.http_status.2XX"]) { should eq(
       key: "cc.http_status.2XX",
       timestamp: now,
       value: 9105 + 203,
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
 
 
@@ -145,52 +108,28 @@ describe Collector::Handler::CloudController do
       key: "cc.http_status.3XX",
       timestamp: now,
       value: 12 + 21,
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
 
     its(["cc.http_status.4XX"]) { should eq(
       key: "cc.http_status.4XX",
       timestamp: now,
       value: 622 + 99 + 2,
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
 
     its(["cc.http_status.5XX"]) { should eq(
       key: "cc.http_status.5XX",
       timestamp: now,
       value: 22,
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
 
     its(["cc.uptime"]) { should eq(
       key: "cc.uptime",
       timestamp: now,
       value: 2 + (60 * 2) + (60 * 60 * 2) + (60 * 60 * 24 * 2),
-      tags: {
-        role: "core",
-        job: "CloudController",
-        index: 0,
-        name: "CloudController/0",
-        deployment: "untitled_dev"
-      }
+      tags: tags
     )}
   end
 end
