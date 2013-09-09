@@ -55,6 +55,8 @@ describe Collector::Handler::Router do
           0.9014480037952
         ],
         "requests" => 68213,
+        "bad_requests" => 42,
+        "bad_gateways" => 45387,
         "requests_per_sec" => 0.22460493344950977,
         "responses_2xx" => 65021,
         "responses_3xx" => 971,
@@ -105,6 +107,14 @@ describe Collector::Handler::Router do
         tags = {"component" => "component-1"}
 
         handler.process(context)
+
+        historian.should have_sent_data("router.total_requests", 68213)
+        historian.should have_sent_data("router.total_routes", 123456789)
+        historian.should have_sent_data("router.ms_since_last_registry_update", 15)
+
+        historian.should have_sent_data("router.bad_requests", 42)
+        historian.should have_sent_data("router.bad_gateways", 45387)
+
         historian.should have_sent_data("router.requests", 3200, tags)
         historian.should have_sent_data("router.latency.1m", 5, tags)
 
@@ -113,10 +123,6 @@ describe Collector::Handler::Router do
         historian.should have_sent_data("router.responses", 400, tags.merge("status" => "4xx"))
         historian.should have_sent_data("router.responses", 800, tags.merge("status" => "5xx"))
         historian.should have_sent_data("router.responses", 1600, tags.merge("status" => "xxx"))
-
-        historian.should have_sent_data("router.total_requests", 68213)
-        historian.should have_sent_data("router.total_routes", 123456789)
-        historian.should have_sent_data("router.ms_since_last_registry_update", 15)
       end
     end
 
