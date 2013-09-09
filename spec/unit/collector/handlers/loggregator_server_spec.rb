@@ -32,6 +32,9 @@ describe Collector::Handler::Router do
           "name" => "LoggregatorServer",
           "numCPUS" => 1,
           "numGoRoutines" => 1,
+          "tags" => {
+              "ip" => "10.10.10.10"
+          },
           "memoryStats" => {
             "numBytesAllocatedHeap" => 1024,
             "numBytesAllocatedStack" => 4096,
@@ -69,7 +72,7 @@ describe Collector::Handler::Router do
       historian.should have_sent_data("LoggregatorServer.agentListener.currentBufferCount", 12)
       historian.should have_sent_data("LoggregatorServer.agentListener.receivedMessageCount", 45)
       historian.should have_sent_data("LoggregatorServer.agentListener.receivedByteCount", 6)
-      historian.should have_sent_data("LoggregatorServer.sinkServer.numberOfSinks", 9, {"tag1" => "tagValue1", "tag2" => "tagValue2"})
+      historian.should have_sent_data("LoggregatorServer.sinkServer.numberOfSinks", 9, {"ip"=>"10.10.10.10", "tag1" => "tagValue1", "tag2" => "tagValue2"})
     end
   end
 end
