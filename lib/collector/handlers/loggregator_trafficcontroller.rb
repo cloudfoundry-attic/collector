@@ -27,7 +27,7 @@ module Collector
 
       private
 
-      register Components::LOGGREGATOR_ROUTER_COMPONENT
+      register Components::LOGGREGATOR_TRAFFICCONTROLLER_COMPONENT
     end
   end
 end

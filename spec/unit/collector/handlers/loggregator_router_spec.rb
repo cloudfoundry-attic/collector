@@ -29,7 +29,7 @@ describe Collector::Handler::Router do
   describe "process" do
     let(:varz) do
       {
-          "name" => "LoggregatorRouter",
+          "name" => "LoggregatorTrafficcontroller",
           "numCPUS" => 1,
           "numGoRoutines" => 1,
           "tags" => {
@@ -61,18 +61,18 @@ describe Collector::Handler::Router do
 
     it "sends the metrics" do
       handler.process(context)
-      historian.should have_sent_data("LoggregatorRouter.numCpus", 1)
-      historian.should have_sent_data("LoggregatorRouter.numGoRoutines", 1)
-      historian.should have_sent_data("LoggregatorRouter.memoryStats.numBytesAllocatedHeap", 1024)
-      historian.should have_sent_data("LoggregatorRouter.memoryStats.numBytesAllocatedStack", 4096)
-      historian.should have_sent_data("LoggregatorRouter.memoryStats.numBytesAllocated", 2048)
-      historian.should have_sent_data("LoggregatorRouter.memoryStats.numMallocs", 3)
-      historian.should have_sent_data("LoggregatorRouter.memoryStats.numFrees", 10)
-      historian.should have_sent_data("LoggregatorRouter.memoryStats.lastGCPauseTimeNS", 1000)
-      historian.should have_sent_data("LoggregatorRouter.agentListener.currentBufferCount", 12)
-      historian.should have_sent_data("LoggregatorRouter.agentListener.receivedMessageCount", 45)
-      historian.should have_sent_data("LoggregatorRouter.agentListener.receivedByteCount", 6)
-      historian.should have_sent_data("LoggregatorRouter.sinkServer.numberOfSinks", 9, {"ip"=>"10.10.10.10", "tag1" => "tagValue1", "tag2" => "tagValue2"})
+      historian.should have_sent_data("LoggregatorTrafficcontroller.numCpus", 1)
+      historian.should have_sent_data("LoggregatorTrafficcontroller.numGoRoutines", 1)
+      historian.should have_sent_data("LoggregatorTrafficcontroller.memoryStats.numBytesAllocatedHeap", 1024)
+      historian.should have_sent_data("LoggregatorTrafficcontroller.memoryStats.numBytesAllocatedStack", 4096)
+      historian.should have_sent_data("LoggregatorTrafficcontroller.memoryStats.numBytesAllocated", 2048)
+      historian.should have_sent_data("LoggregatorTrafficcontroller.memoryStats.numMallocs", 3)
+      historian.should have_sent_data("LoggregatorTrafficcontroller.memoryStats.numFrees", 10)
+      historian.should have_sent_data("LoggregatorTrafficcontroller.memoryStats.lastGCPauseTimeNS", 1000)
+      historian.should have_sent_data("LoggregatorTrafficcontroller.agentListener.currentBufferCount", 12)
+      historian.should have_sent_data("LoggregatorTrafficcontroller.agentListener.receivedMessageCount", 45)
+      historian.should have_sent_data("LoggregatorTrafficcontroller.agentListener.receivedByteCount", 6)
+      historian.should have_sent_data("LoggregatorTrafficcontroller.sinkServer.numberOfSinks", 9, {"ip"=>"10.10.10.10", "tag1" => "tagValue1", "tag2" => "tagValue2"})
     end
   end
 end
