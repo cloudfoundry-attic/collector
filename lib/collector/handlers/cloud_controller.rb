@@ -13,7 +13,6 @@ module Collector
       def process(context)
         varz = context.varz
 
-
         varz["vcap_sinatra"]["requests"].each do |key, value|
           send_metric("cc.requests.#{key}", value, context)
         end
@@ -27,6 +26,8 @@ module Collector
         end
 
         send_metric("cc.uptime", uptime_in_seconds(varz), context)
+
+        send_metric("total_users", varz["cc_user_count"], context)
       end
 
       private

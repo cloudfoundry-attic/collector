@@ -132,4 +132,14 @@ describe Collector::Handler::CloudController do
       tags: tags
     )}
   end
+
+  describe "users" do
+    let(:varz) { context.varz }
+
+    it "sends the user count" do
+      varz["cc_user_count"] = 4
+      handler.process(context)
+      expect(data["total_users"][:value]).to eq(4)
+    end
+  end
 end

@@ -6,7 +6,6 @@ describe "Collector::Handler::HealthManager" do
     Collector::Handler.instance_map.clear
   end
 
-  let(:total_users) { 687 }
   let(:varz) do
     {
       "running" => {
@@ -16,7 +15,6 @@ describe "Collector::Handler::HealthManager" do
         "crashes" => 77,
         "apps" => 98
       },
-      "total_users" => total_users,
       "heartbeat_msgs_received" => 1716,
       "droplet_exited_msgs_received" => 128,
       "droplet_updated_msgs_received" => 68,
@@ -52,7 +50,6 @@ describe "Collector::Handler::HealthManager" do
     handler.should_receive(:send_metric).with("running.running_instances", 88, context)
     handler.should_receive(:send_metric).with("running.missing_instances", 13, context)
     handler.should_receive(:send_metric).with("running.flapping_instances", 11, context)
-    handler.should_receive(:send_metric).with("total_users", 687, context)
 
     handler.should_receive(:send_metric).with("hm.time_to_analyze_all_droplets_in_seconds", 60.5, context)
     handler.should_receive(:send_metric).with("hm.time_to_retrieve_desired_state_in_seconds", 1.25, context)
@@ -67,51 +64,5 @@ describe "Collector::Handler::HealthManager" do
     handler.should_receive(:send_metric).with("hm.total_health_stop_messages_sent", 64, context)
 
     handler.process(context)
-  end
-
-  describe "user rate metric" do
-    it "sends the number of new users since the last varz check" do
-      num_new_users = 1
-      time_diff = 10 # seconds
-
-
-      handler.should_receive(:send_metric).twice.with("total_users", anything, anything)
-      handler.should_receive(:send_metric).once.with("user_rate", 0.1, anything)
-      magic_number_with_magic_math = 22 * 2 - 2
-      handler.should_receive(:send_metric).exactly(magic_number_with_magic_math).times
-
-      varz.merge!({ "total_users" => 100 })
-      context = Collector::HandlerContext.new(nil, 0, varz)
-      handler.process(context)
-
-      varz.merge!({ "total_users" => 100 + num_new_users })
-      context = Collector::HandlerContext.new(nil, time_diff, varz)
-      handler.process(context)
-
-    end
-
-    context "when the collector has no prior information about the number of users (i.e., when it's started up)" do
-      it "doesn't send a user rate metric" do
-        varz.merge!({ "total_users" => 123 })
-        context = Collector::HandlerContext.new(nil, nil, varz)
-
-        handler.should_not_receive(:send_metric).with("user_rate", anything, context)
-        handler.process(context)
-      end
-
-      context 'when the collector received zero user count' do
-        it 'does not send the data and update the last known values' do
-          handler.stub(:send_metric)
-          context = Collector::HandlerContext.new(nil, nil, varz.merge("total_users" => 10))
-          handler.process(context)
-
-
-          context = Collector::HandlerContext.new(nil, nil, varz.merge("total_users" => 0))
-          handler.should_not_receive(:send_metric).with("user_rate", anything, anything)
-          handler.should_not_receive(:send_metric).with("total_users", anything, anything)
-          handler.process(context)
-        end
-      end
-    end
   end
 end

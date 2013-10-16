@@ -30,22 +30,6 @@ module Collector
         send_metric("hm.total_droplet_request_messages_received", varz["healthmanager_droplet_request_msgs_received"], context)
         send_metric("hm.total_health_start_messages_sent", varz["health_start_messages_sent"], context)
         send_metric("hm.total_health_stop_messages_sent", varz["health_stop_messages_sent"], context)
-
-        total_users = varz["total_users"]
-        return unless total_users
-
-        if total_users > 0
-          send_metric("total_users", total_users, context)
-
-          if @last_num_users
-            new_users = total_users - @last_num_users
-            rate = new_users.to_f / (context.now - @last_check_timestamp)
-            send_metric("user_rate", rate, context)
-          end
-
-          @last_num_users = total_users
-          @last_check_timestamp = context.now
-        end
       end
 
       register Components::HEALTH_MANAGER_COMPONENT
