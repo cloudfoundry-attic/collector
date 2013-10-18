@@ -1,5 +1,3 @@
-# Copyright (c) 2009-2012 VMware, Inc.
-
 $:.unshift(File.expand_path(".", File.dirname(__FILE__)))
 
 require "base64"

@@ -1,5 +1,3 @@
-# Copyright (c) 2009-2012 VMware, Inc.
-
 $:.unshift(File.expand_path("../../rake", __FILE__))
 
 ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __FILE__)

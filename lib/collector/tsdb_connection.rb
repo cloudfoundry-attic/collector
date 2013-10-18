@@ -1,5 +1,3 @@
-# Copyright (c) 2009-2012 VMware, Inc.
-
 module Collector
   # TSDB connection for sending metrics
   class TsdbConnection < EventMachine::Connection
