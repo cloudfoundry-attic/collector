@@ -61,34 +61,6 @@ describe Collector::Handler::CloudController do
       tags: tags
     )}
 
-    its(["cc.db.pool.size"]) { should eq(
-      key: "cc.db.pool.size",
-      timestamp: now,
-      value: 17,
-      tags: tags
-    )}
-
-    its(["cc.db.pool.max_size"]) { should eq(
-      key: "cc.db.pool.max_size",
-      timestamp: now,
-      value: 32,
-      tags: tags
-    )}
-
-    its(["cc.db.pool.allocated"]) { should eq(
-      key: "cc.db.pool.allocated",
-      timestamp: now,
-      value: 5,
-      tags: tags
-    )}
-
-    its(["cc.db.pool.available"]) { should eq(
-      key: "cc.db.pool.available",
-      timestamp: now,
-      value: 12,
-      tags: tags
-    )}
-
     its(["cc.http_status.1XX"]) { should eq(
       key: "cc.http_status.1XX",
       timestamp: now,

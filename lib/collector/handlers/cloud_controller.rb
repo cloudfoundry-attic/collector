@@ -21,10 +21,6 @@ module Collector
           send_metric("cc.http_status.#{key}", value, context)
         end
 
-        varz["vcap_sequel"]["connection_pool"].each do |key, value|
-          send_metric("cc.db.pool.#{key}", value, context)
-        end
-
         send_metric("cc.uptime", uptime_in_seconds(varz), context)
 
         send_metric("total_users", varz["cc_user_count"], context)

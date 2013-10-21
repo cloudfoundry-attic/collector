@@ -51,14 +51,6 @@
 
         ]
     },
-    "vcap_sequel": {
-        "connection_pool": {
-            "size": 17,
-            "max_size": 32,
-            "allocated": 5,
-            "available": 12
-        }
-    },
     "type": "CloudController",
     "index": 1,
     "uuid": "d9ff154b0af17f1d8e65ec51143bbdf4",
