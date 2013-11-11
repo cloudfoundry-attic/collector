@@ -1,4 +1,5 @@
 require_relative "./historian/cloud_watch"
+require_relative "./historian/cf_metrics"
 require_relative "./historian/data_dog"
 require_relative "./historian/tsdb"
 require "httparty"
@@ -21,6 +22,11 @@ module Collector
       if Config.datadog
         historian.add_adapter(Historian::DataDog.new(Config.datadog_api_key, HTTParty))
         Config.logger.info("collector.historian-adapter.added-datadog")
+      end
+
+      if Config.cf_metrics
+        historian.add_adapter(Historian::CfMetrics.new(Config.cf_metrics_api_host, HTTParty))
+        Config.logger.info("collector.historian-adapter.added-cfmetrics")
       end
 
       historian

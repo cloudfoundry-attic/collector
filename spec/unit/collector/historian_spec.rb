@@ -64,12 +64,37 @@ describe Collector::Historian do
 
     before do
       Collector::Config.configure(config_override)
-      Collector::Historian::DataDog.should_receive(:new).and_return(dog_historian)
+      Collector::Historian::DataDog.should_receive(:new).with("DATADOG_API_KEY", HTTParty).and_return(dog_historian)
     end
 
     it "builds a historian that logs to DataDog" do
       historian = Collector::Historian.build
       dog_historian.should_receive(:send_data)
+      historian.send_data({tags:{}})
+    end
+  end
+
+  describe "configuring with cf metrics data" do
+    let(:config_override) do
+      {
+          "intervals" => {},
+          "logging" => {},
+          "cf_metrics" => {
+              "host" => "api.metrics.example.com"
+          }
+      }
+    end
+
+    let(:cfmetrics_historian) { double('CfMetrics historian') }
+
+    before do
+      Collector::Config.configure(config_override)
+      Collector::Historian::CfMetrics.should_receive(:new).with("api.metrics.example.com", HTTParty).and_return(cfmetrics_historian)
+    end
+
+    it "builds a historian that logs to Cf Metrics" do
+      historian = Collector::Historian.build
+      cfmetrics_historian.should_receive(:send_data)
       historian.send_data({tags:{}})
     end
   end
@@ -89,6 +114,9 @@ describe Collector::Historian do
           },
           "datadog" => {
               "api_key" => "DATADOG_API_KEY"
+          },
+          "cf_metrics" => {
+              "host" => "api.metrics.example.com"
           }
       }
     end
@@ -101,6 +129,7 @@ describe Collector::Historian do
       AWS.should_receive(:config).with(access_key_id: "AWS_ACCESS_KEY12345", secret_access_key: "AWS_SECRET_ACCESS_KEY98765")
       EventMachine.should_receive(:connect).with("localhost", 4242, Collector::TsdbConnection)
       Collector::Historian::DataDog.should_receive(:new).with("DATADOG_API_KEY", HTTParty)
+      Collector::Historian::CfMetrics.should_receive(:new).with("api.metrics.example.com", HTTParty)
 
       historian.should respond_to :send_data
     end
@@ -122,6 +151,9 @@ describe Collector::Historian do
           "datadog" => {
               "api_key" => "DATADOG_API_KEY",
               "application_key" => "DATADOG_APPLICATION_KEY"
+          },
+          "cf_metrics" => {
+              "host" => "api.metrics.example.com"
           }
       }
     end
@@ -129,12 +161,14 @@ describe Collector::Historian do
     let(:connection) { double('Connection') }
     let(:cloud_watch) { double('Cloud Watch') }
     let(:dog_historian) { double('DataDog historian') }
+    let(:cfmetrics_historian) { double('CfMetrics historian') }
 
     before do
       AWS.stub(:config)
       AWS::CloudWatch.stub(:new).and_return(cloud_watch)
       EventMachine.stub(:connect).and_return(connection)
       Collector::Historian::DataDog.should_receive(:new).and_return(dog_historian)
+      Collector::Historian::CfMetrics.should_receive(:new).with("api.metrics.example.com", HTTParty).and_return(cfmetrics_historian)
     end
 
     context "when one of the historians fail" do
@@ -143,6 +177,7 @@ describe Collector::Historian do
       it "should still send data to the other historians" do
         cloud_watch.should_receive(:put_metric_data)
         dog_historian.should_receive(:send_data)
+        cfmetrics_historian.should_receive(:send_data)
 
         expect { historian.send_data({tags: {}}) }.to_not raise_error
       end
