@@ -20,7 +20,7 @@ require "collector"
 
 RSpec.configure do |c|
   c.before do
-    EventMachine.stub(:defer).any_number_of_times.and_yield
+    allow(EventMachine).to receive(:defer).and_yield
     Collector::Handler.reset
   end
 end
@@ -53,7 +53,7 @@ def create_fake_collector
   EventMachine.should_receive(:connect).
     with("dummy", 14242, Collector::TsdbConnection)
 
-  nats_connection = mock(:NatsConnection)
+  nats_connection = double(:NatsConnection)
   NATS.should_receive(:connect).
     with(:uri => "nats://foo:bar@nats-host:14222").
     and_return(nats_connection)

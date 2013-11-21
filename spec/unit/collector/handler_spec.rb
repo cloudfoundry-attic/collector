@@ -122,7 +122,7 @@ describe Collector::Handler do
 
   describe "send_metric" do
     it "should send the metric to the Historian" do
-      historian = mock('Historian')
+      historian = double('Historian')
       historian.should_receive(:send_data).with(
                 key: "some_key",
                 timestamp: 10000,
@@ -136,7 +136,7 @@ describe Collector::Handler do
     end
 
     it "should not allow additional_tags to override base tags" do
-      historian = mock('Historian')
+      historian = double('Historian')
       historian.should_receive(:send_data).with(
           key: "some_key",
           timestamp: 10000,
@@ -159,7 +159,7 @@ describe Collector::Handler do
 
   describe "send_latency_metric" do
     it "should send the metric to the historian with string keys" do
-      historian = mock("historian")
+      historian = double("historian")
       historian.should_receive(:send_data).
           with({key: "latency_key",
                 timestamp: 10000,
@@ -171,7 +171,7 @@ describe Collector::Handler do
     end
 
     it "should send the metric to the historian with symbolized keys" do
-      historian = mock("historian")
+      historian = double("historian")
       historian.should_receive(:send_data).
           with({key: "latency_key",
                 timestamp: 10000,

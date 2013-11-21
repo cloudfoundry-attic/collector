@@ -17,7 +17,7 @@ describe Collector::ServiceNodeHandler do
 
   describe :process_healthy_instances_metric do
     it "should report healthy instances percentage metric to TSDB server" do
-      historian = mock('Historian')
+      historian = double('Historian')
       historian.should_receive(:send_data).
         with({
         key: "services.healthy_instances",

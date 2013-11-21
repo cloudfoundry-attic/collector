@@ -5,7 +5,7 @@ describe Collector::ServiceHandler do
 
   describe "send_metric" do
     it "should send the metric to the TSDB server with service & component tag" do
-      historian = mock("Historian")
+      historian = double("Historian")
       historian.should_receive(:send_data).with(
         hash_including(
           tags: hash_including(

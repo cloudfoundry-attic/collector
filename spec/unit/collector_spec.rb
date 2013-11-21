@@ -102,9 +102,9 @@ describe Collector::Collector do
 
     context "when a normal varz returns succesfully" do
       it "hits the correct endpoint" do
-        http_conn = mock(:http_conn)
+        http_conn = double(:http_conn)
         EventMachine::HttpRequest.should_receive(:new).with("http://test-host:1234/varz") { http_conn }
-        http_conn.should_receive(:get).with(head: { "Authorization" => "Basic dXNlcjpwYXNz" }) { mock.as_null_object }
+        http_conn.should_receive(:get).with(head: { "Authorization" => "Basic dXNlcjpwYXNz" }) { double.as_null_object }
 
         fetch_varz
       end
@@ -115,7 +115,7 @@ describe Collector::Collector do
           fetch_varz
 
           request.stub(:response) { '{"foo": "bar"}' }
-          handler = mock(:handler)
+          handler = double(:handler)
           Collector::Handler.should_receive(:handler).with(anything, anything) { handler }
           handler.should_receive(:do_process).with(Collector::HandlerContext.new(0, Time.now.to_i, { "foo" => "bar" }))
 
@@ -169,9 +169,9 @@ describe Collector::Collector do
       before { Collector::Config.stub(:deployment_name).and_return("the_deployment") }
 
       it "hits the correct endpoint" do
-        http_conn = mock(:http_conn)
+        http_conn = double(:http_conn)
         EventMachine::HttpRequest.should_receive(:new).with("http://test-host:1234/healthz") { http_conn }
-        http_conn.should_receive(:get).with(head: { "Authorization" => "Basic dXNlcjpwYXNz" }) { mock.as_null_object }
+        http_conn.should_receive(:get).with(head: { "Authorization" => "Basic dXNlcjpwYXNz" }) { double.as_null_object }
 
         fetch_healthz
       end
@@ -229,14 +229,14 @@ describe Collector::Collector do
 
   describe "local metrics" do
     def send_local_metrics
-      Time.stub!(:now).and_return(1000)
+      allow(Time).to receive(:now) { 1000 }
 
       create_fake_collector do |collector, _, _|
         collector.process_nats_ping(997)
         collector.process_nats_ping(998)
         collector.process_nats_ping(999)
 
-        handler = mock(:Handler)
+        handler = double(:Handler)
         yield handler
 
         Collector::Handler.should_receive(:handler).
