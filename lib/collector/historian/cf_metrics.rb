@@ -29,7 +29,7 @@ module Collector
       end
 
       def send_metrics(metric_name, metric_data)
-        Config.logger.debug("Sending metrics to datadog: [#{metric_data.inspect}]")
+        Config.logger.debug("Sending metrics to cf-metrics: [#{metric_data.inspect}]")
         body = Yajl::Encoder.encode(metric_data)
         response = @http_client.put("https://#{@api_host}/metrics/#{metric_name}/values", body: body, headers: {"Content-type" => "application/json"})
         if response.success?
