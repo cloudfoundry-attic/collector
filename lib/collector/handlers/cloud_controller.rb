@@ -24,6 +24,11 @@ module Collector
         send_metric("cc.uptime", uptime_in_seconds(varz), context)
 
         send_metric("total_users", varz["cc_user_count"], context)
+
+        varz["cc_job_queue_length"] ||= {}
+        varz["cc_job_queue_length"].each do |key, value|
+          send_metric("cc.job_queue_length.#{key}", value, context)
+        end
       end
 
       private

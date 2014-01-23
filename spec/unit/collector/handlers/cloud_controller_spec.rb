@@ -114,4 +114,16 @@ describe Collector::Handler::CloudController do
       expect(data["total_users"][:value]).to eq(4)
     end
   end
+
+  describe "Cloud Controller jobs queue length" do
+    let(:varz) { context.varz }
+    let(:cc_job_queue_length) { {"cc-local" => 2, "cc-generic" => 1} }
+
+    it "sends the job queue length" do
+      varz["cc_job_queue_length"] = cc_job_queue_length
+      handler.process(context)
+      expect(data["cc.job_queue_length.cc-local"][:value]).to eq(2)
+      expect(data["cc.job_queue_length.cc-generic"][:value]).to eq(1)
+    end
+  end
 end
