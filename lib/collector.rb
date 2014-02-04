@@ -128,7 +128,8 @@ module Collector
     # Fetches the varzs from all the components and calls the proper {Handler}
     # to record the metrics in the TSDB server
     def fetch_varz
-      fetch(:varz) do |http, job, index|
+      fetch(:varz) do |http, job, instance|
+        index = instance[:index]
         varz = Yajl::Parser.parse(http.response)
         now = Time.now.to_i
 
@@ -142,9 +143,11 @@ module Collector
     # Fetches the healthz from all the components and calls the proper {Handler}
     # to record the metrics in the TSDB server
     def fetch_healthz
-      fetch(:healthz) do |http, job, index|
+      fetch(:healthz) do |http, job, instance|
+        index = instance[:index]
+        host = instance[:host]
         is_healthy = http.response.strip.downcase == "ok" ? 1 : 0
-        send_healthz_metric(is_healthy, job, index)
+        send_healthz_metric(is_healthy, job, index, host)
       end
     end
 
@@ -194,7 +197,7 @@ module Collector
 
           http.callback do
             begin
-              yield http, job, instance[:index]
+              yield http, job, instance
             rescue => e
               Config.logger.error(
                 "collector.#{type}.processing-failed",
@@ -205,13 +208,13 @@ module Collector
       end
     end
 
-    def send_healthz_metric(is_healthy, job, index)
+    def send_healthz_metric(is_healthy, job, index, host)
       Config.logger.info("collector.healthz-metrics.sending", job: job, index: index)
       @historian.send_data({
         key: "healthy",
         timestamp: Time.now.to_i,
         value: is_healthy,
-        tags: Components.get_job_tags(job).merge({job: job, index: index, deployment: Config.deployment_name})
+        tags: Components.get_job_tags(job).merge({job: job, index: index, deployment: Config.deployment_name, ip: host.split(":").first})
       })
     end
 
