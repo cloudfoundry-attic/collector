@@ -186,7 +186,7 @@ describe Collector::Collector do
             key: "healthy",
             timestamp: Time.now.to_i,
             value: 0,
-            tags: {job: "Test", index: 0, deployment: "the_deployment"}
+            tags: {job: "Test", index: 0, deployment: "the_deployment", ip: "test-host"}
           )
 
           request.call_callback
@@ -203,7 +203,7 @@ describe Collector::Collector do
             key: "healthy",
             timestamp: Time.now.to_i,
             value: 1,
-            tags: {job: "Test", index: 0, deployment: "the_deployment"}
+            tags: {job: "Test", index: 0, deployment: "the_deployment", ip: "test-host"}
           )
 
           request.call_callback
