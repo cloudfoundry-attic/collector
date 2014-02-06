@@ -56,6 +56,14 @@ describe Collector::Handler do
       handler.do_process(context)
     end
 
+    it "sends out 'mem' if specified" do
+      context = Collector::HandlerContext.new(nil, nil, {"mem" => 1048})
+      handler = Collector::Handler.new(nil, nil)
+      handler.should_receive(:send_metric).with("mem", 1048, context)
+
+      handler.do_process(context)
+    end
+
     it "sends out 'mem_free_bytes' if specified" do
       context = Collector::HandlerContext.new(nil, nil, {"mem_free_bytes" => 2048})
       handler = Collector::Handler.new(nil, nil)
