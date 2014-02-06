@@ -99,20 +99,23 @@ module Collector
     def additional_tags(context)
       {}
     end
+       
+    MEM_AND_CPU_STATS = %w(mem mem_used_bytes mem_free_bytes cpu_load_avg).freeze
+
+    RECORDED_LOG_LEVELS = %w(fatal error warn).freeze
 
     # Called by the collector to process the varz. Processes common
     # metric data and then calls process() to add subclass behavior.
     def do_process(context)
       varz = context.varz
-      send_metric("mem", varz["mem"], context) if varz["mem"]
-      send_metric("mem_free_bytes", varz["mem_free_bytes"], context) if varz["mem_free_bytes"]
-      send_metric("mem_used_bytes", varz["mem_used_bytes"], context) if varz["mem_used_bytes"]
-      send_metric("cpu_load_avg", varz["cpu_load_avg"], context) if varz["cpu_load_avg"]
+
+      MEM_AND_CPU_STATS.each { |stat| send_metric(stat, varz[stat], context) if varz[stat] }
+
       send_metric("uptime_in_seconds", VCAP.uptime_string_to_seconds(varz["uptime"]), context) if varz["uptime"]
 
       # Log counts in varz look like: { log_counts: { "error": 2, "warn": 1 }}
       varz.fetch("log_counts", {}).each do |level, count|
-        next unless %w(fatal error warn).include?(level)
+        next unless RECORDED_LOG_LEVELS.include?(level)
         send_metric("log_count", count, context, {"level" => level})
       end
 

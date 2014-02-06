@@ -47,35 +47,13 @@ describe Collector::Handler do
       handler.do_process(context)
     end
 
-    it "sends out 'mem_used_bytes' if specified" do
-      context = Collector::HandlerContext.new(nil, nil, {"mem_used_bytes" => 2048})
-      handler = Collector::Handler.new(nil, nil)
-      handler.should_receive(:send_metric).with("mem_used_bytes", 2048, context)
-      handler.do_process(context)
-    end
-
-    it "sends out 'mem' if specified" do
-      context = Collector::HandlerContext.new(nil, nil, {"mem" => 1048})
-      handler = Collector::Handler.new(nil, nil)
-      handler.should_receive(:send_metric).with("mem", 1048, context)
-
-      handler.do_process(context)
-    end
-
-    it "sends out 'mem_free_bytes' if specified" do
-      context = Collector::HandlerContext.new(nil, nil, {"mem_free_bytes" => 2048})
-      handler = Collector::Handler.new(nil, nil)
-      handler.should_receive(:send_metric).with("mem_free_bytes", 2048, context)
-
-      handler.do_process(context)
-    end
-
-    it "sends out 'cpu_load_avg' if specified" do
-      context = Collector::HandlerContext.new(nil, nil, {"cpu_load_avg" => 2.0})
-      handler = Collector::Handler.new(nil, nil)
-      handler.should_receive(:send_metric).with("cpu_load_avg", 2.0, context)
-
-      handler.do_process(context)
+    %w(mem mem_used_bytes mem_free_bytes cpu_load_avg).each do |stat|
+      it "sends out '#{stat}' if specified" do
+        context = Collector::HandlerContext.new(nil, nil, {stat => 2048})
+        handler = Collector::Handler.new(nil, nil)
+        handler.should_receive(:send_metric).with(stat, 2048, context)
+        handler.do_process(context)
+      end
     end
 
     it "sends out 'uptime' if specified" do
