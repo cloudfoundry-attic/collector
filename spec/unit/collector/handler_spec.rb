@@ -6,7 +6,7 @@ describe Collector::Handler do
     Collector::Handler.instance_map.clear
   end
 
-  describe "register" do
+  describe "handler registration" do
     it "should register varz handler plugins" do
       test_handler = Class.new(Collector::Handler) { register "Test" }
       Collector::Handler.handler_map.should include("Test" => test_handler)
@@ -21,8 +21,7 @@ describe Collector::Handler do
     end
   end
 
-  describe "handler" do
-
+  describe "#handler" do
     it "should return the registered varz handler plugin" do
       test_handler = Class.new(Collector::Handler) { register "Test" }
       Collector::Handler.handler(nil, "Test").should be_kind_of(test_handler)
@@ -40,8 +39,7 @@ describe Collector::Handler do
     end
   end
 
-  describe "do_process" do
-
+  describe "#do_process" do
     it "calls #process defined by the subclass" do
       context = Collector::HandlerContext.new(nil, nil, {})
       handler = Collector::Handler.new(nil, nil)
@@ -99,43 +97,43 @@ describe Collector::Handler do
 
       handler.do_process(context)
     end
+
+    describe "sent tags" do
+      let(:historian) { double }
+      let(:handler) { Collector::Handler.new(historian, "DEA") }
+      let(:context) { Collector::HandlerContext.new(0, nil, {"cpu_load_avg" => "42"}) }
+
+      it "adds extra tags when specified" do
+        handler.stub(:additional_tags => {foo: "bar"})
+        historian.should_receive(:send_data).with(hash_including(
+          tags: hash_including({
+            foo: "bar"
+          })
+        ))
+        handler.do_process(context)
+      end
+
+      it "sends the common tags" do
+        historian.should_receive(:send_data).with(hash_including(
+          tags: hash_including({
+            job: "DEA",
+            index: 0,
+            role: "core"
+          })
+        ))
+        handler.do_process(context)
+      end
+    end
   end
 
-  describe "sent tags" do
-    let(:historian) { double }
-    let(:handler) { Collector::Handler.new(historian, "DEA") }
-    let(:context) { Collector::HandlerContext.new(0, nil, {"cpu_load_avg" => "42"}) }
-
-    it "adds extra tags when specified" do
-      handler.stub(:additional_tags => {foo: "bar"})
-      historian.should_receive(:send_data).with(hash_including({
-        tags: hash_including({
-          foo: "bar"
-        })
-      }))
-      handler.do_process(context)
-    end
-
-    it "sends the common tags" do
-      historian.should_receive(:send_data).with(hash_including({
-        tags: hash_including({
-          job: "DEA",
-          index: 0,
-          role: "core"
-        })
-      }))
-      handler.do_process(context)
-    end
-  end
-
-  describe "send_metric" do
+  describe "#send_metric" do
     it "should send the metric to the Historian" do
       historian = double('Historian')
       historian.should_receive(:send_data).with(
-                key: "some_key",
-                timestamp: 10000,
-                value: 2,
-                tags: {index: 1, job: "Test", name: "Test/1", deployment: "untitled_dev", foo: "bar"}
+        key: "some_key",
+        timestamp: 10000,
+        value: 2,
+        tags: {index: 1, job: "Test", name: "Test/1", deployment: "untitled_dev", foo: "bar"}
       )
 
       context = Collector::HandlerContext.new(1, 10000, {})
@@ -146,10 +144,10 @@ describe Collector::Handler do
     it "should not allow additional_tags to override base tags" do
       historian = double('Historian')
       historian.should_receive(:send_data).with(
-          key: "some_key",
-          timestamp: 10000,
-          value: 2,
-          tags: {index: 1, job: "DEA", name: "DEA/1", deployment: "untitled_dev", role: "core"}
+        key: "some_key",
+        timestamp: 10000,
+        value: 2,
+        tags: {index: 1, job: "DEA", name: "DEA/1", deployment: "untitled_dev", role: "core"}
       )
 
       context = Collector::HandlerContext.new(1, 10000, {})
@@ -165,14 +163,15 @@ describe Collector::Handler do
     end
   end
 
-  describe "send_latency_metric" do
+  describe "#send_latency_metric" do
     it "should send the metric to the historian with string keys" do
       historian = double("historian")
-      historian.should_receive(:send_data).
-          with({key: "latency_key",
-                timestamp: 10000,
-                value: 5,
-                tags: hash_including({index: 1, job: "Test", foo: "bar"})})
+      historian.should_receive(:send_data).with(
+        key: "latency_key",
+        timestamp: 10000,
+        value: 5,
+        tags: hash_including({index: 1, job: "Test", foo: "bar"})
+      )
       context = Collector::HandlerContext.new(1, 10000, {})
       handler = Collector::Handler.handler(historian, "Test")
       handler.send_latency_metric("latency_key", {"value" => 10, "samples" => 2}, context, {foo: "bar"})
@@ -180,11 +179,12 @@ describe Collector::Handler do
 
     it "should send the metric to the historian with symbolized keys" do
       historian = double("historian")
-      historian.should_receive(:send_data).
-          with({key: "latency_key",
-                timestamp: 10000,
-                value: 5,
-                tags: hash_including({index: 1, job: "Test", foo: "bar"})})
+      historian.should_receive(:send_data).with(
+        key: "latency_key",
+        timestamp: 10000,
+        value: 5,
+        tags: hash_including({index: 1, job: "Test", foo: "bar"})
+      )
       context = Collector::HandlerContext.new(1, 10000, {})
       handler = Collector::Handler.handler(historian, "Test")
       handler.send_latency_metric("latency_key", {:value => 10, :samples => 2}, context, {foo: "bar"})
