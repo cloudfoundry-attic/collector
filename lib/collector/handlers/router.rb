@@ -10,6 +10,7 @@ module Collector
         varz = context.varz
 
         send_metric("router.total_requests", varz["requests"], context)
+        send_metric("router.requests_received", varz["requests_received"], context)
         send_metric("router.total_routes", varz["urls"], context)
         send_metric("router.ms_since_last_registry_update", varz["ms_since_last_registry_update"], context)
 

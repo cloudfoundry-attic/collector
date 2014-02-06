@@ -55,6 +55,7 @@ describe Collector::Handler::Router do
           0.9014480037952
         ],
         "requests" => 68213,
+        "requests_received" => 68215,
         "bad_requests" => 42,
         "bad_gateways" => 45387,
         "requests_per_sec" => 0.22460493344950977,
@@ -109,6 +110,7 @@ describe Collector::Handler::Router do
         handler.process(context)
 
         historian.should have_sent_data("router.total_requests", 68213)
+        historian.should have_sent_data("router.requests_received", 68215)
         historian.should have_sent_data("router.total_routes", 123456789)
         historian.should have_sent_data("router.ms_since_last_registry_update", 15)
 
