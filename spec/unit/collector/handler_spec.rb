@@ -47,7 +47,7 @@ describe Collector::Handler do
       handler.do_process(context)
     end
 
-    %w(mem mem_used_bytes mem_free_bytes cpu_load_avg).each do |stat|
+    %w(mem_bytes mem_used_bytes mem_free_bytes cpu_load_avg).each do |stat|
       it "sends out '#{stat}' if specified" do
         context = Collector::HandlerContext.new(nil, nil, {stat => 2048})
         handler = Collector::Handler.new(nil, nil)

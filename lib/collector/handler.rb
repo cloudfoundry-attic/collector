@@ -99,8 +99,8 @@ module Collector
     def additional_tags(context)
       {}
     end
-       
-    MEM_AND_CPU_STATS = %w(mem mem_used_bytes mem_free_bytes cpu_load_avg).freeze
+
+    MEM_AND_CPU_STATS = %w(mem_bytes mem_used_bytes mem_free_bytes cpu_load_avg).freeze
 
     RECORDED_LOG_LEVELS = %w(fatal error warn).freeze
 
