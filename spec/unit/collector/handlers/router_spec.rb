@@ -111,6 +111,7 @@ describe Collector::Handler::Router do
 
         historian.should have_sent_data("router.total_requests", 68213)
         historian.should have_sent_data("router.requests_received", 68215)
+        historian.should have_sent_data("router.incomplete_requests", 68213 - 3100)
         historian.should have_sent_data("router.total_routes", 123456789)
         historian.should have_sent_data("router.ms_since_last_registry_update", 15)
 
