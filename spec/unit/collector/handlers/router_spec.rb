@@ -129,7 +129,32 @@ describe Collector::Handler::Router do
     end
 
     describe "dea-related components (i.e., apps)" do
-      let(:component) do
+      let(:dea_1) do
+        {
+            "latency" => {
+                "50" => 0.025036,
+                "75" => 0.034314,
+                "90" => 0.0791451,
+                "95" => 0.1607238499999999,
+                "99" => 1.1623077700000013,
+                "samples" => 1,
+                "value" => 5
+            },
+            "rate" => [
+                0.22490272672626982,
+                0.4771015543892108,
+                0.8284101734116986
+            ],
+            "requests" => 2400,
+            "responses_2xx" => 200,
+            "responses_3xx" => 300,
+            "responses_4xx" => 400,
+            "responses_5xx" => 500,
+            "responses_xxx" => 1000
+        }
+      end
+
+      let(:dea_2) do
         {
           "latency" => {
             "50" => 0.025036,
@@ -145,7 +170,7 @@ describe Collector::Handler::Router do
             0.4771015543892108,
             0.8284101734116986
           ],
-          "requests" => 2400,
+          "requests" => 1500,
           "responses_2xx" => 200,
           "responses_3xx" => 300,
           "responses_4xx" => 400,
@@ -155,13 +180,23 @@ describe Collector::Handler::Router do
       end
 
       it "sends metrics tagged with component:dea and dea_index:x" do
-        varz['tags']['component']['dea-2'] = component
+        varz['tags']['component']['dea-1'] = dea_1
 
-        tags = {:component => "app", :dea_index => "2"}
+        tags = {:component => "app", :dea_index => "1"}
 
         handler.process(context)
+
         historian.should have_sent_data("router.requests", 2400, tags)
         historian.should have_sent_data("router.latency.1m", 5, tags)
+      end
+
+      it "sends a metric of all dea requests" do
+        varz['tags']['component']['dea-1'] = dea_1
+        varz['tags']['component']['dea-2'] = dea_2
+
+        handler.process(context)
+
+        historian.should have_sent_data("router.app_requests", 3900)
       end
     end
   end

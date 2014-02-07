@@ -19,6 +19,7 @@ module Collector
 
         return unless varz["tags"]
 
+        app_requests = 0
         varz["tags"].each do |key, values|
           values.each do |value, metrics|
             if key == "component" && value.start_with?("dea-")
@@ -27,6 +28,7 @@ module Collector
 
               # These are app requests, not requests to the dea. So we change the component to "app".
               tags = {:component => "app", :dea_index => dea_id }
+              app_requests += metrics["requests"]
             else
               tags = {key => value}
             end
@@ -38,6 +40,7 @@ module Collector
             end
           end
         end
+        send_metric("router.app_requests", app_requests, context)
       end
 
       register Components::ROUTER_COMPONENT
