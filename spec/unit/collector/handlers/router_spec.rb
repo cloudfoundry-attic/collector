@@ -24,19 +24,19 @@ describe Collector::Handler::Router do
   let(:historian) { FakeHistorian.new }
   let(:timestamp) { 123456789 }
   let(:handler) { Collector::Handler::Router.new(historian, "job") }
-  let(:context) { Collector::HandlerContext.new(1, timestamp, varz) }
+  let(:handler_context) { Collector::HandlerContext.new(1, timestamp, varz) }
 
   describe "#additional_tags" do
     let(:varz) { { "host" => "0.0.0.11:4567" } }
 
     it "tags metrics with the host" do
-      handler.additional_tags(context).should == {
+      handler.additional_tags(handler_context).should == {
         ip: "0.0.0.11",
       }
     end
   end
 
-  describe "process" do
+  describe "#process" do
     let(:varz) do
       {
         "host" => "1.2.3.4:5678",
@@ -74,7 +74,7 @@ describe Collector::Handler::Router do
       }
     end
 
-    describe "normal components" do
+    context "for default components" do
       let(:component) do
         {
           "latency" => {
@@ -104,14 +104,13 @@ describe Collector::Handler::Router do
         varz['tags']['component']['component-1'] = component
       end
 
-      it "sends the metrics" do
+      it "sends the default metrics" do
         tags = {"component" => "component-1"}
 
-        handler.process(context)
+        handler.process(handler_context)
 
         historian.should have_sent_data("router.total_requests", 68213)
         historian.should have_sent_data("router.requests_received", 68215)
-        historian.should have_sent_data("router.incomplete_requests", 68213 - 3100)
         historian.should have_sent_data("router.total_routes", 123456789)
         historian.should have_sent_data("router.ms_since_last_registry_update", 15)
 
@@ -129,7 +128,7 @@ describe Collector::Handler::Router do
       end
     end
 
-    describe "dea-related components (i.e., apps)" do
+    context "for dea-related components (i.e., apps)" do
       let(:dea_1) do
         {
             "latency" => {
@@ -150,7 +149,7 @@ describe Collector::Handler::Router do
             "responses_2xx" => 200,
             "responses_3xx" => 300,
             "responses_4xx" => 400,
-            "responses_5xx" => 500,
+            "responses_5xx" => 400,
             "responses_xxx" => 1000
         }
       end
@@ -175,8 +174,8 @@ describe Collector::Handler::Router do
           "responses_2xx" => 200,
           "responses_3xx" => 300,
           "responses_4xx" => 400,
-          "responses_5xx" => 500,
-          "responses_xxx" => 1000
+          "responses_5xx" => 400,
+          "responses_xxx" => 100
         }
       end
 
@@ -185,7 +184,7 @@ describe Collector::Handler::Router do
 
         tags = {:component => "app", :dea_index => "1"}
 
-        handler.process(context)
+        handler.process(handler_context)
 
         historian.should have_sent_data("router.requests", 2400, tags)
         historian.should have_sent_data("router.latency.1m", 5, tags)
@@ -195,7 +194,7 @@ describe Collector::Handler::Router do
         varz['tags']['component']['dea-1'] = dea_1
         varz['tags']['component']['dea-2'] = dea_2
 
-        handler.process(context)
+        handler.process(handler_context)
 
         historian.should have_sent_data("router.app_requests", 3900)
       end

@@ -20,7 +20,6 @@ module Collector
         return unless varz["tags"]
 
         app_requests = 0
-        component_responses = 0
         varz["tags"].each do |key, values|
           values.each do |value, metrics|
             if key == "component" && value.start_with?("dea-")
@@ -38,13 +37,11 @@ module Collector
             send_latency_metric("router.latency.1m", metrics["latency"], context, tags)
             ["2xx", "3xx", "4xx", "5xx", "xxx"].each do |status_code|
               component_responses_by_status_code = metrics["responses_#{status_code}"]
-              component_responses += component_responses_by_status_code
               send_metric("router.responses", component_responses_by_status_code, context, tags.merge("status" => status_code))
             end
           end
         end
         send_metric("router.app_requests", app_requests, context)
-        send_metric("router.incomplete_requests", varz["requests"] - component_responses, context)
       end
 
       register Components::ROUTER_COMPONENT
