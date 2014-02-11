@@ -11,8 +11,8 @@
     "uuid": "0-b5c8a039c8a368bb64ad75cd857330bb",
     "host": "10.10.33.0:32839",
     "credentials": [
-        "0d98981ae6499414950e74d80391bef1",
-        "0b784d5743a991422dcf5de277cb27b7"
+        "CREDENTIAL_0",
+        "CREDENTIAL_1"
     ],
     "start": "2013-11-08 18:06:31 +0000",
     "num_cores": 1,

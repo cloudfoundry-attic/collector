@@ -56,8 +56,8 @@
     "uuid": "d9ff154b0af17f1d8e65ec51143bbdf4",
     "host": "10.10.16.13:33215",
     "credentials": [
-        "d4ef64c0f3fa06aeb0c27d3cbc5c2316",
-        "c656945883523052508b2bd5e9ebce9b"
+        "CREDENTIAL_0",
+        "CREDENTIAL_1"
     ],
     "start": "2013-05-20 18:07:21 +0000",
     "num_cores": 1,
@@ -65,7 +65,7 @@
         "local_route": "10.10.16.13",
         "port": 9022,
         "pid_filename": "/var/vcap/sys/run/cloud_controller_ng/cloud_controller_ng.pid",
-        "nats_uri": "nats://nats:4VtHVxJb8Y@10.10.16.11:4222",
+        "nats_uri": "nats://nats:NATS_PASSWORD@10.10.16.11:4222",
         "external_domain": [
             "ccng.tabasco.cf-app.com",
             "api.tabasco.cf-app.com"
@@ -76,10 +76,10 @@
             "tabasco-app.cf-app.com"
         ],
         "cc_partition": "default",
-        "bootstrap_admin_email": "sre@vmware.com",
+        "bootstrap_admin_email": "bootstrap_admin_email@example.com",
         "bulk_api": {
             "auth_user": "bulk_api",
-            "auth_password": "zbTuuLaap44jadlas2l312lk"
+            "auth_password": "BULK_API_PASSWORD"
         },
         "service_lifecycle": {
             "max_upload_size": 1,
@@ -113,7 +113,7 @@
             "max_retries": 1
         },
         "db": {
-            "database": "mysql2://u84bc8d00ed220f:p14d1d13ab3030cbd456bbb556b9ed9d1@ccdb.cwioxiwh43gn.us-east-1.rds.amazonaws.com:3306/ccdb",
+            "database": "mysql2://admin:MYSQL_PASSWORD@mysql.example.com:3306/ccdb",
             "max_connections": 32,
             "pool_timeout": 10,
             "log_level": "debug2"
@@ -124,12 +124,12 @@
         "uaa": {
             "url": "https://uaa.tabasco.cf-app.com",
             "resource_id": "cloud_controller",
-            "verification_key": "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/85WUjM7WKxnSMkd/TtGo+WWX\nkI5pH8ACBtb5oameiMJIw/wZ+dtyIwU+NZ0mKua+IzpGL1++bLJL0fDxE1LpD88j\nWzjaaTp8930UyY23oMxSa6JMG6OpDW469VTkY1g3uE/RAFtg7J9ZnDrTrMFJrduV\nVRs5sM3o4r1UYUTD6wIDAQAB\n-----END PUBLIC KEY-----\n"
+            "verification_key": "-----BEGIN PUBLIC KEY-----\nREDACTED\n-----END PUBLIC KEY-----\n"
         },
         "staging": {
             "max_staging_runtime": 900,
             "auth": {
-                "user": "zxsfhgjg"
+                "user": "staging-auth-user"
             }
         },
         "runtimes_file": "/var/vcap/jobs/cloud_controller_ng/config/runtimes.yml",
@@ -164,27 +164,27 @@
             "resource_directory_key": "tabasco-cf-app-com-cc-resources",
             "fog_connection": {
                 "provider": "AWS",
-                "aws_access_key_id": "AKIAIBJFPKON2WXOK5JQ",
-                "aws_secret_access_key": "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"
+                "aws_access_key_id": "resource_pool-AWS_KEY",
+                "aws_secret_access_key": "resource_pool-AWS_SECRET"
             }
         },
         "packages": {
             "app_package_directory_key": "tabasco-cf-app-com-cc-packages",
             "fog_connection": {
                 "provider": "AWS",
-                "aws_access_key_id": "AKIAIBJFPKON2WXOK5JQ",
-                "aws_secret_access_key": "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"
+                "aws_access_key_id": "packages-AWS_KEY",
+                "aws_secret_access_key": "packages-AWS_SECRET"
             }
         },
         "droplets": {
             "droplet_directory_key": "tabasco-cf-app-com-cc-droplets",
             "fog_connection": {
                 "provider": "AWS",
-                "aws_access_key_id": "AKIAIBJFPKON2WXOK5JQ",
-                "aws_secret_access_key": "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"
+                "aws_access_key_id": "droplets-AWS_KEY",
+                "aws_secret_access_key": "droplets-AWS_SECRET"
             }
         },
-        "db_encryption_key": "4493e8ec89f6",
+        "db_encryption_key": "deadbeef",
         "trial_db": {
             "guid": "78ad16cf-3c22-4427-a982-b9d35d746914"
         },

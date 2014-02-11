@@ -4,8 +4,8 @@
     "uuid": "0-8e1b2e0db73172fe61f9c27e5bb26638",
     "host": "10.10.17.11:53736",
     "credentials": [
-        "8e7e7df63fb20c4b75d956ead5bf0b37",
-        "9dded70599f1759cfca421a745803404"
+        "CREDENTIAL_0",
+        "CREDENTIAL_1"
     ],
     "start": "2013-07-02 17:28:03 +0000",
     "num_cores": 2,
