@@ -14,7 +14,7 @@ module Collector
         send_metric("router.total_routes", varz["urls"], context)
         send_metric("router.ms_since_last_registry_update", varz["ms_since_last_registry_update"], context)
 
-        send_metric("router.bad_requests", varz["bad_requests"], context)
+        send_metric("router.rejected_requests", varz["rejected_requests"], context)
         send_metric("router.bad_gateways", varz["bad_gateways"], context)
 
         return unless varz["tags"]
