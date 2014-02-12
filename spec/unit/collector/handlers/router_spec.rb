@@ -196,7 +196,7 @@ describe Collector::Handler::Router do
 
         handler.process(handler_context)
 
-        historian.should have_sent_data("router.received_app_requests", 3900)
+        historian.should have_sent_data("router.routed_app_requests", 3900)
       end
     end
   end
