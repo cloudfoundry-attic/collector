@@ -74,6 +74,19 @@ describe Collector::Handler::Router do
       }
     end
 
+    context "when 'rejected_requests' is still named 'bad_requests' in varz" do
+      before do
+        varz.delete("rejected_requests")
+        varz["bad_requests"] = 17
+      end
+
+      it "emits 'rejected_requests' based on the 'bad_requests' key" do
+        handler.process(handler_context)
+
+        historian.should have_sent_data("router.rejected_requests", 17)
+      end
+    end
+
     context "for default components" do
       let(:component) do
         {
