@@ -20,6 +20,10 @@ module Collector
         metrics = registry_usage(context)
         send_metric("dea_registry_mem_reserved", metrics[:mem], context)
         send_metric("dea_registry_disk_reserved", metrics[:disk], context)
+
+        send_metric("total_warden_response_time_in_ms", context.varz["total_warden_response_time_in_ms"], context)
+        send_metric("warden_request_count", context.varz["warden_request_count"], context)
+        send_metric("warden_error_response_count", context.varz["warden_error_response_count"], context)
       end
 
       private

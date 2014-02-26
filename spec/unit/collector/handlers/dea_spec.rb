@@ -62,5 +62,12 @@ describe Collector::Handler::Dea do
       handler.should_receive(:send_metric).with("dea_registry_disk_reserved", 1024 * 5, context)
       process
     end
+
+    it "sends warden requests metrics" do
+      handler.should_receive(:send_metric).with("total_warden_response_time_in_ms", 1010, context)
+      handler.should_receive(:send_metric).with("warden_request_count", 49, context)
+      handler.should_receive(:send_metric).with("warden_error_response_count", 3, context)
+      process
+    end
   end
 end

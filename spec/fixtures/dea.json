@@ -17,6 +17,9 @@
     "reservable_stagers": 28,
     "available_memory_ratio": 5.678,
     "available_disk_ratio": 1.234,
+    "total_warden_response_time_in_ms": 1010,
+    "warden_request_count": 49,
+    "warden_error_response_count": 3,
     "instance_registry": {
         "723fe875-e797-47a3-a323-born": {
             "af6c8fc752993310ba9404a55a27a294": {
