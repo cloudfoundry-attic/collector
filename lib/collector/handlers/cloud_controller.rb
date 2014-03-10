@@ -29,6 +29,10 @@ module Collector
         varz["cc_job_queue_length"].each do |key, value|
           send_metric("cc.job_queue_length.#{key}", value, context)
         end
+
+        thread_info_metrics(varz['thread_info'], 'thread_info').each do |key, value|
+          send_metric("cc.#{key}", value, context)
+        end
       end
 
       private
@@ -45,6 +49,19 @@ module Collector
           end
           ["#{key}XX", value]
         end
+      end
+
+      def thread_info_metrics(hash, parent_key, result={})
+        hash.each do |key, value|
+          metric_name = "#{parent_key}.#{key}"
+          if value.is_a? Hash
+            thread_info_metrics(value, metric_name, result)
+          else
+            result[metric_name] = value
+          end
+        end
+
+        result
       end
 
       register Components::CLOUD_CONTROLLER_COMPONENT

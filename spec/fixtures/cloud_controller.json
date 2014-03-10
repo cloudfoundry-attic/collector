@@ -64,5 +64,19 @@
     "nats_downtime": null,
     "uptime": "2d:2h:2m:2s",
     "mem": 112104,
-    "cpu": 2.3
+    "cpu": 2.3,
+    "thread_info": {
+        "thread_count": 21,
+        "event_machine": {
+            "connection_count": 30,
+            "threadqueue": {
+                "size": 40,
+                "num_waiting": 10
+            },
+            "resultqueue": {
+                "size": 4,
+                "num_waiting": 2
+            }
+        }
+    }
 }

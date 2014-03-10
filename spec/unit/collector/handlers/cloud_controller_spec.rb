@@ -103,6 +103,49 @@ describe Collector::Handler::CloudController do
       value: 2 + (60 * 2) + (60 * 60 * 2) + (60 * 60 * 24 * 2),
       tags: tags
     )}
+
+    its(["cc.thread_info.thread_count"]) { should eq(
+      key: "cc.thread_info.thread_count",
+      timestamp: now,
+      value: 21,
+      tags: tags
+    )}
+
+    its(["cc.thread_info.event_machine.connection_count"]) { should eq(
+      key: "cc.thread_info.event_machine.connection_count",
+      timestamp: now,
+      value: 30,
+      tags: tags
+    )}
+
+    its(["cc.thread_info.event_machine.threadqueue.size"]) { should eq(
+      key: "cc.thread_info.event_machine.threadqueue.size",
+      timestamp: now,
+      value: 40,
+      tags: tags
+    )}
+
+    its(["cc.thread_info.event_machine.threadqueue.num_waiting"]) { should eq(
+     key: "cc.thread_info.event_machine.threadqueue.num_waiting",
+     timestamp: now,
+     value: 10,
+     tags: tags
+    )}
+
+    its(["cc.thread_info.event_machine.resultqueue.size"]) { should eq(
+      key: "cc.thread_info.event_machine.resultqueue.size",
+      timestamp: now,
+      value: 4,
+      tags: tags
+    )}
+
+    its(["cc.thread_info.event_machine.resultqueue.num_waiting"]) { should eq(
+      key: "cc.thread_info.event_machine.resultqueue.num_waiting",
+      timestamp: now,
+      value: 2,
+      tags: tags
+
+    )}
   end
 
   describe "users" do
