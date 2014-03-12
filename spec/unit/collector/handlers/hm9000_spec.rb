@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Collector::Handler::Router do
+describe Collector::Handler::HM9000 do
 
   class FakeHistorian
     attr_reader :sent_data

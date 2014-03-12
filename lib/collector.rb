@@ -134,7 +134,7 @@ module Collector
         now = Time.now.to_i
 
         handler = Handler.handler(@historian, job)
-        Config.logger.debug("collector.job.process", job: job, handler: handler)
+        Config.logger.debug("collector.job.process", job: job, handler: handler.class.name)
         ctx = HandlerContext.new(index, now, varz)
         handler.do_process(ctx)
       end
