@@ -2,6 +2,7 @@ require_relative "./historian/cloud_watch"
 require_relative "./historian/cf_metrics"
 require_relative "./historian/data_dog"
 require_relative "./historian/tsdb"
+require_relative "./historian/graphite"
 require "httparty"
 
 module Collector
