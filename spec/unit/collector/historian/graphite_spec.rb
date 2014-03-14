@@ -67,5 +67,14 @@ describe Collector::Historian::Graphite do
       end
     end
 
+    context "when there is a missing field from the properties" do
+      it "cannot create a metrics key and should log the error" do
+        graphite_historian = described_class.new("host", 9999)
+        metric_payload.delete(:key)
+        ::Collector::Config.logger.should_receive(:error).with("collector.create-graphite-key.fail: Could not create metrics name from fields tags.deployment, tags.job, tags.index or key.")
+        graphite_historian.send_data(metric_payload)
+      end
+    end
+
   end
 end

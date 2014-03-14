@@ -15,11 +15,14 @@ module Collector
         # {:key=>"cpu_load_avg", :timestamp=>1394801347, :value=>0.25, :tags=>{:ip=>"172.30.5.74", :role=>"core", :job=>"CloudController", :index=>0, :name=>"CloudController/0", :deployment=>"CF"}}
         # One will get a metrics key like so
         # CF.CloudController0.cpu_load_avg
-        begin
-          [p[:tags][:deployment], p[:tags][:job], p[:tags][:index], p[:key]].join '.'
-        rescue
-          Config.logger.error("collector.create-graphite-key.fail: Could not create metrics name from fields tags.deployment, tags.job, tags.index and key.")
+        deployment = p[:tags][:deployment]
+        job = p[:tags][:job]
+        index = p[:tags][:index]
+        key = p[:key]
+        if deployment and job and index and key
+          return [deployment, job, index, key].join '.'
         end
+        Config.logger.error("collector.create-graphite-key.fail: Could not create metrics name from fields tags.deployment, tags.job, tags.index or key.")
       end
 
       def validate_value(value)
@@ -42,15 +45,11 @@ module Collector
         ts
       end
 
-
-
       def send_data(properties)
         metrics_name = create_metrics_name(properties)
         value = validate_value(properties[:value])
         timestamp = validate_timestamp(properties[:timestamp])
-
         if metrics_name and value and timestamp
-          puts
           command =  "#{metrics_name} #{value} #{timestamp}"
           @connection.send_data(command)
         end
