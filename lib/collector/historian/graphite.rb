@@ -15,8 +15,11 @@ module Collector
         # {:key=>"cpu_load_avg", :timestamp=>1394801347, :value=>0.25, :tags=>{:ip=>"172.30.5.74", :role=>"core", :job=>"CloudController", :index=>0, :name=>"CloudController/0", :deployment=>"CF"}}
         # One will get a metrics key like so
         # CF.CloudController0.cpu_load_avg
-
-        [p[:tags][:deployment], p[:tags][:name].gsub('/',''), p[:key]].join '.'
+        begin
+          [p[:tags][:deployment], p[:tags][:job], p[:tags][:index], p[:key]].join '.'
+        rescue
+          Config.logger.error("collector.create-graphite-key.fail: Could not create metrics name from fields tags.deployment, tags.job, tags.index and key.")
+        end
       end
 
       def validate_value(value)
