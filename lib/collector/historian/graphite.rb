@@ -10,29 +10,47 @@ module Collector
         @connection = EventMachine.connect(@host, @port, GraphiteConnection)
       end
 
-      def validate_timestamp(properties)
+      def create_metrics_name(p)
+        # Given a properties hash like so
+        # {:key=>"cpu_load_avg", :timestamp=>1394801347, :value=>0.25, :tags=>{:ip=>"172.30.5.74", :role=>"core", :job=>"CloudController", :index=>0, :name=>"CloudController/0", :deployment=>"CF"}}
+        # One will get a metrics key like so
+        # CF.CloudController0.cpu_load_avg
+
+        [p[:tags][:deployment], p[:tags][:name].gsub('/',''), p[:key]].join '.'
+      end
+
+      def validate_value(value)
+        if value.is_a? Integer or value.is_a? Float
+          return value
+        end
+        Config.logger.error("collector.emit-graphite.fail: Value is not a float or int, got: #{value}")
+        nil
+      end
+
+      def validate_timestamp(ts)
         # If we are missing a timestamp return now
-        if not properties.has_key? :timestamp
+        if not ts
           return Time.now.to_i
         end
         # If the timestamp is not unix epoch format return now
-        if not /^1[0-9]{9}$/.match(properties[:timestamp].to_s)
+        if not /^1[0-9]{9}$/.match(ts.to_s)
           return Time.now.to_i
         end
-        properties[:timestamp]
+        ts
       end
 
+
+
       def send_data(properties)
-        tags = (properties[:tags].flat_map do |key, value|
-          Array(value).map do |v|
-            "#{key}=#{v}"
-          end
-        end).sort.join(" ")
+        metrics_name = create_metrics_name(properties)
+        value = validate_value(properties[:value])
+        timestamp = validate_timestamp(properties[:timestamp])
 
-        timestamp = validate_timestamp(properties)
-
-        command = "#{properties[:key]} #{properties[:value]} #{timestamp}"
-        @connection.send_data(command)
+        if metrics_name and value and timestamp
+          puts
+          command =  "#{metrics_name} #{value} #{timestamp}"
+          @connection.send_data(command)
+        end
       end
     end
   end
