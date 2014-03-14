@@ -30,6 +30,11 @@ module Collector
         Config.logger.info("collector.historian-adapter.added-cfmetrics")
       end
 
+      if Config.graphite
+        historian.add_adapter(Historian::Graphite.new(Config.graphite_host, Config.graphite_port))
+        Config.logger.info("collector.historian-adapter.added-graphite", host: Config.graphite_host)
+      end
+
       historian
     end
 
