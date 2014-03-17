@@ -50,7 +50,7 @@ module Collector
         value = validate_value(properties[:value])
         timestamp = validate_timestamp(properties[:timestamp])
         if metrics_name and value and timestamp
-          command =  "#{metrics_name} #{value} #{timestamp}"
+          command =  "#{metrics_name} #{value} #{timestamp}\n"
           @connection.send_data(command)
         end
       end
