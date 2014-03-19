@@ -35,7 +35,7 @@ module Collector
 
       def get_timestamp(ts)
         # If we are missing a timestamp return now
-        if not ts
+        unless ts
           return Time.now.to_i
         end
         # If the timestamp is not unix epoch format return now
