@@ -25,7 +25,7 @@ module Collector
         Config.logger.error("collector.create-graphite-key.fail: Could not create metrics name from fields tags.deployment, tags.job, tags.index or key.")
       end
 
-      def validate_value(value)
+      def get_value(value)
         if value.is_a? Integer or value.is_a? Float
           return value
         end
@@ -47,8 +47,8 @@ module Collector
 
       def send_data(properties)
         metrics_name = create_metrics_name(properties)
-        value = validate_value(properties[:value])
         timestamp = validate_timestamp(properties[:timestamp])
+        value = get_value(properties[:value])
         if metrics_name and value and timestamp
           command =  "#{metrics_name} #{value} #{timestamp}\n"
           @connection.send_data(command)
