@@ -33,7 +33,7 @@ module Collector
         nil
       end
 
-      def validate_timestamp(ts)
+      def get_timestamp(ts)
         # If we are missing a timestamp return now
         if not ts
           return Time.now.to_i
@@ -47,8 +47,8 @@ module Collector
 
       def send_data(properties)
         metrics_name = create_metrics_name(properties)
-        timestamp = validate_timestamp(properties[:timestamp])
         value = get_value(properties[:value])
+        timestamp = get_timestamp(properties[:timestamp])
         if metrics_name and value and timestamp
           command =  "#{metrics_name} #{value} #{timestamp}\n"
           @connection.send_data(command)
