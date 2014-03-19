@@ -19,7 +19,7 @@ module Collector
         job = p[:tags][:job]
         index = p[:tags][:index]
         key = p[:key]
-        if deployment and job and index and key
+        if deployment && job && index && key
           return [deployment, job, index, key].join '.'
         end
         Config.logger.error("collector.create-graphite-key.fail: Could not create metrics name from fields tags.deployment, tags.job, tags.index or key.")
@@ -49,9 +49,9 @@ module Collector
         metrics_name = get_metrics_name(properties)
         value = get_value(properties[:value])
         timestamp = get_timestamp(properties[:timestamp])
-        if metrics_name and value and timestamp
           command =  "#{metrics_name} #{value} #{timestamp}\n"
           @connection.send_data(command)
+        if metrics_name && value && timestamp
         end
       end
     end
