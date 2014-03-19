@@ -10,7 +10,7 @@ module Collector
         @connection = EventMachine.connect(@host, @port, GraphiteConnection)
       end
 
-      def create_metrics_name(p)
+      def get_metrics_name(p)
         # Given a properties hash like so
         # {:key=>"cpu_load_avg", :timestamp=>1394801347, :value=>0.25, :tags=>{:ip=>"172.30.5.74", :role=>"core", :job=>"CloudController", :index=>0, :name=>"CloudController/0", :deployment=>"CF"}}
         # One will get a metrics key like so
@@ -46,7 +46,7 @@ module Collector
       end
 
       def send_data(properties)
-        metrics_name = create_metrics_name(properties)
+        metrics_name = get_metrics_name(properties)
         value = get_value(properties[:value])
         timestamp = get_timestamp(properties[:timestamp])
         if metrics_name and value and timestamp
