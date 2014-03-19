@@ -30,7 +30,6 @@ module Collector
           return value
         end
         Config.logger.error("collector.emit-graphite.fail: Value is not a float or int, got: #{value}")
-        nil
       end
 
       def get_timestamp(ts)
@@ -49,9 +48,8 @@ module Collector
         metrics_name = get_metrics_name(properties)
         value = get_value(properties[:value])
         timestamp = get_timestamp(properties[:timestamp])
-          command =  "#{metrics_name} #{value} #{timestamp}\n"
-          @connection.send_data(command)
         if metrics_name && value && timestamp
+          @connection.send_data("#{metrics_name} #{value} #{timestamp}\n")
         end
       end
     end
