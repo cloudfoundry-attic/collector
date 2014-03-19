@@ -2,6 +2,7 @@ require_relative "./historian/cloud_watch"
 require_relative "./historian/cf_metrics"
 require_relative "./historian/data_dog"
 require_relative "./historian/tsdb"
+require_relative "./historian/graphite"
 require "httparty"
 
 module Collector
@@ -27,6 +28,11 @@ module Collector
       if Config.cf_metrics
         historian.add_adapter(Historian::CfMetrics.new(Config.cf_metrics_api_host, HTTParty))
         Config.logger.info("collector.historian-adapter.added-cfmetrics")
+      end
+
+      if Config.graphite
+        historian.add_adapter(Historian::Graphite.new(Config.graphite_host, Config.graphite_port))
+        Config.logger.info("collector.historian-adapter.added-graphite", host: Config.graphite_host)
       end
 
       historian

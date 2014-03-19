@@ -99,6 +99,24 @@ describe Collector::Historian do
     end
   end
 
+  describe "configuring with graphite data" do
+    let(:config_override) do
+      {
+          "intervals" => {},
+          "logging" => {},
+          "graphite" => {
+              "host" => "graphite.host.domain.com",
+              "port" => 1234
+          }
+      }
+    end
+
+    it "builds a historian that logs to graphite" do
+      historian.should respond_to :send_data
+    end
+  end
+
+
   describe "configuring with all" do
     let(:config_override) do
       {

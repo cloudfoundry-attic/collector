@@ -8,7 +8,8 @@ module Collector
         :aws_secret_access_key, :datadog_api_key, :datadog_application_key,
         :nats_uri, :discover_interval, :varz_interval, :healthz_interval,
         :prune_interval, :nats_ping_interval, :local_metrics_interval,
-        :deployment_name, :datadog_data_threshold, :datadog_time_threshold_in_seconds, :cf_metrics_api_host
+        :deployment_name, :datadog_data_threshold, :datadog_time_threshold_in_seconds, :cf_metrics_api_host,
+        :graphite_host, :graphite_port
 
       def tsdb
         tsdb_host && tsdb_port
@@ -24,6 +25,10 @@ module Collector
 
       def cf_metrics
         cf_metrics_api_host
+      end
+
+      def graphite
+        graphite_host && graphite_port
       end
 
       def logger
@@ -65,6 +70,10 @@ module Collector
 
         cf_metrics_config = config["cf_metrics"] || {}
         @cf_metrics_api_host = cf_metrics_config["host"]
+
+        graphite_config = config["graphite"] || {}
+        @graphite_host = graphite_config["host"]
+        @graphite_port = graphite_config["port"]
 
         @nats_uri = config["mbus"]
 
