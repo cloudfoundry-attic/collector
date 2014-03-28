@@ -11,6 +11,8 @@ module Collector
 
     MARKETPLACE_GATEWAY = 'MarketplaceGateway'
 
+    ETCD_COMPONENT = "etcd".freeze
+
     # services components
     MYSQL_PROVISIONER = "MyaaS-Provisioner".freeze
     MYSQL_NODE = "MyaaS-Node".freeze

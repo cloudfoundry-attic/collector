@@ -1,26 +1,6 @@
 require 'spec_helper'
 
 describe Collector::Handler::Router do
-
-  class FakeHistorian
-    attr_reader :sent_data
-
-    def initialize
-      @sent_data = []
-    end
-
-    def send_data(data)
-      @sent_data << data
-    end
-
-    def has_sent_data?(key, value, tags={})
-      @sent_data.any? do |data|
-        data[:key] == key && data[:value] == value &&
-            data[:tags] == data[:tags].merge(tags)
-      end
-    end
-  end
-
   let(:historian) { FakeHistorian.new }
   let(:timestamp) { 123456789 }
   let(:handler) { Collector::Handler::LoggregatorDeaAgent.new(historian, "job") }

@@ -45,6 +45,25 @@ class MockRequest
   end
 end
 
+class FakeHistorian
+  attr_reader :data_lake
+
+  def initialize
+    @data_lake = []
+  end
+
+  def send_data(data)
+    @data_lake << data
+  end
+
+  def has_sent_data?(key, value, tags={})
+    @data_lake.any? do |data|
+      data[:key] == key && data[:value] == value &&
+        tags.all? { |k, v| data[:tags][k] == v }
+    end
+  end
+end
+
 def create_fake_collector
   Collector::Config.tsdb_host = "dummy"
   Collector::Config.tsdb_port = 14242
