@@ -9,6 +9,7 @@ require "rspec/core"
 require "timecop"
 
 require "collector/config"
+require "cf_message_bus/mock_message_bus"
 Collector::Config.configure(
   "logging" => {"level" => ENV["DEBUG"] ? "debug2" : "fatal"},
   "tsdb" => {},
@@ -72,9 +73,9 @@ def create_fake_collector
   EventMachine.should_receive(:connect).
     with("dummy", 14242, Collector::TsdbConnection)
 
-  nats_connection = double(:NatsConnection)
-  NATS.should_receive(:connect).
-    with(:uri => "nats://foo:bar@nats-host:14222").
+  nats_connection = CfMessageBus::MockMessageBus.new
+  CfMessageBus::MessageBus.should_receive(:new).
+    with(:servers => "nats://foo:bar@nats-host:14222").
     and_return(nats_connection)
 
   yield Collector::Collector.new, nats_connection

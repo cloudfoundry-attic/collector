@@ -8,7 +8,7 @@ require "bundler/setup"
 
 require "em-http-request"
 require "eventmachine"
-require "nats/client"
+require "cf_message_bus/message_bus"
 require "vcap/rolling_metric"
 
 require "collector/config"
@@ -36,25 +36,18 @@ module Collector
       @historian = ::Collector::Historian.build
       @nats_latency = VCAP::RollingMetric.new(60)
 
-      NATS.on_error do |e|
-        Config.logger.fatal("collector.nats.error", error: e.backtrace)
-        exit
-      end
+      @nats = CfMessageBus::MessageBus.new(servers: Config.nats_uri)
+      # Send initially to discover what's already running
+      @nats.subscribe(ANNOUNCE_SUBJECT) { |message| process_component_discovery(message) }
 
-      @nats = NATS.connect(:uri => Config.nats_uri) do
-        Config.logger.info("collector.nats.connected")
-        # Send initially to discover what's already running
-        @nats.subscribe(ANNOUNCE_SUBJECT) { |message| process_component_discovery(message) }
+      @inbox = NATS.create_inbox
+      @nats.subscribe(@inbox) { |message| process_component_discovery(message) }
 
-        @inbox = NATS.create_inbox
-        @nats.subscribe(@inbox) { |message| process_component_discovery(message) }
+      @nats.publish(DISCOVER_SUBJECT, "", @inbox)
 
-        @nats.publish(DISCOVER_SUBJECT, "", @inbox)
+      @nats.subscribe(COLLECTOR_PING) { |message| process_nats_ping(message.to_f) }
 
-        @nats.subscribe(COLLECTOR_PING) { |message| process_nats_ping(message.to_f) }
-
-        setup_timers
-      end
+      setup_timers
 
     end
 

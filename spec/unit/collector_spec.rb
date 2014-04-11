@@ -1,13 +1,18 @@
-require File.expand_path("../spec_helper", File.dirname(__FILE__))
+require "spec_helper"
 
 describe Collector::Collector do
   let(:collector) do
     Collector::Config.tsdb_host = "dummy"
     Collector::Config.tsdb_port = 14242
-    Collector::Config.nats_uri = "nats://foo:bar@nats-host:14222"
+    Collector::Config.nats_uri = ["nats://foo:bar@nats-host:14222"]
     EventMachine.stub(:connect)
-    NATS.stub(:connect)
     Collector::Collector.new
+  end
+
+  before do
+    message_bus = CfMessageBus::MockMessageBus.new
+    CfMessageBus::MessageBus.stub(:new).and_return(message_bus)
+    EM.stub(:add_periodic_timer)
   end
 
   def stub_em_http

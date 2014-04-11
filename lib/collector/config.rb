@@ -75,7 +75,7 @@ module Collector
         @graphite_host = graphite_config["host"]
         @graphite_port = graphite_config["port"]
 
-        @nats_uri = config["mbus"]
+        @nats_uri = config["message_bus_uris"]
 
         intervals = config["intervals"]
 

@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "nats", ">= 0.5.0.beta.12", "< 0.6"
+gem "cf-message-bus", git: "https://github.com/cloudfoundry/cf-message-bus.git"
 gem "vcap_common", git: "https://github.com/cloudfoundry/vcap-common.git"
 gem "aws-sdk", require: false
 gem "steno"
