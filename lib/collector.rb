@@ -82,7 +82,6 @@ module Collector
     #
     # @param [Hash] message the discovery message
     def process_component_discovery(message)
-      message = Yajl::Parser.parse(message)
       if message["index"]
         Config.logger.debug1("collector.component.discovered", type: message["type"], index: message["index"], host: message["host"])
         instances = (@components[message["type"]] ||= {})

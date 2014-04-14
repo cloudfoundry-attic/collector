@@ -29,12 +29,12 @@ describe Collector::Collector do
 
         Time.should_receive(:now).at_least(1).and_return(Time.at(1311979380))
 
-        collector.process_component_discovery(Yajl::Encoder.encode({
+        collector.process_component_discovery({
           "type" => "Test",
           "index" => 1,
           "host" => "test-host:1234",
           "credentials" => ["user", "pass"]
-        }))
+        })
 
         components.should == {
           "Test"=> {
@@ -58,19 +58,19 @@ describe Collector::Collector do
         components = collector.instance_eval { @components }
         components.should be_empty
 
-        collector.process_component_discovery(Yajl::Encoder.encode({
+        collector.process_component_discovery({
           "type" => "Test",
           "index" => 1,
           "host" => "test-host-1:1234",
           "credentials" => ["user", "pass"]
-        }))
+        })
 
-        collector.process_component_discovery(Yajl::Encoder.encode({
+        collector.process_component_discovery({
           "type" => "Test",
           "index" => 2,
           "host" => "test-host-2:1234",
           "credentials" => ["user", "pass"]
-        }))
+        })
 
         components["Test"]["test-host-1"][:timestamp] = 100000
         components["Test"]["test-host-2"][:timestamp] = 100005
@@ -95,12 +95,12 @@ describe Collector::Collector do
 
   describe "fetch varz" do
     before do
-      collector.process_component_discovery(Yajl::Encoder.encode(
+      collector.process_component_discovery(
                                                 "type" => "Test",
                                                 "index" => 0,
                                                 "host" => "test-host:1234",
                                                 "credentials" => ["user", "pass"]
-                                            ))
+                                            )
     end
 
     subject(:fetch_varz) { collector.fetch_varz }
@@ -160,12 +160,12 @@ describe Collector::Collector do
 
   describe "fetch healthz" do
     before do
-      collector.process_component_discovery(Yajl::Encoder.encode(
+      collector.process_component_discovery(
         "type" => "Test",
         "index" => 0,
         "host" => "test-host:1234",
         "credentials" => ["user", "pass"]
-      ))
+      )
     end
 
     subject(:fetch_healthz) { collector.fetch_healthz }
