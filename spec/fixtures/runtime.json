@@ -1,0 +1,24 @@
+{
+    "name": "Runtime",
+
+    "tags": {
+        "ip": "0.0.0.11"
+    },
+
+    "contexts": [
+        {
+            "name": "metricA",
+            "metrics": [
+                { "name": "SomeValueA", "value": 40 },
+                { "name": "SomeValueB", "value": 41, "tags": { "foo": "bar" } }
+            ]
+        },
+        {
+            "name": "metricB",
+            "metrics": [
+                { "name": "SomeValueA", "value": 40 },
+                { "name": "SomeValueB", "value": 41, "tags": { "foo": "bar" } }
+            ]
+        }
+    ]
+}

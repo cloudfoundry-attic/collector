@@ -13,6 +13,9 @@ module Collector
 
     ETCD_COMPONENT = "etcd".freeze
 
+    # diego runtime state
+    RUNTIME_COMPONENT = "runtime".freeze
+
     # services components
     MYSQL_PROVISIONER = "MyaaS-Provisioner".freeze
     MYSQL_NODE = "MyaaS-Node".freeze
