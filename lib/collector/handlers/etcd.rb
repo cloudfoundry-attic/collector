@@ -17,10 +17,6 @@ module Collector
           end
         end
       end
-
-      private
-
-      register Components::ETCD_COMPONENT
     end
   end
 end

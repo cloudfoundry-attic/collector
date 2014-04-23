@@ -17,10 +17,6 @@ module Collector
           end
         end
       end
-
-      private
-
-      register Components::RUNTIME_COMPONENT
     end
   end
 end

@@ -18,11 +18,12 @@ require "collector/service_node_handler"
 require "collector/service_gateway_handler"
 require "collector/tsdb_connection"
 require "collector/historian"
-require "collector/components"
 
 Dir[File.join(File.dirname(__FILE__), "../lib/collector/handlers/*.rb")].each do |file|
   require File.join("collector/handlers", File.basename(file, File.extname(file)))
 end
+
+require "collector/components"
 
 module Collector
   # Varz collector

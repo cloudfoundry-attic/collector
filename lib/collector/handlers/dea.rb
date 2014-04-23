@@ -60,8 +60,6 @@ module Collector
 
         {mem: reserved_mem, disk: reserved_disk}
       end
-
-      register Components::DEA_COMPONENT
     end
   end
 end

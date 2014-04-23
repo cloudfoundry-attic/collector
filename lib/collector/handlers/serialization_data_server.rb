@@ -10,8 +10,6 @@ module Collector
       def service_type
         "serialization_data_server"
       end
-
-      register Components::SERIALIZATION_DATA_SERVER
     end
   end
 end

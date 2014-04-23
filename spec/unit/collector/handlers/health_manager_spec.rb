@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe "Collector::Handler::HealthManager" do
-  before do
-    Collector::Handler.handler_map.clear
-    Collector::Handler.instance_map.clear
-  end
-
   let(:varz) do
     {
       "running" => {

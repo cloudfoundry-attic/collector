@@ -4,8 +4,6 @@ module Collector
       def service_type
         "mysql"
       end
-
-      register Components::MYSQL_NODE
     end
   end
 end

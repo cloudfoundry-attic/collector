@@ -24,10 +24,6 @@ module Collector
           end
         end
       end
-
-      private
-
-      register Components::LOGGREGATOR_DEA_AGENT_COMPONENT
     end
   end
 end

@@ -30,8 +30,6 @@ module Collector
         send_metric("hm.total_health_start_messages_sent", varz["health_start_messages_sent"], context)
         send_metric("hm.total_health_stop_messages_sent", varz["health_stop_messages_sent"], context)
       end
-
-      register Components::HEALTH_MANAGER_COMPONENT
     end
   end
 end

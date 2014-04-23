@@ -14,8 +14,6 @@ module Collector
       def service_type
         "backup_manager"
       end
-
-      register Components::BACKUP_MANAGER
     end
   end
 end

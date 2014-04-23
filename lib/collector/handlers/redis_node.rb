@@ -4,7 +4,6 @@ module Collector
       def service_type
         "redis"
       end
-      register Components::REDIS_NODE
     end
   end
 end

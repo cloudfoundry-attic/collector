@@ -12,6 +12,7 @@ module Collector
     MARKETPLACE_GATEWAY = 'MarketplaceGateway'
 
     ETCD_COMPONENT = "etcd".freeze
+    ETCD_DIEGO_COMPONENT = "etcd-diego".freeze
 
     # diego runtime state
     RUNTIME_COMPONENT = "runtime".freeze
@@ -54,6 +55,37 @@ module Collector
       VBLOB_PROVISIONER, VBLOB_NODE]).freeze
     SERVICE_AUXILIARY_COMPONENTS = Set.new([SERIALIZATION_DATA_SERVER,
       BACKUP_MANAGER]).freeze
+
+    HANDLERS = {
+      CLOUD_CONTROLLER_COMPONENT => Collector::Handler::CloudController,
+      DEA_COMPONENT => Collector::Handler::Dea,
+      HEALTH_MANAGER_COMPONENT => Collector::Handler::HealthManager,
+      HM9000_COMPONENT => Collector::Handler::HM9000,
+      ROUTER_COMPONENT => Collector::Handler::Router,
+      LOGGREGATOR_SERVER_COMPONENT => Collector::Handler::LoggregatorServer,
+      LOGGREGATOR_TRAFFICCONTROLLER_COMPONENT => Collector::Handler::LoggregatorRouter,
+      LOGGREGATOR_DEA_AGENT_COMPONENT => Collector::Handler::LoggregatorDeaAgent,
+      MARKETPLACE_GATEWAY => Collector::Handler::MarketplaceGateway,
+      ETCD_COMPONENT => Collector::Handler::Etcd,
+      ETCD_DIEGO_COMPONENT => Collector::Handler::Etcd,
+      RUNTIME_COMPONENT => Collector::Handler::Runtime,
+      MYSQL_PROVISIONER => Collector::Handler::MysqlProvisioner,
+      MYSQL_NODE => Collector::Handler::MysqlNode,
+      PGSQL_PROVISIONER => Collector::Handler::PostgresqlProvisioner,
+      PGSQL_NODE => Collector::Handler::PostgresqlNode,
+      MONGODB_PROVISIONER => Collector::Handler::MongodbProvisioner,
+      MONGODB_NODE => Collector::Handler::MongodbNode,
+      NEO4J_PROVISIONER => Collector::Handler::Neo4jProvisioner,
+      NEO4J_NODE => Collector::Handler::Neo4jNode,
+      RABBITMQ_PROVISIONER => Collector::Handler::RabbitmqProvisioner,
+      RABBITMQ_NODE => Collector::Handler::RabbitmqNode,
+      REDIS_PROVISIONER => Collector::Handler::RedisProvisioner,
+      REDIS_NODE => Collector::Handler::RedisNode,
+      VBLOB_PROVISIONER => Collector::Handler::VblobProvisioner,
+      VBLOB_NODE => Collector::Handler::VblobNode,
+      SERIALIZATION_DATA_SERVER => Collector::Handler::SerializationDataServer,
+      BACKUP_MANAGER => Collector::Handler::BackupManager
+    }.freeze
 
     # Generates the common tags used for generating common
     # (memory, health, etc.) metrics.

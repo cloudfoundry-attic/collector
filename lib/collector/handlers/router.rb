@@ -44,8 +44,6 @@ module Collector
         end
         send_metric("router.routed_app_requests", app_requests, context)
       end
-
-      register Components::ROUTER_COMPONENT
     end
   end
 end

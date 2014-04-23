@@ -1,39 +1,7 @@
 require "spec_helper"
 
 describe Collector::Handler do
-  after do
-    Collector::Handler.handler_map.clear
-    Collector::Handler.instance_map.clear
-  end
-
-  describe "handler registration" do
-    it "should register varz handler plugins" do
-      test_handler = Class.new(Collector::Handler) { register "Test" }
-      Collector::Handler.handler_map.should include("Test" => test_handler)
-    end
-
-    it "should fail to register multiple handlers for a single job" do
-      Class.new(Collector::Handler) { register "Test" }
-
-      expect {
-        Class.new(Collector::Handler) { register "Test" }
-      }.to raise_exception "Job: Test already registered"
-    end
-  end
-
   describe "#handler" do
-    it "should return the registered varz handler plugin" do
-      test_handler = Class.new(Collector::Handler) { register "Test" }
-      Collector::Handler.handler(nil, "Test").should be_kind_of(test_handler)
-    end
-
-    it "should return cached handler after the first call" do
-      test_handler_class = Class.new(Collector::Handler) { register "Test" }
-      handler1 = Collector::Handler.handler(nil, "Test")
-      handler2 = Collector::Handler.handler(nil, "Test")
-      expect(handler1).to equal handler2
-    end
-
     it "should return the default handler when none registered" do
       Collector::Handler.handler(nil, "Test").should be_kind_of(Collector::Handler)
     end

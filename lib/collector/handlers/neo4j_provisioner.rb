@@ -4,8 +4,6 @@ module Collector
       def service_type
         "neo4j"
       end
-
-      register Components::NEO4J_PROVISIONER
     end
   end
 end

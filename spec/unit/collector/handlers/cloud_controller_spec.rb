@@ -14,11 +14,6 @@ describe Collector::Handler::CloudController do
   let(:handler) { Collector::Handler::CloudController.new(historian, "CloudController") }
 
   it "should register itself as a handler" do
-    Collector::Handler.handler_map.clear
-    silence_warnings do
-      load "collector/handlers/cloud_controller.rb" # Must re-register
-    end
-    handler
     Collector::Handler.handler_map["CloudController"].should == handler.class
   end
 

@@ -63,8 +63,6 @@ module Collector
 
         result
       end
-
-      register Components::CLOUD_CONTROLLER_COMPONENT
     end
   end
 end

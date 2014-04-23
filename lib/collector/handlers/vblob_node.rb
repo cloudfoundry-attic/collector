@@ -4,8 +4,6 @@ module Collector
       def service_type
         "vblob"
       end
-
-      register Components::VBLOB_NODE
     end
   end
 end

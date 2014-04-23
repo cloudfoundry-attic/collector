@@ -22,7 +22,7 @@ require "collector"
 RSpec.configure do |c|
   c.before do
     allow(EventMachine).to receive(:defer).and_yield
-    Collector::Handler.reset
+    Collector::Handler.instance_map = {}
   end
 end
 

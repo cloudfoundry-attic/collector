@@ -23,7 +23,6 @@ module Collector
   # It's used for processing varz from jobs and publishing them to the metric collector (Historian)
   # server
   class Handler
-    @handler_map = {}
     @instance_map = {}
 
     class << self
@@ -31,14 +30,8 @@ module Collector
       attr_accessor :handler_map
       attr_accessor :instance_map
 
-      # Registers the {Handler} for a job type.
-      #
-      # @param [String, Symbol] job the job name
-      def register(job)
-        job = job.to_s
-        Config.logger.info("collector.handler.registered", handler: self, job: job)
-        raise "Job: #{job} already registered" if Handler.handler_map.has_key?(job)
-        Handler.handler_map[job] = self
+      def handler_map
+        Components::HANDLERS
       end
 
       # Retrieves a {Handler} for the job type with the provided context. Will
@@ -55,18 +48,12 @@ module Collector
       #   default one
       def handler(historian, job)
         handler_class = Handler.handler_map.fetch(job, Handler)
-
         handler_instance = @instance_map[handler_class]
         unless handler_instance
           handler_instance = handler_class.new(historian, job)
           @instance_map[handler_class] = handler_instance
         end
         handler_instance
-      end
-
-      def reset
-        @handler_map = {}
-        @instance_map = {}
       end
     end
 

@@ -4,8 +4,6 @@ module Collector
       def service_type
         "postgresql"
       end
-
-      register Components::PGSQL_NODE
     end
   end
 end

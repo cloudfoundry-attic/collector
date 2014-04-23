@@ -4,8 +4,6 @@ module Collector
       def service_type
         "mongodb"
       end
-
-      register Components::MONGODB_PROVISIONER
     end
   end
 end
