@@ -45,7 +45,7 @@ describe Collector::Historian::CfMetrics do
     let(:fake_http_client) { FakeHttpClient.new }
     let(:cf_metrics_historian) do
       Timecop.freeze(Time.at(time)) do
-        described_class.new("api.metrics.example.com", fake_http_client)
+        described_class.new("https://api.metrics.example.com", fake_http_client)
       end
     end
     let(:time) { Time.now.to_i }
