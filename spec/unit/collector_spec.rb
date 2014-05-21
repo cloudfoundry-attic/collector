@@ -234,7 +234,7 @@ describe Collector::Collector do
 
   describe "local metrics" do
     def send_local_metrics
-      allow(Time).to receive(:now) { 1000 }
+      allow(Time).to receive(:now) { Time.at(1000) }
 
       create_fake_collector do |collector, _, _|
         collector.process_nats_ping(timestamp: 997)
