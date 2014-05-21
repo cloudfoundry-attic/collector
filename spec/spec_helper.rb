@@ -75,7 +75,7 @@ def create_fake_collector
 
   nats_connection = CfMessageBus::MockMessageBus.new
   CfMessageBus::MessageBus.should_receive(:new).
-    with(:servers => "nats://foo:bar@nats-host:14222").
+    with(:servers => "nats://foo:bar@nats-host:14222", :logger => Collector::Config.logger).
     and_return(nats_connection)
 
   yield Collector::Collector.new, nats_connection

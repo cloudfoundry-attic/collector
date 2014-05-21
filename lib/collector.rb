@@ -37,7 +37,7 @@ module Collector
       @historian = ::Collector::Historian.build
       @nats_latency = VCAP::RollingMetric.new(60)
 
-      @nats = CfMessageBus::MessageBus.new(servers: Config.nats_uri)
+      @nats = CfMessageBus::MessageBus.new(servers: Config.nats_uri, logger: Config.logger)
       # Send initially to discover what's already running
       @nats.subscribe(ANNOUNCE_SUBJECT) { |message| process_component_discovery(message) }
 
