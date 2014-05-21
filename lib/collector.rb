@@ -46,7 +46,7 @@ module Collector
 
       @nats.publish(DISCOVER_SUBJECT, "", @inbox)
 
-      @nats.subscribe(COLLECTOR_PING) { |message| process_nats_ping(message.to_f) }
+      @nats.subscribe(COLLECTOR_PING) { |message| process_nats_ping(message) }
 
       setup_timers
 
@@ -74,8 +74,8 @@ module Collector
     # Processes NATS ping in order to calculate NATS roundtrip latency
     #
     # @param [Float] ping_timestamp UNIX timestamp when the ping was sent
-    def process_nats_ping(ping_timestamp)
-      @nats_latency << ((Time.now.to_f - ping_timestamp) * 1000).to_i
+    def process_nats_ping(ping_message)
+      @nats_latency << ((Time.now.to_f - ping_message[:timestamp].to_f) * 1000).to_i
     end
 
     # Processes a discovered component message, recording it's location for

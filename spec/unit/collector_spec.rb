@@ -237,9 +237,9 @@ describe Collector::Collector do
       allow(Time).to receive(:now) { 1000 }
 
       create_fake_collector do |collector, _, _|
-        collector.process_nats_ping(997)
-        collector.process_nats_ping(998)
-        collector.process_nats_ping(999)
+        collector.process_nats_ping(timestamp: 997)
+        collector.process_nats_ping(timestamp: 998)
+        collector.process_nats_ping(timestamp: 999)
 
         handler = double(:Handler)
         yield handler
@@ -279,7 +279,7 @@ describe Collector::Collector do
 
     it 'should report metrics' do
       Collector::Historian.stub(:build).and_return(historian)
-      collector.process_nats_ping((Time.now + 50).to_f)
+      collector.process_nats_ping(timestamp: (Time.now + 50).to_f.to_s)
 
       historian.should_receive(:send_data)
       collector.send_local_metrics
