@@ -10,19 +10,24 @@ require "timecop"
 
 require "collector/config"
 require "cf_message_bus/mock_message_bus"
-Collector::Config.configure(
-  "logging" => {"level" => ENV["DEBUG"] ? "debug2" : "fatal"},
-  "tsdb" => {},
-  "intervals" => {}
-)
+
 
 require "collector"
 
+
+def set_collector_base_config
+  Collector::Config.configure(
+    "logging" => {"level" => ENV["DEBUG"] ? "debug2" : "fatal"},
+    "tsdb" => {},
+    "intervals" => {}
+  )
+end
 
 RSpec.configure do |c|
   c.before do
     allow(EventMachine).to receive(:defer).and_yield
     Collector::Handler.instance_map = {}
+    set_collector_base_config
   end
 end
 
