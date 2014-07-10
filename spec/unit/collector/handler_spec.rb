@@ -107,6 +107,15 @@ describe Collector::Handler do
       })
       handler.send_metric("some_key", 2, context)
     end
+
+    it "should not send metrics without a value" do
+      historian = double('Historian')
+      historian.should_not_receive(:send_data)
+      Collector::Config.logger.should_receive(:warn).with("Received no value for some_key")
+
+      handler = Collector::Handler.handler(historian, "DEA")
+      handler.send_metric("some_key", nil , nil)
+    end
   end
 
   describe "#send_latency_metric" do

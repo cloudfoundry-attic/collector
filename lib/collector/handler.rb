@@ -114,6 +114,11 @@ module Collector
     # @param [String] name the metric name
     # @param [String, Fixnum] value the metric value
     def send_metric(name, value, context, tags = {})
+      if value.nil?
+        Config.logger.warn("Received no value for #{name}")
+        return
+      end
+
       tags.merge!(additional_tags(context))
       tags.merge!(Components.get_job_tags(@job))
       tags.merge!(job: @job, index: context.index)
