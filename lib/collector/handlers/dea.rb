@@ -29,7 +29,7 @@ module Collector
       private
 
       DEA_STATES = %W[
-        BORN STARTING RUNNING STOPPING STOPPED CRASHED RESUMING DELETED
+        BORN STARTING RUNNING STOPPING STOPPED CRASHED RESUMING DELETED EVACUATING
       ].freeze
 
       def state_counts(context)
@@ -44,7 +44,7 @@ module Collector
         metrics
       end
 
-      RESERVING_STATES = %W[BORN STARTING RUNNING RESUMING].freeze
+      RESERVING_STATES = %W[BORN STARTING RUNNING RESUMING EVACUATING].freeze
 
       def registry_usage(context)
         reserved_mem = reserved_disk = 0

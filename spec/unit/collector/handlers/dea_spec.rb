@@ -54,12 +54,13 @@ describe Collector::Handler::Dea do
       handler.should_receive(:send_metric).with("dea_registry_crashed", 1, context)
       handler.should_receive(:send_metric).with("dea_registry_deleted", 1, context)
       handler.should_receive(:send_metric).with("dea_registry_resuming", 1, context)
+      handler.should_receive(:send_metric).with("dea_registry_evacuating", 1, context)
       process
     end
 
     it "includes born, running, starting and resuming (not sure) in mem and disk usage" do
-      handler.should_receive(:send_metric).with("dea_registry_mem_reserved", 256 * 5, context)
-      handler.should_receive(:send_metric).with("dea_registry_disk_reserved", 1024 * 5, context)
+      handler.should_receive(:send_metric).with("dea_registry_mem_reserved", 256 * 6, context)
+      handler.should_receive(:send_metric).with("dea_registry_disk_reserved", 1024 * 6, context)
       process
     end
 
