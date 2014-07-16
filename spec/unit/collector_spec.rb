@@ -131,14 +131,25 @@ describe Collector::Collector do
 
     context "when the varz has json errors" do
       it 'should log the error' do
-        request = stub_em_http
+        request         = stub_em_http
+        response_header = double('response_header', status: 418)
+
+        allow(Collector::Config.logger).to receive(:error)
+        allow(request).to receive(:response).and_return('foo')
+        allow(request).to receive(:response_header).and_return(response_header)
+
         fetch_varz
-
-        Collector::Config.logger.stub(:warn).with(/\AError processing varz: lexical error: .*?; fetched from test-host:1234\z/m)
-        Collector::Config.logger.stub(:warn).with(instance_of(Yajl::ParseError))
-
-        request.stub(:response) { 'foo' }
         request.call_callback
+
+        expect(Collector::Config.logger).to have_received(:error).with(
+          'collector.varz.processing-failed',
+          hash_including(
+            error:         instance_of(Yajl::ParseError),
+            response:      'foo',
+            request_uri:   match(/http.*varz/),
+            response_code: 418
+          )
+        )
       end
     end
 

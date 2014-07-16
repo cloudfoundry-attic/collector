@@ -194,7 +194,12 @@ module Collector
             rescue => e
               Config.logger.error(
                 "collector.#{type}.processing-failed",
-                :error => e, :backtrace => e.backtrace)
+                error: e,
+                backtrace: e.backtrace,
+                request_uri: uri,
+                response: http.response,
+                response_code: http.response_header.status
+              )
             end
           end
         end
