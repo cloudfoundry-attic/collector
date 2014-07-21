@@ -7,6 +7,7 @@ gem "steno"
 gem "httparty"
 
 group :test do
+  gem 'codeclimate-test-reporter', require: false
   gem "rake"
   gem "rspec"
   gem "ci_reporter"

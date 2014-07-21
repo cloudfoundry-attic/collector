@@ -5,6 +5,11 @@ require "rubygems"
 require "bundler"
 Bundler.setup(:default, :test)
 
+if ENV["CODECLIMATE_REPO_TOKEN"]
+  require "codeclimate-test-reporter"
+  CodeClimate::TestReporter.start
+end
+
 require "rspec/core"
 require "timecop"
 
