@@ -67,7 +67,7 @@ module Collector
       end
 
       EM.add_periodic_timer(Config.nats_ping_interval) do
-        @nats.publish(COLLECTOR_PING, Time.now.to_f.to_s)
+        @nats.publish(COLLECTOR_PING, { timestamp: Time.now.to_f.to_s })
       end
     end
 
