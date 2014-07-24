@@ -8,6 +8,7 @@ module Collector
     LOGGREGATOR_SERVER_COMPONENT = "LoggregatorServer".freeze
     LOGGREGATOR_TRAFFICCONTROLLER_COMPONENT = "LoggregatorTrafficcontroller".freeze
     LOGGREGATOR_DEA_AGENT_COMPONENT = "LoggregatorDeaAgent".freeze
+    METRON_AGENT_COMPONENT = "MetronAgent".freeze
 
     MARKETPLACE_GATEWAY = 'MarketplaceGateway'
 
@@ -65,6 +66,7 @@ module Collector
       LOGGREGATOR_SERVER_COMPONENT => Collector::Handler::LoggregatorServer,
       LOGGREGATOR_TRAFFICCONTROLLER_COMPONENT => Collector::Handler::LoggregatorRouter,
       LOGGREGATOR_DEA_AGENT_COMPONENT => Collector::Handler::LoggregatorDeaAgent,
+      METRON_AGENT_COMPONENT => Collector::Handler::MetronAgent,
       MARKETPLACE_GATEWAY => Collector::Handler::MarketplaceGateway,
       ETCD_COMPONENT => Collector::Handler::Etcd,
       ETCD_DIEGO_COMPONENT => Collector::Handler::Etcd,
