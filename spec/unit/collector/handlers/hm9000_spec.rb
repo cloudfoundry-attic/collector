@@ -25,6 +25,10 @@ describe Collector::Handler::HM9000 do
           },
           "contexts" => [
               {
+                "name" => "null_metric",
+                "metrics" => nil
+              },
+              {
                 "name" => "HM9000",
                 "metrics" => [
                    {"name" => "NumberOfAppsWithAllInstancesReporting", "value" => 120},

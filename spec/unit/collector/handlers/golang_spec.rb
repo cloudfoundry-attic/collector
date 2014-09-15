@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Collector::Handler::MetronAgent do
+describe Collector::Handler::Golang do
   let(:historian) { FakeHistorian.new }
   let(:timestamp) { 123456789 }
-  let(:handler) { Collector::Handler::MetronAgent.new(historian, "job") }
+  let(:handler) { Collector::Handler::Golang.new(historian, "job") }
   let(:context) { Collector::HandlerContext.new(1, timestamp, varz) }
 
   describe "process" do
@@ -12,9 +12,6 @@ describe Collector::Handler::MetronAgent do
           "name" => "MetronAgent",
           "numCPUS" => 1,
           "numGoRoutines" => 1,
-          "tags" => {
-              "ip" => "10.10.10.10"
-          },
           "memoryStats" => {
             "numBytesAllocatedHeap" => 1024,
             "numBytesAllocatedStack" => 4096,
@@ -23,15 +20,7 @@ describe Collector::Handler::MetronAgent do
             "numFrees" => 10,
             "lastGCPauseTimeNS" => 1000
           },
-          "contexts" => [
-              {"name" => "null_metric",
-                "metrics" => nil},
-              {"name" => "agentListener",
-               "metrics" => [
-                   {"name" => "currentBufferCount", "value" => 12},
-                   {"name" => "receivedMessageCount", "value" => 45},
-                   {"name" => "receivedByteCount", "value" => 6}]},
-          ]
+          "contexts" => []
       }
     end
 
@@ -45,9 +34,6 @@ describe Collector::Handler::MetronAgent do
       historian.should have_sent_data("MetronAgent.memoryStats.numMallocs", 3)
       historian.should have_sent_data("MetronAgent.memoryStats.numFrees", 10)
       historian.should have_sent_data("MetronAgent.memoryStats.lastGCPauseTimeNS", 1000)
-      historian.should have_sent_data("MetronAgent.agentListener.currentBufferCount", 12)
-      historian.should have_sent_data("MetronAgent.agentListener.receivedMessageCount", 45)
-      historian.should have_sent_data("MetronAgent.agentListener.receivedByteCount", 6)
     end
   end
 end

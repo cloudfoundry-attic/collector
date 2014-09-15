@@ -21,6 +21,10 @@
             ]
         },
         {
+            "name": "null_metric",
+            "metrics": null
+        },
+        {
             "name": "store",
             "metrics": [
                 { "name": "SomeValueA", "value": 40 },
