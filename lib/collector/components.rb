@@ -5,7 +5,7 @@ module Collector
     HEALTH_MANAGER_COMPONENT = "HealthManager".freeze
     HM9000_COMPONENT = "HM9000".freeze
     ROUTER_COMPONENT = "Router".freeze
-    LOGGREGATOR_SERVER_COMPONENT = "LoggregatorServer".freeze
+    DOPPLER_SERVER_COMPONENT = "DopplerServer".freeze
     LOGGREGATOR_TRAFFICCONTROLLER_COMPONENT = "LoggregatorTrafficcontroller".freeze
     LOGGREGATOR_DEA_AGENT_COMPONENT = "LoggregatorDeaAgent".freeze
     METRON_AGENT_COMPONENT = "MetronAgent".freeze
@@ -46,7 +46,7 @@ module Collector
 
     CORE_COMPONENTS = Set.new([CLOUD_CONTROLLER_COMPONENT, DEA_COMPONENT,
       HEALTH_MANAGER_COMPONENT, HM9000_COMPONENT, ROUTER_COMPONENT,
-      LOGGREGATOR_SERVER_COMPONENT, LOGGREGATOR_TRAFFICCONTROLLER_COMPONENT, LOGGREGATOR_DEA_AGENT_COMPONENT]).freeze
+      DOPPLER_SERVER_COMPONENT, LOGGREGATOR_TRAFFICCONTROLLER_COMPONENT, LOGGREGATOR_DEA_AGENT_COMPONENT]).freeze
     SERVICE_COMPONENTS = Set.new([MYSQL_PROVISIONER, MYSQL_NODE,
       PGSQL_PROVISIONER, PGSQL_NODE,
       MONGODB_PROVISIONER, MONGODB_NODE,
@@ -63,7 +63,7 @@ module Collector
       HEALTH_MANAGER_COMPONENT => Collector::Handler::HealthManager,
       HM9000_COMPONENT => Collector::Handler::HM9000,
       ROUTER_COMPONENT => Collector::Handler::Router,
-      LOGGREGATOR_SERVER_COMPONENT => Collector::Handler::LoggregatorServer,
+      DOPPLER_SERVER_COMPONENT => Collector::Handler::DopplerServer,
       LOGGREGATOR_TRAFFICCONTROLLER_COMPONENT => Collector::Handler::LoggregatorRouter,
       LOGGREGATOR_DEA_AGENT_COMPONENT => Collector::Handler::LoggregatorDeaAgent,
       METRON_AGENT_COMPONENT => Collector::Handler::MetronAgent,

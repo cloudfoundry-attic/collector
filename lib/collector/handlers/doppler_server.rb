@@ -1,6 +1,6 @@
 module Collector
   class Handler
-    class LoggregatorServer < Handler
+    class DopplerServer < Handler
       def process(context)
         varz_message = context.varz
         component_name = varz_message['name']
