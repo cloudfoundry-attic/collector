@@ -17,6 +17,7 @@ describe Collector::Historian::Graphite do
         timestamp: 1234568912,
         value: 2,
         tags: {
+          :ip => "1.2.3.4",
           :deployment => "CF",
           :job => "Blurgh",
           :index => 0
@@ -43,6 +44,14 @@ describe Collector::Historian::Graphite do
           connection.should_receive(:send_data).with("CF.Blurgh.0.some_key 2 #{Time.now.to_i}\n")
           graphite_historian.send_data(metric_payload)
         end
+      end
+    end
+
+    context "when the ip_key option is set" do
+      it "use IP in graphite key" do
+        graphite_historian = described_class.new("host", 9999, true)
+        connection.should_receive(:send_data).with("CF.Blurgh.1-2-3-4.some_key 2 1234568912\n")
+        graphite_historian.send_data(metric_payload)
       end
     end
 

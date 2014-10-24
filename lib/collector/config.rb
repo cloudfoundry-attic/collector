@@ -9,7 +9,7 @@ module Collector
         :nats_uri, :discover_interval, :varz_interval, :healthz_interval,
         :prune_interval, :nats_ping_interval, :local_metrics_interval,
         :deployment_name, :datadog_data_threshold, :datadog_time_threshold_in_seconds, :cf_metrics_api_host,
-        :graphite_host, :graphite_port
+        :graphite_host, :graphite_port, :graphite_ip_key
 
       def tsdb
         tsdb_host && tsdb_port
@@ -28,7 +28,7 @@ module Collector
       end
 
       def graphite
-        graphite_host && graphite_port
+        graphite_host && graphite_port && graphite_ip_key
       end
 
       def logger
@@ -74,6 +74,7 @@ module Collector
         graphite_config = config["graphite"] || {}
         @graphite_host = graphite_config["host"]
         @graphite_port = graphite_config["port"]
+        @graphite_ip_key = graphite_config["ip_key"] =~ (/^(true|t|yes|y|1)$/i) ? true : false
 
         @nats_uri = config["message_bus_uris"]
 

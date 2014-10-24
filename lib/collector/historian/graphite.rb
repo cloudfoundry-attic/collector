@@ -4,9 +4,10 @@ module Collector
   class Historian
     class Graphite
       attr_reader :connection
-      def initialize(host, port)
+      def initialize(host, port, ip_key=false)
         @host = host
         @port = port
+        @ip_key = ip_key
         @connection = EventMachine.connect(@host, @port, GraphiteConnection)
       end
 
@@ -29,7 +30,12 @@ module Collector
         # CF.CloudController0.cpu_load_avg
         deployment = p[:tags][:deployment]
         job = p[:tags][:job]
-        index = p[:tags][:index]
+        if(@ip_key)
+          index = p[:tags][:ip].gsub!(".","-")
+        else
+          index = p[:tags][:index]
+        end
+
         key = p[:key]
 
         unless deployment && job && index && key
