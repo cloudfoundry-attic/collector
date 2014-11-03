@@ -32,7 +32,7 @@ describe Collector::Historian::Graphite do
     it "converts the properties hash graphite data" do
       graphite_historian = described_class.new("host", 9999)
 
-      connection.should_receive(:send_data).with("CF.Blurgh.0.some_key 2 1234568912\n")
+      connection.should_receive(:send_data).with("CF.Blurgh.0.1-2-3-4.some_key 2 1234568912\n")
       graphite_historian.send_data(metric_payload)
     end
 
@@ -41,19 +41,12 @@ describe Collector::Historian::Graphite do
         graphite_historian = described_class.new("host", 9999)
         metric_payload.delete(:timestamp)
         Timecop.freeze Time.now.to_i do
-          connection.should_receive(:send_data).with("CF.Blurgh.0.some_key 2 #{Time.now.to_i}\n")
+          connection.should_receive(:send_data).with("CF.Blurgh.0.1-2-3-4.some_key 2 #{Time.now.to_i}\n")
           graphite_historian.send_data(metric_payload)
         end
       end
     end
 
-    context "when the ip_key option is set" do
-      it "use IP in graphite key" do
-        graphite_historian = described_class.new("host", 9999, true)
-        connection.should_receive(:send_data).with("CF.Blurgh.1-2-3-4.some_key 2 1234568912\n")
-        graphite_historian.send_data(metric_payload)
-      end
-    end
 
     context "when the passed in data has wrongly formatted timestamp" do
       it "uses now" do
@@ -61,7 +54,7 @@ describe Collector::Historian::Graphite do
 
         metric_payload.update(:timestamp => "BLURGh!!11")
         Timecop.freeze Time.now.to_i do
-          connection.should_receive(:send_data).with("CF.Blurgh.0.some_key 2 #{Time.now.to_i}\n")
+          connection.should_receive(:send_data).with("CF.Blurgh.0.1-2-3-4.some_key 2 #{Time.now.to_i}\n")
           graphite_historian.send_data(metric_payload)
         end
       end

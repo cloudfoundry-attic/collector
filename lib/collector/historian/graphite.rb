@@ -4,10 +4,9 @@ module Collector
   class Historian
     class Graphite
       attr_reader :connection
-      def initialize(host, port, ip_key=false)
+      def initialize(host, port)
         @host = host
         @port = port
-        @ip_key = ip_key
         @connection = EventMachine.connect(@host, @port, GraphiteConnection)
       end
 
@@ -30,20 +29,16 @@ module Collector
         # CF.CloudController0.cpu_load_avg
         deployment = p[:tags][:deployment]
         job = p[:tags][:job]
-        if(@ip_key)
-          index = p[:tags][:ip].gsub!(".","-")
-        else
-          index = p[:tags][:index]
-        end
-
+        index = p[:tags][:index]
+        ip = p[:tags][:ip].gsub!(".","-")
         key = p[:key]
 
-        unless deployment && job && index && key
+        unless deployment && job && index && ip && key
           Config.logger.error("collector.create-graphite-key.fail: Could not create metrics name from fields tags.deployment, tags.job, tags.index or key.")
           return nil
         end
 
-        [deployment, job, index, key].join '.'
+        [deployment, job, index, ip, key].join '.'
       end
 
       def get_value(value)
