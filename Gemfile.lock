@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/cloudfoundry/cf-message-bus.git
-  revision: f463c0ff201abae2abaa2c6264e498d762aca0ed
+  revision: 462341fb3f0e313caf5af3c14efc217326175783
   specs:
     cf-message-bus (0.3.0)
       eventmachine (~> 1.0.0)
@@ -110,10 +110,10 @@ GEM
       fluent-logger
       grape
       yajl-ruby (~> 1.0)
-    thin (1.6.2)
-      daemons (>= 1.0.9)
-      eventmachine (>= 1.0.0)
-      rack (>= 1.0.0)
+    thin (1.6.3)
+      daemons (~> 1.0, >= 1.0.9)
+      eventmachine (~> 1.0)
+      rack (~> 1.0)
     timecop (0.6.3)
     uuidtools (2.1.3)
     vcap-concurrency (0.1.0)
