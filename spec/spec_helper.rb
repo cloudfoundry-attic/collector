@@ -15,7 +15,7 @@ require "timecop"
 
 require "collector/config"
 require "cf_message_bus/mock_message_bus"
-
+require "webmock/rspec"
 
 require "collector"
 
@@ -33,26 +33,9 @@ RSpec.configure do |c|
     Collector::Handler.instance_map = {}
     set_collector_base_config
   end
-end
 
-class MockRequest
-  def errback(&blk)
-    @errback = blk
-  end
-
-  def callback(&blk)
-    @callback = blk
-  end
-
-  def call_errback(*args)
-    raise "No errback set up" unless @errback
-    @errback.call(*args)
-  end
-
-  def call_callback(*args)
-    raise "No callback set up" unless @callback
-    @callback.call(*args)
-  end
+  c.before(:all) { WebMock.disable_net_connect!(:allow => "codeclimate.com") }
+  c.after(:all) { WebMock.disable_net_connect!(:allow => "codeclimate.com") }
 end
 
 class FakeHistorian
