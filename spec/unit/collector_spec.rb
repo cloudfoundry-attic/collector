@@ -4,7 +4,7 @@ describe Collector::Collector do
   let(:collector) do
     Collector::Config.tsdb_host = "dummy"
     Collector::Config.tsdb_port = 14242
-    Collector::Config.nats_uri = ["nats://foo:bar@nats-host:14222"]
+    Collector::Config.nats_uri  = ["nats://foo:bar@nats-host:14222"]
     EventMachine.stub(:connect)
     Collector::Collector.new
   end
@@ -13,12 +13,6 @@ describe Collector::Collector do
     message_bus = CfMessageBus::MockMessageBus.new
     CfMessageBus::MessageBus.stub(:new).and_return(message_bus)
     EM.stub(:add_periodic_timer)
-  end
-
-  def stub_em_http
-    http_request = MockRequest.new
-    EventMachine::HttpRequest.stub_chain(:new, get: http_request)
-    http_request
   end
 
   describe "component discovery" do
@@ -30,19 +24,19 @@ describe Collector::Collector do
         Time.should_receive(:now).at_least(1).and_return(Time.at(1311979380))
 
         collector.process_component_discovery({
-          "type" => "Test",
-          "index" => 1,
-          "host" => "test-host:1234",
-          "credentials" => ["user", "pass"]
-        })
+            "type"        => "Test",
+            "index"       => 1,
+            "host"        => "test-host:1234",
+            "credentials" => ["user", "pass"]
+          })
 
         components.should == {
-          "Test"=> {
+          "Test" => {
             "test-host" => {
-              :host => "test-host:1234",
-              :index => 1,
+              :host        => "test-host:1234",
+              :index       => 1,
               :credentials => ["user", "pass"],
-              :timestamp => 1311979380
+              :timestamp   => 1311979380
             }
           }
         }
@@ -59,18 +53,18 @@ describe Collector::Collector do
         components.should be_empty
 
         collector.process_component_discovery({
-          "type" => "Test",
-          "index" => 1,
-          "host" => "test-host-1:1234",
-          "credentials" => ["user", "pass"]
-        })
+            "type"        => "Test",
+            "index"       => 1,
+            "host"        => "test-host-1:1234",
+            "credentials" => ["user", "pass"]
+          })
 
         collector.process_component_discovery({
-          "type" => "Test",
-          "index" => 2,
-          "host" => "test-host-2:1234",
-          "credentials" => ["user", "pass"]
-        })
+            "type"        => "Test",
+            "index"       => 2,
+            "host"        => "test-host-2:1234",
+            "credentials" => ["user", "pass"]
+          })
 
         components["Test"]["test-host-1"][:timestamp] = 100000
         components["Test"]["test-host-2"][:timestamp] = 100005
@@ -80,12 +74,12 @@ describe Collector::Collector do
         collector.prune_components
 
         components.should == {
-          "Test"=> {
+          "Test" => {
             "test-host-2" => {
-              :host=>"test-host-2:1234",
-              :index => 2,
-              :credentials=>["user", "pass"],
-              :timestamp=>100005
+              :host        => "test-host-2:1234",
+              :index       => 2,
+              :credentials => ["user", "pass"],
+              :timestamp   => 100005
             }
           }
         }
@@ -96,75 +90,96 @@ describe Collector::Collector do
   describe "fetch varz" do
     before do
       collector.process_component_discovery(
-                                                "type" => "Test",
-                                                "index" => 0,
-                                                "host" => "test-host:1234",
-                                                "credentials" => ["user", "pass"]
-                                            )
+        "type"        => "Test",
+        "index"       => 0,
+        "host"        => "test-host:1234",
+        "credentials" => ["user", "pass"]
+      )
+
+      stub_request(:get, "http://user:pass@test-host:1234/varz").
+        to_return(body: response_body, status: response_status)
+
+      allow(EM).to receive(:next_tick) { |&blk| blk.call }
     end
+
+    let(:response_body) { '{"foo": "bar"}' }
+    let(:response_status) { 200 }
 
     subject(:fetch_varz) { collector.fetch_varz }
 
     context "when a normal varz returns succesfully" do
       it "hits the correct endpoint" do
-        http_conn = double(:http_conn)
-        EventMachine::HttpRequest.should_receive(:new).with("http://test-host:1234/varz") { http_conn }
-        http_conn.should_receive(:get).with(head: { "Authorization" => "Basic dXNlcjpwYXNz" }) { double.as_null_object }
-
         fetch_varz
+
+        expect(a_request(:get, "http://user:pass@test-host:1234/varz")).to have_been_made
       end
 
       it "gives the message to the correct handler" do
         Timecop.freeze(Time.now) do
-          request = stub_em_http
+          handler = double(:handler)
+          allow(Collector::Handler).to receive(:handler).with(anything, anything).and_return(handler)
+          allow(handler).to receive(:do_process)
+
           fetch_varz
 
-          request.stub(:response) { '{"foo": "bar"}' }
-          handler = double(:handler)
-          Collector::Handler.should_receive(:handler).with(anything, anything) { handler }
-          handler.should_receive(:do_process).with(Collector::HandlerContext.new(0, Time.now.to_i, { "foo" => "bar" }))
-
-          request.call_callback
+          expect(handler).to have_received(:do_process).with(Collector::HandlerContext.new(0, Time.now.to_i, { "foo" => "bar" }))
         end
       end
     end
 
     context "when the varz has json errors" do
+      let(:response_body) { 'foo' }
       it 'should log the error' do
-        request         = stub_em_http
-        response_header = double('response_header', status: 418)
-
         allow(Collector::Config.logger).to receive(:error)
-        allow(request).to receive(:response).and_return('foo')
-        allow(request).to receive(:response_header).and_return(response_header)
 
         fetch_varz
-        request.call_callback
 
         expect(Collector::Config.logger).to have_received(:error).with(
-          'collector.varz.processing-failed',
-          hash_including(
-            error:         instance_of(Yajl::ParseError),
-            response:      'foo',
-            request_uri:   match(/http.*varz/),
-            response_code: 418
+            'collector.varz.processing-failed',
+            hash_including(
+              error:         instance_of(Yajl::ParseError),
+              response:      'foo',
+              request_uri:   match(/http.*varz/),
+              response_code: 200
+            )
           )
-        )
       end
     end
 
     context "when the varz does not return succefully" do
+      let(:response_status) { 404 }
+      let(:response_body) { 'some error' }
+
       it "should log the failure" do
-        request = stub_em_http
-        request.stub(error: "404 not found")
+        allow(Collector::Config.logger).to receive(:warn)
 
         fetch_varz
 
-        Collector::Config.logger.stub(:warn).with(
-          "collector.varz.failed",
-          :host => "test-host:1234", :error => "404 not found")
+        expect(Collector::Config.logger).to have_received(:warn).with(
+            'collector.varz.failed',
+            hash_including(
+              host:  "test-host:1234",
+              error: 'some error')
+          )
+      end
+    end
 
-        request.call_errback(:foo)
+    context "when the varz request raises an exception" do
+      before do
+        stub_request(:get, "http://user:pass@test-host:1234/varz").to_raise(StandardError.new("error message"))
+      end
+
+      it "should log the failure" do
+        allow(Collector::Config.logger).to receive(:warn)
+
+        fetch_varz
+
+        expect(Collector::Config.logger).to have_received(:warn).with(
+            'collector.varz.failed',
+            hash_including(
+              host:  "test-host:1234",
+              error: "error message")
+          )
       end
     end
   end
@@ -172,73 +187,82 @@ describe Collector::Collector do
   describe "fetch healthz" do
     before do
       collector.process_component_discovery(
-        "type" => "Test",
-        "index" => 0,
-        "host" => "test-host:1234",
+        "type"        => "Test",
+        "index"       => 0,
+        "host"        => "test-host:1234",
         "credentials" => ["user", "pass"]
       )
+
+      stub_request(:get, "http://user:pass@test-host:1234/healthz").
+        to_return(body: response_body, status: response_status)
+
+      allow(EM).to receive(:next_tick) { |&blk| blk.call }
     end
+
+    let(:response_body) { '{"foo": "bar"}' }
+    let(:response_status) { 200 }
 
     subject(:fetch_healthz) { collector.fetch_healthz }
 
     context "when a normal healthz returns succesfully" do
-      before { Collector::Config.stub(:deployment_name).and_return("the_deployment") }
+      before { allow(Collector::Config).to receive(:deployment_name).and_return("the_deployment") }
 
       it "hits the correct endpoint" do
-        http_conn = double(:http_conn)
-        EventMachine::HttpRequest.should_receive(:new).with("http://test-host:1234/healthz") { http_conn }
-        http_conn.should_receive(:get).with(head: { "Authorization" => "Basic dXNlcjpwYXNz" }) { double.as_null_object }
 
         fetch_healthz
+        expect(a_request(:get, "http://user:pass@test-host:1234/healthz")).to have_been_made
+
       end
 
-      it "directly sends the bad health out" do
-        Timecop.freeze(Time.now) do
-          request = stub_em_http
-          fetch_healthz
+      context "with bad health" do
+        let(:response_body) { 'bad' }
 
-          request.stub(:response) { 'bad' }
-          Collector::Historian.any_instance.should_receive(:send_data).with(
-            key: "healthy",
-            timestamp: Time.now.to_i,
-            value: 0,
-            tags: {job: "Test", index: 0, deployment: "the_deployment", ip: "test-host"}
-          )
+        it "directly sends the bad health out" do
+          Timecop.freeze(Time.now) do
 
-          request.call_callback
+            expect_any_instance_of(Collector::Historian).to receive(:send_data).with(
+                key:       "healthy",
+                timestamp: Time.now.to_i,
+                value:     0,
+                tags:      { job: "Test", index: 0, deployment: "the_deployment", ip: "test-host" }
+              )
+
+            fetch_healthz
+          end
         end
       end
 
-      it "directly sends the good health out" do
-        Timecop.freeze(Time.now) do
-          request = stub_em_http
-          fetch_healthz
+      context "with good health" do
+        let(:response_body) { 'ok' }
 
-          request.stub(:response) { 'ok' }
-          Collector::Historian.any_instance.should_receive(:send_data).with(
-            key: "healthy",
-            timestamp: Time.now.to_i,
-            value: 1,
-            tags: {job: "Test", index: 0, deployment: "the_deployment", ip: "test-host"}
-          )
+        it "directly sends the good health out" do
+          Timecop.freeze(Time.now) do
 
-          request.call_callback
+            expect_any_instance_of(Collector::Historian).to receive(:send_data).with(
+                key:       "healthy",
+                timestamp: Time.now.to_i,
+                value:     1,
+                tags:      { job: "Test", index: 0, deployment: "the_deployment", ip: "test-host" }
+              )
+
+            fetch_healthz
+          end
         end
       end
     end
 
     context "when the healthz does not return succefully" do
+      let(:response_body) { "404 not found" }
+      let(:response_status) { 404 }
+
       it "should log the failure" do
-        request = stub_em_http
-        request.stub(error: "404 not found")
+        allow(Collector::Config.logger).to receive(:warn)
 
         fetch_healthz
 
-        Collector::Config.logger.stub(:warn).with(
-          "collector.healthz.failed",
-          :host => "test-host:1234", :error => "404 not found")
-
-        request.call_errback(:foo)
+        expect(Collector::Config.logger).to have_received(:warn).with(
+            "collector.healthz.failed",
+            :host => "test-host:1234", :error => "404 not found")
       end
     end
   end
@@ -265,7 +289,7 @@ describe Collector::Collector do
 
     it "should send nats latency rolling metric" do
       send_local_metrics do |handler|
-        latency = {:value => 6000, :samples => 3}
+        latency = { :value => 6000, :samples => 3 }
         handler.should_receive(:send_latency_metric).with("nats.latency.1m", latency, kind_of(Collector::HandlerContext))
       end
     end
@@ -274,13 +298,13 @@ describe Collector::Collector do
   describe "authorization headers" do
     it "should correctly encode long credentials (no CR/LF)" do
       create_fake_collector do |collector, _, _|
-        collector.authorization_headers({:credentials => ["A" * 64, "B" * 64]}).
-            should == {
-              "Authorization" =>
-                 "Basic QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB" +
-                   "QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQTpCQkJCQkJC" +
-                   "QkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJC" +
-                   "QkJCQkJCQkJCQkJCQkJCQkJCQkJC"}
+        collector.authorization_headers({ :credentials => ["A" * 64, "B" * 64] }).
+          should == {
+          "Authorization" =>
+            "Basic QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB" +
+              "QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQTpCQkJCQkJC" +
+              "QkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJC" +
+              "QkJCQkJCQkJCQkJCQkJCQkJCQkJC" }
       end
     end
   end

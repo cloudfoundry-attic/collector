@@ -43,6 +43,8 @@ GEM
     codeclimate-test-reporter (0.3.0)
       simplecov (>= 0.7.1, < 1.0.0)
     cookiejar (0.3.0)
+    crack (0.4.2)
+      safe_yaml (~> 1.0.0)
     daemons (1.1.9)
     diff-lcs (1.2.5)
     docile (1.1.5)
@@ -99,6 +101,7 @@ GEM
     rspec-expectations (2.14.4)
       diff-lcs (>= 1.1.3, < 2.0)
     rspec-mocks (2.14.4)
+    safe_yaml (1.0.4)
     simplecov (0.9.0)
       docile (~> 1.1.0)
       multi_json
@@ -118,6 +121,9 @@ GEM
     uuidtools (2.1.3)
     vcap-concurrency (0.1.0)
     vmstat (2.1.0)
+    webmock (1.17.4)
+      addressable (>= 2.2.7)
+      crack (>= 0.3.2)
     yajl-ruby (1.2.1)
 
 PLATFORMS
@@ -134,3 +140,4 @@ DEPENDENCIES
   steno
   timecop
   vcap_common!
+  webmock

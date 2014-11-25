@@ -6,7 +6,6 @@ require "set"
 require "rubygems"
 require "bundler/setup"
 
-require "em-http-request"
 require "eventmachine"
 require "cf_message_bus/message_bus"
 require "vcap/rolling_metric"
@@ -121,9 +120,9 @@ module Collector
     # Fetches the varzs from all the components and calls the proper {Handler}
     # to record the metrics in the TSDB server
     def fetch_varz
-      fetch(:varz) do |http, job, instance|
+      fetch(:varz) do |resp, job, instance|
         index = instance[:index]
-        varz = Yajl::Parser.parse(http.response)
+        varz = Yajl::Parser.parse(resp)
         now = Time.now.to_i
 
         handler = Handler.handler(@historian, job)
@@ -136,10 +135,10 @@ module Collector
     # Fetches the healthz from all the components and calls the proper {Handler}
     # to record the metrics in the TSDB server
     def fetch_healthz
-      fetch(:healthz) do |http, job, instance|
+      fetch(:healthz) do |resp, job, instance|
         index = instance[:index]
         host = instance[:host]
-        is_healthy = http.response.strip.downcase == "ok" ? 1 : 0
+        is_healthy = resp.strip.downcase == "ok" ? 1 : 0
         send_healthz_metric(is_healthy, job, index, host)
       end
     end
@@ -172,38 +171,48 @@ module Collector
           next unless credentials_ok?(job, instance)
 
           host = instance[:host]
-          uri = "http://#{host}/#{type}"
+          uri  = "http://#{host}/#{type}"
 
           Config.logger.debug(
             "collector.#{type}.update",
-            :host => host, :index => index, :uri => uri,
+            :host     => host, :index => index, :uri => uri,
             :instance => instance.inspect)
 
-          http = EventMachine::HttpRequest.new(uri).get(
-            :head => authorization_headers(instance))
-
-          http.errback do
-            Config.logger.warn(
-              "collector.#{type}.failed",
-              :host => host, :error => http.error)
-          end
-
-          http.callback do
+          EM.defer do
             begin
-              yield http, job, instance
+              response = HTTParty.get(uri, headers: authorization_headers(instance))
             rescue => e
-              Config.logger.error(
-                "collector.#{type}.processing-failed",
-                error: e,
-                backtrace: e.backtrace,
-                request_uri: uri,
-                response: http.response,
-                response_code: http.response_header.status
-              )
+              log_fetch_error(type, host, e.message)
+              next
+            end
+
+            if response.ok?
+              EM.next_tick do
+                begin
+                  yield response.body, job, instance
+                rescue => e
+                  Config.logger.error(
+                    "collector.#{type}.processing-failed",
+                    error:         e,
+                    backtrace:     e.backtrace,
+                    request_uri:   uri,
+                    response:      response.body,
+                    response_code: response.code
+                  )
+                end
+              end
+            else
+              log_fetch_error(type, host, response.body)
             end
           end
         end
       end
+    end
+
+    def log_fetch_error(type, host, message)
+      Config.logger.warn(
+        "collector.#{type}.failed",
+        :host => host, :error => message)
     end
 
     def send_healthz_metric(is_healthy, job, index, host)
