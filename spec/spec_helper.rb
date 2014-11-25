@@ -18,8 +18,6 @@ require "cf_message_bus/mock_message_bus"
 
 
 require "collector"
-require "webmock/rspec"
-
 
 def set_collector_base_config
   Collector::Config.configure(
