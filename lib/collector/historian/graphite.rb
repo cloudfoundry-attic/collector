@@ -26,11 +26,11 @@ module Collector
         # Given a properties hash like so
         # {:key=>"cpu_load_avg", :timestamp=>1394801347, :value=>0.25, :tags=>{:ip=>"172.30.5.74", :role=>"core", :job=>"CloudController", :index=>0, :name=>"CloudController/0", :deployment=>"CF"}}
         # One will get a metrics key like so
-        # CF.CloudController0.cpu_load_avg
+        # CF.CloudController.0.172-30-5-74.cpu_load_avg
         deployment = p[:tags][:deployment]
         job = p[:tags][:job]
         index = p[:tags][:index]
-        ip = p[:tags][:ip].gsub!(".","-")
+        ip = (p[:tags][:ip] || p[:tags]["ip"]).gsub!(".","-")
         key = p[:key]
 
         unless deployment && job && index && ip && key
