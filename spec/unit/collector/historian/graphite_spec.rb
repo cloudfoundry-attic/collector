@@ -53,6 +53,23 @@ describe Collector::Historian::Graphite do
       graphite_historian.send_data(metric_payload_with_string_type)
     end
 
+
+    it "send the event even if ip tags is missing" do
+      metric_payload_with_string_type = {
+        key: "some_key",
+        timestamp: 1234568912,
+        value: 2,
+        tags: {
+          :deployment => "CF",
+          :job => "Blurgh",
+          :index => 0
+        }
+      }
+      graphite_historian = described_class.new("host", 9999)
+      connection.should_receive(:send_data).with("CF.Blurgh.0.nil.some_key 2 1234568912\n")
+      graphite_historian.send_data(metric_payload_with_string_type)
+    end
+
     context "when the passed in data is missing a timestamp" do
       it "uses now" do
         graphite_historian = described_class.new("host", 9999)

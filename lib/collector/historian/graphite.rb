@@ -30,9 +30,9 @@ module Collector
         deployment = p[:tags][:deployment]
         job = p[:tags][:job]
         index = p[:tags][:index]
-        ip = (p[:tags][:ip] || p[:tags]["ip"]).gsub!(".","-")
+        ipField = (p[:tags][:ip]|| p[:tags]["ip"])
+        ip = ((ipField) ? ipField.gsub(".","-") : "nil" )
         key = p[:key]
-
         unless deployment && job && index && ip && key
           Config.logger.error("collector.create-graphite-key.fail: Could not create metrics name from fields tags.deployment, tags.job, tags.index or key.")
           return nil
