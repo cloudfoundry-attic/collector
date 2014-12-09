@@ -9,7 +9,6 @@ require "bundler/setup"
 require "eventmachine"
 require "cf_message_bus/message_bus"
 require "vcap/rolling_metric"
-require "vcap/common"
 
 require "collector/config"
 require "collector/handler"
@@ -112,7 +111,7 @@ module Collector
 
     # Generates metrics that don't require any interactions with varz or healthz
     def send_local_metrics
-      context = HandlerContext.new(Config.index, Time.now.to_i, {:ip => "#{VCAP::local_ip}" })
+      context = HandlerContext.new(Config.index, Time.now.to_i, {})
       handler = Handler.handler(@historian, "collector")
       Config.logger.info("collector.nats-latency.sending")
       handler.send_latency_metric("nats.latency.1m", @nats_latency.value, context)
