@@ -11,11 +11,18 @@ module Collector
 
         send_metric("router.total_requests", varz["requests"], context)
         send_metric("router.total_routes", varz["urls"], context)
+        send_metric("router.requests_per_sec", varz["requests_per_sec"].to_i, context)
         send_metric("router.ms_since_last_registry_update", varz["ms_since_last_registry_update"], context)
 
         rejected_request_count = varz["bad_requests"]
         send_metric("router.rejected_requests", rejected_request_count, context)
         send_metric("router.bad_gateways", varz["bad_gateways"], context)
+
+        ["2xx", "3xx", "4xx", "5xx", "xxx"].each do |status_code|
+          send_metric("router.responses.#{status_code}",varz["responses_#{status_code}"] , context)
+        end
+
+      
 
         return unless varz["tags"]
 

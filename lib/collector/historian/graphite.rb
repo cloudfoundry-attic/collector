@@ -37,8 +37,19 @@ module Collector
           Config.logger.error("collector.create-graphite-key.fail: Could not create metrics name from fields tags.deployment, tags.job, tags.index or key.")
           return nil
         end
+          key = get_keys(p,job)
+          [deployment, job, index, ip, key].join '.'
+      end
 
-        [deployment, job, index, ip, key].join '.'
+      def get_keys(p, job)
+        key = p[:key]
+        case job
+        when "Router"  
+          if key == "router.responses" && (p[:tags].key?("component") || p[:tags].key?(:component))
+             key = [p[:key], p[:tags]["component"] || p[:tags][:component] , p[:tags][:status] || p[:tags]["status"] ].join '.'
+          end
+        end
+        return key  
       end
 
       def get_value(value)
