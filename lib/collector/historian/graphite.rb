@@ -45,8 +45,12 @@ module Collector
         key = p[:key]
         case job
         when "Router"  
-          if key == "router.responses" && (p[:tags].key?("component") || p[:tags].key?(:component))
-             key = [p[:key], p[:tags]["component"] || p[:tags][:component] , p[:tags][:status] || p[:tags]["status"] ].join '.'
+          if p[:tags].key?("component") || p[:tags].key?(:component)
+            if key == "router.responses"
+              key = [p[:key], p[:tags]["component"] || p[:tags][:component] , p[:tags][:status] || p[:tags]["status"]].join '.'
+            elsif key == "router.requests"
+              key = [p[:key], p[:tags]["component"] || p[:tags][:component]].join '.'
+            end
           end
         end
         return key  
