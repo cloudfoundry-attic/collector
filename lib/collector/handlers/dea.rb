@@ -2,9 +2,7 @@ module Collector
   class Handler
     class Dea < Handler
       def additional_tags(context)
-        { stack: context.varz["stacks"],
-          ip: context.varz["host"].split(":").first,
-        }
+        { stack: context.varz["stacks"], ip: context.varz["host"].split(":").first }
       end
 
       def process(context)

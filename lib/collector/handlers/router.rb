@@ -2,8 +2,7 @@ module Collector
   class Handler
     class Router < Handler
       def additional_tags(context)
-        { ip: context.varz["host"].split(":").first,
-          }
+        { ip: context.varz["host"].split(":").first }
       end
 
       def process(context)
@@ -21,8 +20,6 @@ module Collector
         ["2xx", "3xx", "4xx", "5xx", "xxx"].each do |status_code|
           send_metric("router.responses.#{status_code}", varz["responses_#{status_code}"], context)
         end
-
-
 
         return unless varz["tags"]
 

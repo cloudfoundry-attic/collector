@@ -6,8 +6,7 @@ module Collector
       DHMS_IN_SECS = [24 * 60 * 60, 60 * 60, 60, 1].freeze
 
       def additional_tags(context)
-        { ip: context.varz["host"].split(":").first,
-        }
+        { ip: context.varz["host"].split(":").first }
       end
 
       def process(context)
