@@ -70,6 +70,42 @@ describe Collector::Historian::Graphite do
       graphite_historian.send_data(metric_payload_with_string_type)
     end
 
+    it "Should send router responses status code" do
+      metric_payload_with_string_type = {
+        key: "router.responses.2xx",
+        timestamp: 1234568912,
+        value: 2,
+        tags: {
+          "ip" => "1.2.3.4",
+          :deployment => "CF",
+          :job => "Router",
+          :index => 0
+        }
+      }
+      graphite_historian = described_class.new("host", 9999)
+      connection.should_receive(:send_data).with("CF.Router.0.1-2-3-4.router.responses.2xx 2 1234568912\n")
+      graphite_historian.send_data(metric_payload_with_string_type)
+    end
+
+    it "Should send router reponse status by component " do
+      metric_payload_with_string_type = {
+        key: "router.responses",
+        timestamp: 1234568912,
+        value: 2,
+        tags: {
+          "ip" => "1.2.3.4",
+          :deployment => "CF",
+          :job => "Router",
+          :index => 0,
+          :component => "CC",
+          :status => "2xx"
+        }
+      }
+      graphite_historian = described_class.new("host", 9999)
+      connection.should_receive(:send_data).with("CF.Router.0.1-2-3-4.router.responses.CC.2xx 2 1234568912\n")
+      graphite_historian.send_data(metric_payload_with_string_type)
+    end
+
     context "when the passed in data is missing a timestamp" do
       it "uses now" do
         graphite_historian = described_class.new("host", 9999)

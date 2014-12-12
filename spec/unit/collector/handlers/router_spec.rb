@@ -90,6 +90,7 @@ describe Collector::Handler::Router do
 
         historian.should have_sent_data("router.total_requests", 68213)
         historian.should have_sent_data("router.total_routes", 123456789)
+        historian.should have_sent_data("router.requests_per_sec", (0.22460493344950977).to_i)
         historian.should have_sent_data("router.ms_since_last_registry_update", 15)
 
         historian.should have_sent_data("router.rejected_requests", 42)
