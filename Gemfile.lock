@@ -1,10 +1,10 @@
 GIT
   remote: https://github.com/cloudfoundry/cf-message-bus.git
-  revision: 462341fb3f0e313caf5af3c14efc217326175783
+  revision: b48eeb4357bd4b24121d7454b2edc81cbb91f2d8
   specs:
     cf-message-bus (0.3.0)
       eventmachine (~> 1.0.0)
-      nats (>= 0.5.0.beta.12, < 0.6)
+      nats (>= 0.5.0.beta.16, < 0.6)
       vcap-concurrency
       yajl-ruby
 
@@ -81,11 +81,11 @@ GEM
     multi_json (1.0.4)
     multi_xml (0.5.4)
     multipart-post (2.0.0)
-    nats (0.5.0.beta.14)
-      daemons (>= 1.1.9)
-      eventmachine (>= 1.0.3)
-      json_pure (>= 1.8.1)
-      thin (>= 1.6.0)
+    nats (0.5.0.beta.16)
+      daemons (~> 1.1, >= 1.1.9)
+      eventmachine (~> 1.0, >= 1.0.3)
+      json_pure (~> 1.8, >= 1.8.1)
+      thin (~> 1.6, >= 1.6.3)
     nokogiri (1.6.2.1)
       mini_portile (= 0.6.0)
     posix-spawn (0.3.8)
