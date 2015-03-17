@@ -1,5 +1,5 @@
 module Collector
-  # TSDB connection for sending metrics
+  # TCP connection for sending metrics
   class TCPConnection < EventMachine::Connection
     def initialize(logger_name)
       @logger_name = logger_name
