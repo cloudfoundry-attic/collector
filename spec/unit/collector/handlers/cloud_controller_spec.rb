@@ -10,7 +10,7 @@ describe Collector::Handler::CloudController do
       end
     end
   end
-  let(:context) { Collector::HandlerContext.new(0, now, fixture(:cloud_controller)) }
+  let(:context) { Collector::HandlerContext.new(0, now, fixture(:cloud_controller), 'jobname') }
   let(:handler) { Collector::Handler::CloudController.new(historian, "CloudController") }
 
   it "should register itself as a handler" do
@@ -38,7 +38,8 @@ describe Collector::Handler::CloudController do
         index: 0,
         ip: "10.10.16.13",
         name: "CloudController/0",
-        deployment: "untitled_dev"
+        deployment: "untitled_dev",
+        job_name: 'jobname'
       }
     end
 

@@ -88,6 +88,7 @@ module Collector
         instances[message["host"].split(":").first] = {
           :host => message["host"],
           :index => message["index"],
+          :job_name => message['job_name'],
           :credentials => message["credentials"],
           :timestamp => Time.now.to_i
         }
@@ -122,12 +123,13 @@ module Collector
     def fetch_varz
       fetch(:varz) do |resp, job, instance|
         index = instance[:index]
+        job_name = instance[:job_name]
         varz = Yajl::Parser.parse(resp)
         now = Time.now.to_i
 
         handler = Handler.handler(@historian, job)
         Config.logger.debug("collector.job.process", job: job, handler: handler.class.name)
-        ctx = HandlerContext.new(index, now, varz)
+        ctx = HandlerContext.new(index, now, varz, job_name)
         handler.do_process(ctx)
       end
     end

@@ -6,15 +6,17 @@ module Collector
     attr_reader :index
     attr_reader :now
     attr_reader :varz
+    attr_reader :job_name
 
-    def initialize(index, now, varz)
+    def initialize(index, now, varz, job_name = nil)
       @index = index
       @now = now
       @varz = varz
+      @job_name = job_name
     end
 
     def ==(other)
-      other.index == index && other.now == now && other.varz == varz
+      other.index == index && other.now == now && other.varz == varz && other.job_name == job_name
     end
   end
 
@@ -121,7 +123,7 @@ module Collector
 
       tags.merge!(additional_tags(context))
       tags.merge!(Components.get_job_tags(@job))
-      tags.merge!(job: @job, index: context.index)
+      tags.merge!(job: @job, index: context.index, job_name: context.job_name)
       tags.merge!(name: "#{@job}/#{context.index}", deployment: Config.deployment_name)
 
       @historian.send_data({

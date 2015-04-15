@@ -1,5 +1,24 @@
 require "spec_helper"
 
+describe Collector::HandlerContext do
+
+  describe '#==' do
+    it 'should be equal if index, now, varz, and job_name are equal' do
+      context = Collector::HandlerContext.new(nil, nil, {}, 'jobname')
+      context2 = Collector::HandlerContext.new(nil, nil, {}, 'jobname')
+
+      expect(context).to eq(context2)
+    end
+    it 'should not be equal if job_name is not equal' do
+      context = Collector::HandlerContext.new(nil, nil, {}, 'jobname')
+      context2 = Collector::HandlerContext.new(nil, nil, {})
+
+      expect(context).to_not eq(context2)
+    end
+  end
+
+end
+
 describe Collector::Handler do
   describe "#handler" do
     it "should return the default handler when none registered" do
@@ -47,7 +66,7 @@ describe Collector::Handler do
     describe "sent tags" do
       let(:historian) { double }
       let(:handler) { Collector::Handler.new(historian, "DEA") }
-      let(:context) { Collector::HandlerContext.new(0, nil, {"cpu_load_avg" => "42"}) }
+      let(:context) { Collector::HandlerContext.new(0, nil, {"cpu_load_avg" => "42"}, 'jobname') }
 
       it "adds extra tags when specified" do
         handler.stub(:additional_tags => {foo: "bar"})
@@ -64,6 +83,7 @@ describe Collector::Handler do
           tags: hash_including({
             job: "DEA",
             index: 0,
+            job_name: 'jobname',
             role: "core"
           })
         ))
@@ -79,10 +99,10 @@ describe Collector::Handler do
         key: "some_key",
         timestamp: 10000,
         value: 2,
-        tags: {index: 1, job: "Test", name: "Test/1", deployment: "untitled_dev", foo: "bar"}
+        tags: {index: 1, job: "Test", name: "Test/1", deployment: "untitled_dev", foo: "bar", job_name: 'jobname'}
       )
 
-      context = Collector::HandlerContext.new(1, 10000, {})
+      context = Collector::HandlerContext.new(1, 10000, {}, 'jobname')
       handler = Collector::Handler.handler(historian, "Test")
       handler.send_metric("some_key", 2, context, {foo: "bar"})
     end
@@ -93,10 +113,10 @@ describe Collector::Handler do
         key: "some_key",
         timestamp: 10000,
         value: 2,
-        tags: {index: 1, job: "DEA", name: "DEA/1", deployment: "untitled_dev", role: "core"}
+        tags: {index: 1, job: "DEA", name: "DEA/1", deployment: "untitled_dev", role: "core", job_name: 'jobname'}
       )
 
-      context = Collector::HandlerContext.new(1, 10000, {})
+      context = Collector::HandlerContext.new(1, 10000, {}, 'jobname')
       handler = Collector::Handler.handler(historian, "DEA")
       handler.stub(:additional_tags => {
         job: "foo",

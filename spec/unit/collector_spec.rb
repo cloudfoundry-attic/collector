@@ -26,6 +26,7 @@ describe Collector::Collector do
         collector.process_component_discovery({
             "type"        => "Test",
             "index"       => 1,
+            'job_name'    => 'jobname',
             "host"        => "test-host:1234",
             "credentials" => ["user", "pass"]
           })
@@ -35,6 +36,7 @@ describe Collector::Collector do
             "test-host" => {
               :host        => "test-host:1234",
               :index       => 1,
+              :job_name    => 'jobname',
               :credentials => ["user", "pass"],
               :timestamp   => 1311979380
             }
@@ -55,6 +57,7 @@ describe Collector::Collector do
         collector.process_component_discovery({
             "type"        => "Test",
             "index"       => 1,
+            'job_name'    => 'jobname',
             "host"        => "test-host-1:1234",
             "credentials" => ["user", "pass"]
           })
@@ -62,6 +65,7 @@ describe Collector::Collector do
         collector.process_component_discovery({
             "type"        => "Test",
             "index"       => 2,
+            'job_name'    => 'jobname',
             "host"        => "test-host-2:1234",
             "credentials" => ["user", "pass"]
           })
@@ -78,6 +82,7 @@ describe Collector::Collector do
             "test-host-2" => {
               :host        => "test-host-2:1234",
               :index       => 2,
+              :job_name    => 'jobname',
               :credentials => ["user", "pass"],
               :timestamp   => 100005
             }
@@ -92,6 +97,7 @@ describe Collector::Collector do
       collector.process_component_discovery(
         "type"        => "Test",
         "index"       => 0,
+        'job_name'    => 'jobname',
         "host"        => "test-host:1234",
         "credentials" => ["user", "pass"]
       )
@@ -122,7 +128,7 @@ describe Collector::Collector do
 
           fetch_varz
 
-          expect(handler).to have_received(:do_process).with(Collector::HandlerContext.new(0, Time.now.to_i, { "foo" => "bar" }))
+          expect(handler).to have_received(:do_process).with(Collector::HandlerContext.new(0, Time.now.to_i, { "foo" => "bar" }, 'jobname'))
         end
       end
     end
