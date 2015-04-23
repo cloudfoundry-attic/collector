@@ -5,9 +5,10 @@ module Collector
   class Historian
     class CloudWatch
       def initialize(access_key_id, access_secret_key)
-        AWS.config(
-            :access_key_id => access_key_id,
-            :secret_access_key => access_secret_key)
+        Aws.config.update({
+            region: 'us-east-1',
+            credentials: Aws::Credentials.new(access_key_id, access_secret_key),
+           })
       end
 
       def send_data (data)
@@ -30,7 +31,8 @@ module Collector
         }
 
         EventMachine.defer do
-          cloud_watch = AWS::CloudWatch.new
+          Config.logger.info("collector.sending.cloudwatch")
+          cloud_watch = Aws::CloudWatch::Client.new
           unless cloud_watch.respond_to?(:put_metric_data)
             Config.logger.warn("collector.cloud-watch-historian.weird-state")
             return
