@@ -38,7 +38,7 @@ describe Collector::Historian do
     end
 
     before do
-      AWS.should_receive :config
+      Aws.config.should_receive :update
       Collector::Config.configure(config_override)
     end
 
@@ -144,7 +144,9 @@ describe Collector::Historian do
     end
 
     it "builds a historian that logs to all services" do
-      AWS.should_receive(:config).with(access_key_id: "AWS_ACCESS_KEY12345", secret_access_key: "AWS_SECRET_ACCESS_KEY98765")
+      Aws::Credentials.should_receive(:new).with("AWS_ACCESS_KEY12345", "AWS_SECRET_ACCESS_KEY98765")
+      Aws.config.should_receive(:update).with({region: 'us-east-1',
+                                               credentials: anything(),})
       EventMachine.should_receive(:connect).with("localhost", 4242, Collector::TsdbConnection)
       Collector::Historian::DataDog.should_receive(:new).with("DATADOG_API_KEY", HTTParty)
       Collector::Historian::CfMetrics.should_receive(:new).with("api.metrics.example.com", HTTParty)
@@ -182,8 +184,8 @@ describe Collector::Historian do
     let(:cfmetrics_historian) { double('CfMetrics historian') }
 
     before do
-      AWS.stub(:config)
-      AWS::CloudWatch.stub(:new).and_return(cloud_watch)
+      Aws.config.stub(:update)
+      Aws::CloudWatch::Client.stub(:new).and_return(cloud_watch)
       EventMachine.stub(:connect).and_return(connection)
       Collector::Historian::DataDog.should_receive(:new).and_return(dog_historian)
       Collector::Historian::CfMetrics.should_receive(:new).with("api.metrics.example.com", HTTParty).and_return(cfmetrics_historian)

@@ -3,11 +3,10 @@ require File.expand_path("../../../spec_helper", File.dirname(__FILE__))
 describe Collector::Historian::CloudWatch do
   describe "initialization" do
     it "configures AWS credentials" do
-      AWS.should_receive(:config).with({
-                                           access_key_id: "ACCESS",
-                                           secret_access_key: "SECRET"
+      Aws::Credentials.should_receive(:new).with("ACCESS", "SECRET")
+      Aws.config.should_receive(:update).with({region: 'us-east-1',
+                                       credentials: anything(),
                                        })
-
       described_class.new("ACCESS", "SECRET")
     end
   end
@@ -16,7 +15,7 @@ describe Collector::Historian::CloudWatch do
     let(:cloud_watch) { double('CloudWatch') }
 
     before do
-      AWS::CloudWatch.should_receive(:new).and_return(cloud_watch)
+      Aws::CloudWatch::Client.should_receive(:new).and_return(cloud_watch)
       ::Collector::Config.stub(:deployment_name).and_return("dev114cw")
     end
 

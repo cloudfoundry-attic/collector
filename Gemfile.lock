@@ -33,10 +33,14 @@ GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.3.5)
-    aws-sdk (1.8.3.1)
-      json (~> 1.4)
-      nokogiri (>= 1.4.4)
-      uuidtools (~> 2.1)
+    aws-sdk (2.0.39)
+      aws-sdk-resources (= 2.0.39)
+    aws-sdk-core (2.0.39)
+      builder (~> 3.0)
+      jmespath (~> 1.0)
+      multi_json (~> 1.0)
+    aws-sdk-resources (2.0.39)
+      aws-sdk-core (= 2.0.39)
     builder (3.2.2)
     ci_reporter (1.9.0)
       builder (>= 2.1.2)
@@ -72,13 +76,14 @@ GEM
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
     httpclient (2.3.4.1)
+    jmespath (1.0.2)
+      multi_json (~> 1.0)
     json (1.7.7)
     json_pure (1.8.1)
     membrane (0.0.2)
     mime-types (2.1)
-    mini_portile (0.6.0)
     msgpack (0.5.5)
-    multi_json (1.0.4)
+    multi_json (1.11.0)
     multi_xml (0.5.4)
     multipart-post (2.0.0)
     nats (0.5.0.beta.16)
@@ -86,8 +91,6 @@ GEM
       eventmachine (~> 1.0, >= 1.0.3)
       json_pure (~> 1.8, >= 1.8.1)
       thin (~> 1.6, >= 1.6.3)
-    nokogiri (1.6.2.1)
-      mini_portile (= 0.6.0)
     posix-spawn (0.3.8)
     rack (1.5.2)
     rack-mount (0.8.3)
@@ -130,7 +133,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aws-sdk
+  aws-sdk (~> 2)
   cf-message-bus!
   ci_reporter
   codeclimate-test-reporter
