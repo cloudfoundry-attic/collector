@@ -34,7 +34,7 @@ class FakeHttpClient
   end
 
   def parsed_post_body
-    Yajl::Parser.parse(@last_post[:options][:body])
+    MultiJson.load(@last_post[:options][:body])
   end
 end
 
@@ -164,7 +164,7 @@ describe Collector::Historian::DataDog do
         datadog_historian.send_data(datadog_metric_payload)
       end
 
-      expected_json = Yajl::Encoder.encode({
+      expected_json = MultiJson.dump({
                                              series: [
                                                {
                                                  metric: "cf.collector.some_metric.some_key",

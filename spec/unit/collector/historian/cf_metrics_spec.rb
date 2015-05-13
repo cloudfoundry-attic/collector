@@ -34,7 +34,7 @@ class FakeHttpClient
   end
 
   def parsed_put_body
-    Yajl::Parser.parse(@last_put[:options][:body])
+    MultiJson.load(@last_put[:options][:body])
   end
 end
 

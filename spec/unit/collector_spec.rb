@@ -137,7 +137,7 @@ describe Collector::Collector do
         expect(Collector::Config.logger).to have_received(:error).with(
             'collector.varz.processing-failed',
             hash_including(
-              error:         instance_of(Yajl::ParseError),
+              error:         instance_of(MultiJson::ParseError),
               response:      'foo',
               request_uri:   match(/http.*varz/),
               response_code: 200

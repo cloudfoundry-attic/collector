@@ -1,8 +1,9 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env jruby
 $:.unshift(File.expand_path("../lib", File.dirname(__FILE__)))
 
 require "rubygems"
 require "bundler/setup"
+Bundler.require
 
 require "collector/config"
 config_file = ENV["CONFIG_FILE"] || File.expand_path("../config/config.yml", File.dirname(__FILE__))

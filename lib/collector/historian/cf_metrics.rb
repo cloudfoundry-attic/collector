@@ -30,7 +30,7 @@ module Collector
 
       def send_metrics(metric_name, metric_data)
         Config.logger.debug("Sending metrics to cf-metrics: [#{metric_data.inspect}]")
-        body = Yajl::Encoder.encode(metric_data)
+        body = MultiJson.dump(metric_data)
         response = @http_client.put("#{@api_host}/metrics/#{metric_name}/values", body: body, headers: {"Content-type" => "application/json"})
         if response.success?
           Config.logger.info("collector.emit-cfmetrics.success", number_of_metrics: 1, lag_in_seconds: 0)

@@ -1,5 +1,3 @@
-require "vcap/common"
-
 module Collector
 
   class HandlerContext
@@ -98,7 +96,7 @@ module Collector
 
       MEM_AND_CPU_STATS.each { |stat| send_metric(stat, varz[stat], context) if varz[stat] }
 
-      send_metric("uptime_in_seconds", VCAP.uptime_string_to_seconds(varz["uptime"]), context) if varz["uptime"]
+      send_metric("uptime_in_seconds", uptime_string_to_seconds(varz["uptime"]), context) if varz["uptime"]
 
       # Log counts in varz look like: { log_counts: { "error": 2, "warn": 1 }}
       varz.fetch("log_counts", {}).each do |level, count|
@@ -107,6 +105,14 @@ module Collector
       end
 
       process(context)
+    end
+
+
+    def uptime_string_to_seconds(string)
+      parts = string.split(":", 4).map { |i| i.to_i}
+      raise ArgumentError.new("Invalid format") unless parts.size == 4
+      days, hours, mins, secs = parts
+      secs + (mins * 60) + (hours * 3600) + (days * 24 * 3600)
     end
 
     # Sends the metric to the metric collector (historian)

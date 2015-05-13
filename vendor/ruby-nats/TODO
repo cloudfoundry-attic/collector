@@ -1,0 +1,36 @@
+
+- Contributing guidelines
+- cluster tests for travis-ci
+
+- [IN PROGRESS] clustering/routing
+  - Allow implicit route information to propogate to clients?
+  - Check with EM 1.0 not working
+  - [DONE] Client ping timers
+  - [DONE] Retry timers on routes
+  - [DONE] Random on cluster client server pool
+
+- do client blowup detection from sending in tight loop
+- allow port to also be listen_port in config file
+- queue groups allow selection, e.g. round robin vs random
+- Logger rotation should work
+- Allow clients to specify app/client name
+
+- [IN PROGRESS] tests!
+- [IN PROGRESS] JRuby support - works if you hand run servers for tests
+
+- [DONE] balance receive perf with send perf (EM issue, iovec)
+- [DONE] Time interval Pings from server..
+- [DONE] Ping/Pong time window
+- [DONE] monitoring
+- [DONE] Allow monitoring to specify on net param
+- [DONE] /connz info
+- [DONE] Don't truncate log on startup
+- [DONE] Connection queue size dump to log for SIGURS2
+- [DONE] Fixed # of replies? sub foo [2], server closes subscription automatically, avoid overwhelming client connection?
+- [DONE] Request timeout option.
+- [DONE] proper flow control, EM and PING/PONG
+- [DONE] request/response automated, just use UUID now.
+- [DONE] better reply semantics in protocol.
+- [DONE] daemon mode
+- [DONE] autolaunch
+- [DONE] Queue groups

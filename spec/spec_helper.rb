@@ -74,7 +74,7 @@ def create_fake_collector
 end
 
 def fixture(name)
-  Yajl::Parser.parse(File.read(File.expand_path("../fixtures/#{name}.json", __FILE__)))
+  MultiJson.load(File.read(File.expand_path("../fixtures/#{name}.json", __FILE__)))
 end
 
 

@@ -1,10 +1,11 @@
 source "https://rubygems.org"
 
-gem "cf-message-bus", git: "https://github.com/cloudfoundry/cf-message-bus.git"
-gem "vcap_common", git: "https://github.com/cloudfoundry/vcap-common.git"
+gem "cf-message-bus", path: 'vendor/cf-message-bus'
 gem "aws-sdk", '~> 2', require: false
-gem "steno"
+gem "steno", path: 'vendor/steno'
 gem "httparty"
+gem "nats", path: 'vendor/ruby-nats'
+gem "eventmachine"
 
 group :test do
   gem 'codeclimate-test-reporter', require: false

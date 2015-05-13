@@ -5,10 +5,10 @@ require "set"
 
 require "rubygems"
 require "bundler/setup"
+Bundler.require
 
-require "eventmachine"
 require "cf_message_bus/message_bus"
-require "vcap/rolling_metric"
+require_relative "../vendor/rolling_metric"
 
 require "collector/config"
 require "collector/handler"
@@ -115,6 +115,18 @@ module Collector
       handler = Handler.handler(@historian, "collector")
       Config.logger.info("collector.nats-latency.sending")
       handler.send_latency_metric("nats.latency.1m", @nats_latency.value, context)
+
+      threadqueue = EM.instance_variable_get(:@threadqueue)
+      resultqueue = EM.instance_variable_get(:@resultqueue)
+
+      Config.logger.info("event_machine.threadqueue.size", size: threadqueue.size)
+      Config.logger.info("event_machine.threadqueue.num_waiting", size: threadqueue.num_waiting)
+      Config.logger.info("event_machine.resultqueue.size", size: resultqueue.size)
+      Config.logger.info("event_machine.resultqueue.num_waiting", size: resultqueue.num_waiting)
+      handler.send_metric("event_machine.threadqueue.size", threadqueue.size, context)
+      handler.send_metric("event_machine.threadqueue.num_waiting", threadqueue.num_waiting, context)
+      handler.send_metric("event_machine.resultqueue.size", resultqueue.size, context)
+      handler.send_metric("event_machine.resultqueue.num_waiting", resultqueue.num_waiting, context)
     end
 
     # Fetches the varzs from all the components and calls the proper {Handler}
@@ -122,7 +134,7 @@ module Collector
     def fetch_varz
       fetch(:varz) do |resp, job, instance|
         index = instance[:index]
-        varz = Yajl::Parser.parse(resp)
+        varz = MultiJson.load(resp)
         now = Time.now.to_i
 
         handler = Handler.handler(@historian, job)
