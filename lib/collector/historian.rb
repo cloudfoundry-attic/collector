@@ -3,6 +3,8 @@ require_relative "./historian/cf_metrics"
 require_relative "./historian/data_dog"
 require_relative "./historian/tsdb"
 require_relative "./historian/graphite"
+require_relative "./historian/newrelic_insights"
+require_relative "./historian/newrelic_plugin"
 require "httparty"
 
 module Collector
@@ -33,6 +35,16 @@ module Collector
       if Config.graphite
         historian.add_adapter(Historian::Graphite.new(Config.graphite_host, Config.graphite_port))
         Config.logger.info("collector.historian-adapter.added-graphite", host: Config.graphite_host)
+      end
+
+      if Config.newrelic_insights
+        historian.add_adapter(Historian::NewrelicInsights.new(Config.newrelic_insights_api_key, Config.newrelic_insights_app_id, HTTParty))
+        Config.logger.info("collector.historian-adapter.added-newrelic-insights")
+      end
+
+      if Config.newrelic_plugin
+        historian.add_adapter(Historian::NewrelicPlugin.new(Config.newrelic_plugin_license_key, HTTParty))
+        Config.logger.info("collector.historian-adapter.added-newrelic-plugin")
       end
 
       historian
