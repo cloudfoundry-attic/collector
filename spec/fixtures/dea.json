@@ -11,7 +11,7 @@
     "num_cores": 2,
     "log_counts": {"off":0,"fatal":0,"error":0,"warn":0,"info":20,"debug":44,"debug1":0,"debug2":0,"all":0},
     "stacks": [
-        "lucid64"
+        "cflinuxfs2"
     ],
     "can_stage": 1,
     "reservable_stagers": 28,
