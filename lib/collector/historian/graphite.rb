@@ -24,21 +24,23 @@ module Collector
 
       def get_metrics_name(properties)
         # Given a properties hash like so
-        # {:key=>"cpu_load_avg", :timestamp=>1394801347, :value=>0.25, :tags=>{:ip=>"172.30.5.74", :role=>"core", :job=>"CloudController", :index=>0, :name=>"CloudController/0", :deployment=>"CF"}}
+        # {:key=>"cpu_load_avg", :timestamp=>1394801347, :value=>0.25, :tags=>{:ip=>"172.30.5.74", :role=>"core", :job=>"CloudController", :job_name=>"api_z1", :index=>0, :name=>"CloudController/0", :deployment=>"CF"}}
         # One will get a metrics key like so
-        # CF.CloudController.0.172-30-5-74.cpu_load_avg
+        # CF.api_z1.0.cpu_load_avg
         deployment = properties[:tags][:deployment]
         job = properties[:tags][:job]
+        job_name = properties[:tags][:job_name]
         index = properties[:tags][:index]
         ipField = (properties[:tags][:ip]|| properties[:tags]["ip"])
         ip = ((ipField) ? ipField.gsub(".","-") : "nil" )
         key = properties[:key]
-        unless deployment && job && index && ip && key
+        unless deployment && job && index && key
           Config.logger.error("collector.create-graphite-key.fail: Could not create metrics name from fields tags.deployment, tags.job, tags.index or key.")
           return nil
         end
         key = router_key(properties) if job == "Router"
-        [deployment, job, index, ip, key].join '.'
+        return [deployment, job_name, index, key].join '.' if job_name
+        return [deployment, job, index, ip, key].join '.'
       end
 
       def router_key(properties)
