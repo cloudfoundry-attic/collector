@@ -155,13 +155,27 @@ describe Collector::Handler::CloudController do
 
   describe "Cloud Controller jobs queue length" do
     let(:varz) { context.varz }
-    let(:cc_job_queue_length) { {"cc-local" => 2, "cc-generic" => 1} }
+    let(:cc_job_queue_length) { {"cc-local" => 2, "cc-generic" => 1, "total" => 3} }
 
     it "sends the job queue length" do
       varz["cc_job_queue_length"] = cc_job_queue_length
       handler.process(context)
       expect(data["cc.job_queue_length.cc-local"][:value]).to eq(2)
       expect(data["cc.job_queue_length.cc-generic"][:value]).to eq(1)
+      expect(data["cc.job_queue_length.total"][:value]).to eq(3)
+    end
+  end
+
+  describe "Cloud Controller failed job count" do
+    let(:varz) { context.varz }
+    let(:cc_failed_job_count) { {"cc-local" => 2, "cc-generic" => 1, "total" => 3} }
+
+    it "sends the failed job count" do
+      varz["cc_failed_job_count"] = cc_failed_job_count
+      handler.process(context)
+      expect(data["cc.failed_job_count.cc-local"][:value]).to eq(2)
+      expect(data["cc.failed_job_count.cc-generic"][:value]).to eq(1)
+      expect(data["cc.failed_job_count.total"][:value]).to eq(3)
     end
   end
 end

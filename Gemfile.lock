@@ -144,3 +144,6 @@ DEPENDENCIES
   timecop
   vcap_common!
   webmock
+
+BUNDLED WITH
+   1.10.4

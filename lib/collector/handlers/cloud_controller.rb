@@ -29,6 +29,11 @@ module Collector
           send_metric("cc.job_queue_length.#{key}", value, context)
         end
 
+        varz["cc_failed_job_count"] ||= {}
+        varz["cc_failed_job_count"].each do |key, value|
+          send_metric("cc.failed_job_count.#{key}", value, context)
+        end
+
         thread_info_metrics(varz['thread_info'], 'thread_info').each do |key, value|
           send_metric("cc.#{key}", value, context)
         end
