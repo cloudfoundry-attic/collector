@@ -22,11 +22,11 @@ describe Collector::Handler::Etcd do
     it "sends the metrics" do
       handler.process(context)
       historian.should have_sent_data("etcd.leader.SomeValueA", 40)
-      historian.should have_sent_data("etcd.leader.SomeValueB", 41, "foo" => "bar")
+      historian.should have_sent_data("etcd.leader.SomeValueB", 41, foo: "bar")
       historian.should have_sent_data("etcd.server.SomeValueA", 40)
-      historian.should have_sent_data("etcd.server.SomeValueB", 41, "foo" => "bar")
+      historian.should have_sent_data("etcd.server.SomeValueB", 41, foo: "bar")
       historian.should have_sent_data("etcd.store.SomeValueA", 40)
-      historian.should have_sent_data("etcd.store.SomeValueB", 41, "foo" => "bar")
+      historian.should have_sent_data("etcd.store.SomeValueB", 41, foo: "bar")
     end
   end
 
@@ -36,11 +36,11 @@ describe Collector::Handler::Etcd do
     it "sends the metrics" do
       handler.process(context)
       historian.should have_sent_data("etcd-diego.leader.SomeValueA", 40)
-      historian.should have_sent_data("etcd-diego.leader.SomeValueB", 41, "foo" => "bar")
+      historian.should have_sent_data("etcd-diego.leader.SomeValueB", 41, foo: "bar")
       historian.should have_sent_data("etcd-diego.server.SomeValueA", 40)
-      historian.should have_sent_data("etcd-diego.server.SomeValueB", 41, "foo" => "bar")
+      historian.should have_sent_data("etcd-diego.server.SomeValueB", 41, foo: "bar")
       historian.should have_sent_data("etcd-diego.store.SomeValueA", 40)
-      historian.should have_sent_data("etcd-diego.store.SomeValueB", 41, "foo" => "bar")
+      historian.should have_sent_data("etcd-diego.store.SomeValueB", 41, foo: "bar")
     end
   end
 end

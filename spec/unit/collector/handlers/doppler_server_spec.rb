@@ -52,7 +52,7 @@ describe Collector::Handler::Router do
       historian.should have_sent_data("DopplerServer.agentListener.currentBufferCount", 12)
       historian.should have_sent_data("DopplerServer.agentListener.receivedMessageCount", 45)
       historian.should have_sent_data("DopplerServer.agentListener.receivedByteCount", 6)
-      historian.should have_sent_data("DopplerServer.sinkServer.numberOfSinks", 9, {"ip"=>"10.10.10.10", "tag1" => "tagValue1", "tag2" => "tagValue2"})
+      historian.should have_sent_data("DopplerServer.sinkServer.numberOfSinks", 9, {ip: "10.10.10.10", tag1: "tagValue1", tag2: "tagValue2"})
     end
   end
 end

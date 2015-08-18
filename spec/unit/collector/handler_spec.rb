@@ -108,6 +108,60 @@ describe Collector::Handler do
       handler.send_metric("some_key", 2, context)
     end
 
+    context 'when the component provides its own tags' do
+      it 'does not overwrite them' do
+        historian = double('Historian')
+        historian.should_receive(:send_data).with(
+            key: "some_key",
+            timestamp: 10000,
+            value: 2,
+            tags: {index: 2, job: "provided", name: "provided/2", deployment: "untitled_dev", role: "core"}
+        )
+
+        context = Collector::HandlerContext.new(1, 10000, {})
+        handler = Collector::Handler.handler(historian, "DEA")
+        handler.stub(:additional_tags => {
+                         job: "foo",
+            index: "foo",
+            name: "foo",
+            deployment: "foo",
+            role: "foo"
+        })
+
+        provided_tags = {
+            index: 2,
+            job: "provided"
+        }
+        handler.send_metric("some_key", 2, context, provided_tags)
+      end
+
+      it 'stringifies all keys before computing tags' do
+        historian = double('Historian')
+        historian.should_receive(:send_data).with(
+            key: "some_key",
+            timestamp: 10000,
+            value: 2,
+            tags: {index: 2, job: "provided", name: "provided/2", deployment: "untitled_dev", role: "core"}
+        )
+
+        context = Collector::HandlerContext.new(1, 10000, {})
+        handler = Collector::Handler.handler(historian, "DEA")
+        handler.stub(:additional_tags => {
+                         job: "foo",
+            index: "foo",
+            name: "foo",
+            deployment: "foo",
+            role: "foo"
+        })
+
+        provided_tags = {
+            "index" => 2,
+            "job" => "provided"
+        }
+        handler.send_metric("some_key", 2, context, provided_tags)
+      end
+    end
+
     it "should not send metrics without a value" do
       historian = double('Historian')
       historian.should_not_receive(:send_data)

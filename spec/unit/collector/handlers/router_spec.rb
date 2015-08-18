@@ -84,7 +84,7 @@ describe Collector::Handler::Router do
       end
 
       it "sends the default metrics" do
-        tags = {"component" => "component-1"}
+        tags = {component: "component-1"}
 
         handler.process(handler_context)
 
@@ -99,11 +99,11 @@ describe Collector::Handler::Router do
         historian.should have_sent_data("router.requests", 3200, tags)
         historian.should have_sent_data("router.latency.1m", 5, tags)
 
-        historian.should have_sent_data("router.responses", 100, tags.merge("status" => "2xx"))
-        historian.should have_sent_data("router.responses", 200, tags.merge("status" => "3xx"))
-        historian.should have_sent_data("router.responses", 400, tags.merge("status" => "4xx"))
-        historian.should have_sent_data("router.responses", 800, tags.merge("status" => "5xx"))
-        historian.should have_sent_data("router.responses", 1600, tags.merge("status" => "xxx"))
+        historian.should have_sent_data("router.responses", 100, tags.merge(status: "2xx"))
+        historian.should have_sent_data("router.responses", 200, tags.merge(status: "3xx"))
+        historian.should have_sent_data("router.responses", 400, tags.merge(status: "4xx"))
+        historian.should have_sent_data("router.responses", 800, tags.merge(status: "5xx"))
+        historian.should have_sent_data("router.responses", 1600, tags.merge(status: "xxx"))
       end
     end
 

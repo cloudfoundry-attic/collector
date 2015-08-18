@@ -52,7 +52,8 @@ describe Collector::Handler::Router do
       historian.should have_sent_data("LoggregatorDeaAgent.context1.metric1", 12)
       historian.should have_sent_data("LoggregatorDeaAgent.context1.metric2", 45)
       historian.should have_sent_data("LoggregatorDeaAgent.context1.metric3", 6)
-      historian.should have_sent_data("LoggregatorDeaAgent.context2.metric4", 9, {"ip"=>"10.10.10.10", "tag1" => "tagValue1", "tag2" => "tagValue2"})
+
+      historian.should have_sent_data("LoggregatorDeaAgent.context2.metric4", 9, {ip: "10.10.10.10", tag1: "tagValue1", tag2: "tagValue2"})
     end
   end
 end

@@ -52,7 +52,7 @@ describe Collector::Handler::Router do
       historian.should have_sent_data("LoggregatorTrafficcontroller.agentListener.currentBufferCount", 12)
       historian.should have_sent_data("LoggregatorTrafficcontroller.agentListener.receivedMessageCount", 45)
       historian.should have_sent_data("LoggregatorTrafficcontroller.agentListener.receivedByteCount", 6)
-      historian.should have_sent_data("LoggregatorTrafficcontroller.sinkServer.numberOfSinks", 9, {"ip"=>"10.10.10.10", "tag1" => "tagValue1", "tag2" => "tagValue2"})
+      historian.should have_sent_data("LoggregatorTrafficcontroller.sinkServer.numberOfSinks", 9, {ip: "10.10.10.10", tag1: "tagValue1", tag2: "tagValue2"})
     end
   end
 end

@@ -113,23 +113,22 @@ module Collector
     #
     # @param [String] name the metric name
     # @param [String, Fixnum] value the metric value
-    def send_metric(name, value, context, tags = {})
+    def send_metric(name, value, context, tags_provided = {})
       if value.nil?
         Config.logger.warn("Received no value for #{name}")
         return
       end
 
-      tags.merge!(additional_tags(context))
-      tags.merge!(Components.get_job_tags(@job))
-      tags.merge!(job: @job, index: context.index)
-      tags.merge!(name: "#{@job}/#{context.index}", deployment: Config.deployment_name)
+      tags_provided = symbolize_keys(tags_provided)
+      tags = base_tags(context).merge(tags_provided)
+      job = tags[:job]
+      index = tags[:index]
+      tags.merge!(name: "#{job}/#{index}")
 
-      @historian.send_data({
-                               key: name,
+      @historian.send_data({key: name,
                                timestamp: context.now,
                                value: value,
-                               tags: tags
-                           })
+                               tags: tags})
     end
 
     # Sends latency metrics to the metric collector (historian)
@@ -144,6 +143,18 @@ module Collector
         value = value[:value] || value["value"]
         send_metric(name, value / samples, context, tags)
       end
+    end
+
+    private
+
+    def symbolize_keys(hash)
+      hash.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+    end
+
+    def base_tags(context)
+      base_tags = additional_tags(context)
+      base_tags.merge!(Components.get_job_tags(@job))
+      base_tags.merge!(job: @job, index: context.index, deployment: Config.deployment_name)
     end
   end
 end

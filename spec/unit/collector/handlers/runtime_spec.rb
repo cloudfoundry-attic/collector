@@ -12,9 +12,9 @@ describe Collector::Handler::Runtime do
     it "sends the metrics" do
       handler.process(context)
       historian.should have_sent_data("Runtime.metricA.SomeValueA", 40)
-      historian.should have_sent_data("Runtime.metricA.SomeValueB", 41, "foo" => "bar")
+      historian.should have_sent_data("Runtime.metricA.SomeValueB", 41, foo: "bar")
       historian.should have_sent_data("Runtime.metricB.SomeValueA", 40)
-      historian.should have_sent_data("Runtime.metricB.SomeValueB", 41, "foo" => "bar")
+      historian.should have_sent_data("Runtime.metricB.SomeValueB", 41, foo: "bar")
     end
   end
 end
