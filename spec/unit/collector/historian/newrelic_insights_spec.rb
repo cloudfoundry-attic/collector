@@ -67,7 +67,7 @@ describe Collector::Historian::NewrelicInsights do
         }
       }
     end
-    let(:expected_tags) do 
+    let(:expected_tags) do
       { job: "Test", index: 1, component: "unknown", service_type: "unknown", tag: "value", foo: ["bar", "baz"] }
     end
 
@@ -174,7 +174,7 @@ describe Collector::Historian::NewrelicInsights do
       end
 
       expected_result = {
-        eventType: "cf-dev114cw",
+        eventType: "dev114cw",
         key: "some_key",
         tree: "some_metric",
         full_key: "some_metric.some_key",
