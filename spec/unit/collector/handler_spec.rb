@@ -101,7 +101,6 @@ describe Collector::Handler do
       handler.stub(:additional_tags => {
         job: "foo",
         index: "foo",
-        name: "foo",
         deployment: "foo",
         role: "foo"
       })
@@ -115,7 +114,7 @@ describe Collector::Handler do
             key: "some_key",
             timestamp: 10000,
             value: 2,
-            tags: {index: 2, job: "provided", name: "provided/2", deployment: "untitled_dev", role: "core"}
+            tags: {index: 2, job: "provided", name: "custom-name", deployment: "untitled_dev", role: "core"}
         )
 
         context = Collector::HandlerContext.new(1, 10000, {})
@@ -130,7 +129,8 @@ describe Collector::Handler do
 
         provided_tags = {
             index: 2,
-            job: "provided"
+            job: "provided",
+            name: "custom-name"
         }
         handler.send_metric("some_key", 2, context, provided_tags)
       end
@@ -149,7 +149,6 @@ describe Collector::Handler do
         handler.stub(:additional_tags => {
                          job: "foo",
             index: "foo",
-            name: "foo",
             deployment: "foo",
             role: "foo"
         })

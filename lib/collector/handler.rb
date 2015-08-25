@@ -123,7 +123,7 @@ module Collector
       tags = base_tags(context).merge(tags_provided)
       job = tags[:job]
       index = tags[:index]
-      tags.merge!(name: "#{job}/#{index}")
+      tags[:name] = "#{job}/#{index}" unless tags[:name]
 
       @historian.send_data({key: name,
                                timestamp: context.now,
