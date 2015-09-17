@@ -35,6 +35,11 @@ module Collector
         Config.logger.info("collector.historian-adapter.added-graphite", host: Config.graphite_host)
       end
 
+      if Config.gelf
+        historian.add_adapter(Historian::GELF.new(Config.gelf_host, Config.gelf_port))
+        Config.logger.info("collector.historian-adapter.added-gelf", host: Config.gelf_host)
+      end
+
       historian
     end
 

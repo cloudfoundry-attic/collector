@@ -31,6 +31,10 @@ module Collector
         graphite_host && graphite_port
       end
 
+      def gelf
+        gelf_host && gelf_port
+      end
+
       def logger
         raise "logger was used without being configured" unless @logging_configured
         @logger ||= Steno.logger("collector")
@@ -74,6 +78,10 @@ module Collector
         graphite_config = config["graphite"] || {}
         @graphite_host = graphite_config["host"]
         @graphite_port = graphite_config["port"]
+
+        gelf_config = config["gelf"] || {}
+        @gelf_host = gelf_config["host"]
+        @gelf_port = gelf_config["port"]
 
         @nats_uri = config["message_bus_uris"]
 
