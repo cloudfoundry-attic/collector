@@ -3,6 +3,7 @@ require_relative "./historian/cf_metrics"
 require_relative "./historian/data_dog"
 require_relative "./historian/tsdb"
 require_relative "./historian/graphite"
+require_relative "./historian/gelf"
 require "httparty"
 
 module Collector
@@ -36,7 +37,7 @@ module Collector
       end
 
       if Config.gelf
-        historian.add_adapter(Historian::GELF.new(Config.gelf_host, Config.gelf_port))
+        historian.add_adapter(Historian::Gelf.new(Config.gelf_host, Config.gelf_port))
         Config.logger.info("collector.historian-adapter.added-gelf", host: Config.gelf_host)
       end
 
