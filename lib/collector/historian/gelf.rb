@@ -10,9 +10,9 @@ module Collector
       end
 
       def send_data(data)
+        data[:short_message] = "#{data[:key]} #{data[:value]}"
         @gelf.notify!(data)
       end
-
     end
   end
 end
