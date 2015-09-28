@@ -2,8 +2,11 @@
 [![Code Climate](https://codeclimate.com/github/cloudfoundry/collector.png)](https://codeclimate.com/github/cloudfoundry/collector)
 [![Test Coverage](https://codeclimate.com/repos/51d0a9ebf3ea004764027944/badges/336e8c6c62d48583f959/coverage.png)](https://codeclimate.com/repos/51d0a9ebf3ea004764027944/feed)
 
-Cloud Foundry Metric Collector
+(DEPRECATED) Cloud Foundry Metric Collector
 =====================
+__NOTE__ :The collector is being deprecated. The recommended way of getting metrics out of your Cloud Foundry environment is to use a firehose nozzle.
+
+
 The `collector` will discover the various components on the message bus and
 query their /healthz and /varz interfaces.
 
