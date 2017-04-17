@@ -9,7 +9,10 @@ module Collector
         :nats_uri, :discover_interval, :varz_interval, :healthz_interval,
         :prune_interval, :nats_ping_interval, :local_metrics_interval,
         :deployment_name, :datadog_data_threshold, :datadog_time_threshold_in_seconds, :cf_metrics_api_host,
-        :graphite_host, :graphite_port
+        :graphite_host, :graphite_port, :newrelic_insights_api_key, :newrelic_insights_app_id,
+        :newrelic_insights_data_threshold, :newrelic_insights_time_threshold_in_seconds,
+        :newrelic_plugin_data_threshold, :newrelic_plugin_time_threshold_in_seconds,
+        :newrelic_plugin_license_key
 
       def tsdb
         tsdb_host && tsdb_port
@@ -29,6 +32,14 @@ module Collector
 
       def graphite
         graphite_host && graphite_port
+      end
+
+      def newrelic_insights
+        newrelic_insights_api_key && newrelic_insights_app_id
+      end
+
+      def newrelic_plugin
+        newrelic_plugin_license_key
       end
 
       def logger
@@ -74,6 +85,17 @@ module Collector
         graphite_config = config["graphite"] || {}
         @graphite_host = graphite_config["host"]
         @graphite_port = graphite_config["port"]
+
+        newrelic_insights_config = config["newrelic_insights"] || {}
+        @newrelic_insights_api_key = newrelic_insights_config["api_key"]
+        @newrelic_insights_app_id = newrelic_insights_config["app_id"]
+        @newrelic_insights_data_threshold = newrelic_insights_config.fetch("data_threshold", 1000).to_i
+        @newrelic_insights_time_threshold_in_seconds = newrelic_insights_config.fetch("time_threshold_in_seconds", 10).to_i
+
+        newrelic_plugin_config = config["newrelic_plugin"] || {}
+        @newrelic_plugin_license_key = newrelic_plugin_config["license_key"]
+        @newrelic_plugin_data_threshold = newrelic_plugin_config.fetch("data_threshold", 1000).to_i
+        @newrelic_plugin_time_threshold_in_seconds = newrelic_plugin_config.fetch("time_threshold_in_seconds", 10).to_i
 
         @nats_uri = config["message_bus_uris"]
 
