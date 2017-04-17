@@ -5,6 +5,7 @@ gem "vcap_common", git: "https://github.com/cloudfoundry/vcap-common.git"
 gem "aws-sdk", '~> 2', require: false
 gem "steno"
 gem "httparty"
+gem "gelf", "= 1.4.0"
 
 group :test do
   gem 'codeclimate-test-reporter', require: false
